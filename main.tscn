@@ -1,0 +1,18 @@
+[gd_scene format=3 uid="uid://bf21dgh6rbsk4"]
+
+[ext_resource type="PackedScene" uid="uid://bjaqw7tc8s4am" path="res://TestArea.tscn" id="1_ig7tw"]
+[ext_resource type="PackedScene" uid="uid://d20v3s7mqbsg5" path="res://Player.tscn" id="2_0xm2m"]
+
+[node name="Main" type="Node" unique_id=1517588686]
+
+[node name="TestArea" parent="." unique_id=512090307 instance=ExtResource("1_ig7tw")]
+position = Vector2(191, 7)
+
+[node name="Player" parent="." unique_id=789404969 instance=ExtResource("2_0xm2m")]
+position = Vector2(99, 16)
+
+[node name="RemoteTransform2D" type="RemoteTransform2D" parent="Player" unique_id=226148389]
+remote_path = NodePath("../../Camera2D")
+
+[node name="Camera2D" type="Camera2D" parent="." unique_id=919362061]
+position = Vector2(99, 16)
