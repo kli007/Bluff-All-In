@@ -1,6 +1,24 @@
 [gd_scene format=3 uid="uid://buu2g7ninalgl"]
 
-[ext_resource type="Script" uid="uid://dn2t2k45apmj8" path="res://Cards/card_template.gd" id="1_8800e"]
+[ext_resource type="Texture2D" uid="uid://dr32x1m2hcl24" path="res://Assets/Sprite/Card/cardBlank.png" id="1_200fw"]
+[ext_resource type="Texture2D" uid="uid://dr7xcg8gyhqeo" path="res://Assets/Sprite/Card/suits.png" id="2_af5hs"]
+[ext_resource type="Texture2D" uid="uid://d2dwjmyaurevt" path="res://Assets/Sprite/Card/ranks.png" id="3_27ods"]
 
-[node name="CardTemplate" type="Node" unique_id=2031546724]
-script = ExtResource("1_8800e")
+[node name="CardTemplate" type="Node2D" unique_id=2115273943]
+
+[node name="Background" type="Sprite2D" parent="." unique_id=739072590]
+texture = ExtResource("1_200fw")
+
+[node name="Suit" type="Sprite2D" parent="." unique_id=2007704280]
+texture = ExtResource("2_af5hs")
+hframes = 4
+
+[node name="RankTopLeft" type="Sprite2D" parent="." unique_id=571398924]
+position = Vector2(-7, -12)
+texture = ExtResource("3_27ods")
+hframes = 13
+
+[node name="RankBotRight" type="Sprite2D" parent="." unique_id=625620530]
+position = Vector2(7, 12)
+texture = ExtResource("3_27ods")
+hframes = 13
