@@ -15,11 +15,15 @@ run/main_scene="uid://bf21dgh6rbsk4"
 config/features=PackedStringArray("4.7", "Forward Plus")
 config/icon="res://icon.svg"
 
+[autoload]
+
+CardData="*uid://bqmatq3lctehv"
+
 [display]
 
 window/stretch/mode="canvas_items"
 window/stretch/aspect="expand"
-window/stretch/scale=4.0
+window/stretch/scale=2.0
 
 [input]
 

@@ -18,7 +18,19 @@ jump_velocity = null
 remote_path = NodePath("../../Camera2D")
 
 [node name="Camera2D" type="Camera2D" parent="." unique_id=919362061]
+visible = false
 position = Vector2(99, 16)
 
-[node name="PendCards" parent="." unique_id=1641465469 instance=ExtResource("3_h2yge")]
-position = Vector2(310, -32)
+[node name="HUD" type="CanvasLayer" parent="." unique_id=1448757649]
+
+[node name="Control" type="Control" parent="HUD" unique_id=1218590380]
+layout_mode = 3
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -367.0
+offset_bottom = 195.0
+grow_horizontal = 0
+
+[node name="PendCards" parent="HUD/Control" unique_id=1641465469 instance=ExtResource("3_h2yge")]
+position = Vector2(282, 41)

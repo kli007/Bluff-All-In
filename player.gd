@@ -5,7 +5,7 @@ extends CharacterBody2D
 
 @onready var animNode = $AnimationPlayer
 @onready var cardNode = $CardManager
-@onready var pendNode = get_node('/root/Main/PendCards')
+@onready var pendNode = get_node('/root/Main/HUD/Control/PendCards')
 var attack = false
 var direction
 

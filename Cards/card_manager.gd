@@ -6,11 +6,8 @@ var card = preload("res://Cards/card_stats.gd")
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
-	var suits = ['Spade', 'Diamond', 'Club', 'Heart']
-	var ranks = ['2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K', 'A']
-	
-	for suit in suits:
-		for rank in ranks:
+	for suit in CardData.suits:
+		for rank in CardData.ranks:
 			var newName = suit + rank
 			cardList[newName] = card.new()
 			cardList[newName].setData(suit, rank)
@@ -27,4 +24,6 @@ func moveCard():
 	var transferCard = cardList[actList.pop_front()]
 	print(actList)
 	return transferCard
+	
+
 	
