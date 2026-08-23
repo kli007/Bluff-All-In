@@ -1,21 +1,19 @@
 extends CharacterBody2D
 
-@export var speed : float = 200.0
-@export var jump_velocity : float = -350.0
+@export var speed: float = 200.0
+@export var jump_velocity: float = -350.0
 
-@onready var animNode = $AnimationPlayer
-@onready var cardNode = $CardManager
-@onready var pendNode = get_node('/root/Main/HUD/PendCardsControl/PendCards')
-@onready var playedNode = get_node('/root/Main/HUD/UserUIControl/PlayedCards')
+@onready var animNode: Node = $AnimationPlayer
+@onready var cardNode: Node = $CardManager
+@onready var pendCards: Node = get_node('/root/Main/HUD/PendCardsControl/PendCards')
+@onready var playedCards: Node = get_node('/root/Main/HUD/UserUIControl/PlayedCards')
 
-@onready var pendDict = pendNode.pendDict
-@onready var playedDict = playedNode.playedDict
-
-
-var attack = false
-var direction
+@onready var pendDict: Dictionary = pendCards.pendDict
+@onready var playedDict: Dictionary = playedCards.playedDict
 
 
+var attack: bool = false
+var direction: float
 
 func _physics_process(delta: float) -> void:
 	# Add the gravity.
@@ -23,6 +21,7 @@ func _physics_process(delta: float) -> void:
 		velocity += get_gravity() * delta
 		
 	direction = Input.get_axis("Move_Left", "Move_Right")
+	
 	if Input.is_action_just_pressed("Move_Jump") and is_on_floor():
 		velocity.y = jump_velocity
 	if Input.is_action_just_pressed("Attack") and is_on_floor():
@@ -42,7 +41,7 @@ func _physics_process(delta: float) -> void:
 		animation_control()
 		flip_sprite()
 	
-func animation_control():
+func animation_control() -> void:
 	if velocity.y < 0:
 		animNode.play('Jump')
 	elif velocity.y > 0:
@@ -58,17 +57,17 @@ func flip_sprite() -> void:
 	if direction > 0:
 		$Sprite2D.flip_h = false
 		
-func setPendCard():
-	var pendArray = pendNode.nodeArray
+func setPendCard() -> void:
+	var pendNodes: Dictionary = pendCards.nodeDict
 	while CardData.checkSpace(pendDict):
 		CardData.setCards(cardNode.moveCard(), 
-		pendDict, pendArray)
+		pendDict, pendNodes)
 		
-func setPlayedCard():
-	var pendArray = pendNode.nodeArray
-	var playedArray = playedNode.nodeArray
+func setPlayedCard() -> void:
+	var pendNodes: Dictionary = pendCards.nodeDict
+	var playedNodes: Dictionary = playedCards.nodeDict
 	if CardData.checkSpace(playedDict) and pendDict['Card1'] != null:
-		CardData.setCards(cardNode.playCard(pendDict, pendArray), playedDict, playedArray)
+		CardData.setCards(cardNode.playCard(pendDict, pendNodes), playedDict, playedNodes)
 
 func _on_animation_player_animation_finished(anim_name: StringName) -> void:
 	if anim_name == "Attack_1":
