@@ -10,15 +10,21 @@
 texture = ExtResource("1_200fw")
 
 [node name="Suit" type="Sprite2D" parent="." unique_id=2007704280]
+visible = false
 texture = ExtResource("2_af5hs")
 hframes = 4
 
 [node name="RankTopLeft" type="Sprite2D" parent="." unique_id=571398924]
+visible = false
 position = Vector2(-7, -12)
 texture = ExtResource("3_27ods")
 hframes = 13
 
 [node name="RankBotRight" type="Sprite2D" parent="." unique_id=625620530]
+visible = false
 position = Vector2(7, 12)
 texture = ExtResource("3_27ods")
 hframes = 13
+
+[connection signal="frame_changed" from="RankTopLeft" to="." method="_on_rank_top_left_frame_changed"]
+[connection signal="property_list_changed" from="RankTopLeft" to="." method="_on_rank_top_left_property_list_changed"]

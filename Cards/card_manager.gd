@@ -13,7 +13,7 @@ func _ready() -> void:
 			cardList[newName].setData(suit, rank)
 			
 	setNewDeck()
-	print(actList)
+	#print(actList)
 			
 func setNewDeck() -> void:
 	randomize()
@@ -22,8 +22,15 @@ func setNewDeck() -> void:
 	
 func moveCard():
 	var transferCard = cardList[actList.pop_front()]
-	print(actList)
+	#print(actList)
 	return transferCard
+	
+func playCard(pendDict, nodeArray):
+	var transferCard = pendDict['Card1']
+	CardData.hideCards(nodeArray['Card1'])
+	pendDict['Card1'] = null
+	return transferCard
+	
 	
 
 	

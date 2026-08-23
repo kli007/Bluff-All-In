@@ -5,7 +5,13 @@ extends CharacterBody2D
 
 @onready var animNode = $AnimationPlayer
 @onready var cardNode = $CardManager
-@onready var pendNode = get_node('/root/Main/HUD/Control/PendCards')
+@onready var pendNode = get_node('/root/Main/HUD/PendCardsControl/PendCards')
+@onready var playedNode = get_node('/root/Main/HUD/UserUIControl/PlayedCards')
+
+@onready var pendDict = pendNode.pendDict
+@onready var playedDict = playedNode.playedDict
+
+
 var attack = false
 var direction
 
@@ -23,6 +29,8 @@ func _physics_process(delta: float) -> void:
 		setPendCard()
 		attack = true
 		animNode.play("Attack_1")
+	if Input.is_action_just_pressed("Trick") and is_on_floor():
+		setPlayedCard()
 		
 	if direction and animNode.name != 'Jump':
 		velocity.x = direction * speed
@@ -51,8 +59,16 @@ func flip_sprite() -> void:
 		$Sprite2D.flip_h = false
 		
 func setPendCard():
-	if pendNode.checkSpace():
-		pendNode.setCards(cardNode.moveCard())
+	var pendArray = pendNode.nodeArray
+	while CardData.checkSpace(pendDict):
+		CardData.setCards(cardNode.moveCard(), 
+		pendDict, pendArray)
+		
+func setPlayedCard():
+	var pendArray = pendNode.nodeArray
+	var playedArray = playedNode.nodeArray
+	if CardData.checkSpace(playedDict) and pendDict['Card1'] != null:
+		CardData.setCards(cardNode.playCard(pendDict, pendArray), playedDict, playedArray)
 
 func _on_animation_player_animation_finished(anim_name: StringName) -> void:
 	if anim_name == "Attack_1":
