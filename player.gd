@@ -10,7 +10,8 @@ extends CharacterBody2D
 
 @onready var pendDict: Dictionary = pendCards.pendDict
 @onready var playedDict: Dictionary = playedCards.playedDict
-
+var pendNodes: Dictionary
+var playedNodes: Dictionary
 
 var attack: bool = false
 var direction: float
@@ -68,6 +69,13 @@ func setPlayedCard() -> void:
 	var playedNodes: Dictionary = playedCards.nodeDict
 	if CardData.checkSpace(playedDict) and pendDict['Card1'] != null:
 		CardData.setCards(cardNode.playCard(pendDict, pendNodes), playedDict, playedNodes)
+		moveUpPendCards()
+
+func moveUpPendCards() -> void:
+	var pendNodes: Dictionary = pendCards.nodeDict
+	CardData.moveUpCards(pendDict, pendNodes)
+	setPendCard()
+		
 
 func _on_animation_player_animation_finished(anim_name: StringName) -> void:
 	if anim_name == "Attack_1":

@@ -21,7 +21,7 @@ const ranks: Array = [
 	'K', 
 	'A']
 	
-func setCards(newCard, cardDict, cardNodes) -> void:
+func setCards(newCard: Node, cardDict: Dictionary, cardNodes: Dictionary) -> void:
 	for card in cardDict:
 		if cardDict[card] == null:
 			cardDict[card] = newCard
@@ -29,17 +29,24 @@ func setCards(newCard, cardDict, cardNodes) -> void:
 			break
 			
 	
-func moveUpCards() -> void:
-	print(1)
+func moveUpCards(cardDict: Dictionary, cardNodes: Dictionary) -> void:
+	var pastKey = 'Card1'
+	var currentKey
+	for key in range(2, len(cardDict) + 1):
+		currentKey = 'Card' + str(key)
+		cardDict[pastKey] = cardDict[currentKey]
+		changeCardSprite(cardNodes[pastKey],cardDict[pastKey])
+		cardDict[currentKey] = null
+		pastKey = currentKey
 	
-func checkSpace(cardDict) -> bool:
+func checkSpace(cardDict: Dictionary) -> bool:
 	var hasSpace: bool = false
 	for card in cardDict:
 		if cardDict[card] == null:
 			hasSpace = true
 	return hasSpace
 
-func changeCardSprite(cardNode, newCard) -> void:
+func changeCardSprite(cardNode: Node, newCard: Node) -> void:
 	var cardSuit: Node = cardNode.get_node("Suit")
 	var cardRankTL: Node = cardNode.get_node("RankTopLeft")
 	var cardRankBR: Node = cardNode.get_node("RankBotRight")
@@ -50,8 +57,8 @@ func changeCardSprite(cardNode, newCard) -> void:
 	cardSuit.frame = CardData.suits.find(newCard.suit)
 	cardRankTL.frame = CardData.ranks.find(newCard.rank)
 	cardRankBR.frame = CardData.ranks.find(newCard.rank)
-		
-func hideCards(cardNode) -> void:
+	
+func hideCards(cardNode: Node) -> void:
 	var cardSuit: Node = cardNode.get_node("Suit")
 	var cardRankTL: Node = cardNode.get_node("RankTopLeft")
 	var cardRankBR: Node = cardNode.get_node("RankBotRight")

@@ -22,7 +22,6 @@ func setNewDeck() -> void:
 	
 func moveCard() -> Node:
 	var transferCard = cardDict[activeArray.pop_front()]
-	#print(actList)
 	return transferCard
 	
 func playCard(pendDict: Dictionary, nodeDict: Dictionary) -> Node:
