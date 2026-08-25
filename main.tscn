@@ -1,11 +1,13 @@
 [gd_scene format=3 uid="uid://bf21dgh6rbsk4"]
 
 [ext_resource type="PackedScene" uid="uid://bjaqw7tc8s4am" path="res://TestArea.tscn" id="1_ig7tw"]
+[ext_resource type="Script" uid="uid://2eckjdluntd6" path="res://main.gd" id="1_lquwl"]
 [ext_resource type="PackedScene" uid="uid://d20v3s7mqbsg5" path="res://Player.tscn" id="2_0xm2m"]
 [ext_resource type="PackedScene" uid="uid://bc4g2w3j8inqx" path="res://Cards/PlayedCards.tscn" id="3_1bvp3"]
 [ext_resource type="PackedScene" uid="uid://ce7wj45lpekfs" path="res://Cards/PendCards.tscn" id="3_h2yge"]
 
 [node name="Main" type="Node" unique_id=1517588686]
+script = ExtResource("1_lquwl")
 
 [node name="TestArea" parent="." unique_id=512090307 instance=ExtResource("1_ig7tw")]
 position = Vector2(191, 7)
