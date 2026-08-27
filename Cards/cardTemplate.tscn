@@ -1,10 +1,12 @@
 [gd_scene format=3 uid="uid://buu2g7ninalgl"]
 
 [ext_resource type="Texture2D" uid="uid://dr32x1m2hcl24" path="res://Assets/Sprite/Card/cardBlank.png" id="1_200fw"]
+[ext_resource type="Script" uid="uid://dn2t2k45apmj8" path="res://Cards/card_template.gd" id="1_af5hs"]
 [ext_resource type="Texture2D" uid="uid://dr7xcg8gyhqeo" path="res://Assets/Sprite/Card/suits.png" id="2_af5hs"]
 [ext_resource type="Texture2D" uid="uid://d2dwjmyaurevt" path="res://Assets/Sprite/Card/ranks.png" id="3_27ods"]
 
 [node name="CardTemplate" type="Node2D" unique_id=2115273943]
+script = ExtResource("1_af5hs")
 
 [node name="Background" type="Sprite2D" parent="." unique_id=739072590]
 texture = ExtResource("1_200fw")

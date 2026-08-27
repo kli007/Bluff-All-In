@@ -1,10 +1,8 @@
 [gd_scene format=3 uid="uid://bc4g2w3j8inqx"]
 
-[ext_resource type="Script" uid="uid://uipv47eodxoa" path="res://Cards/played_cards.gd" id="1_7pqsq"]
 [ext_resource type="PackedScene" uid="uid://buu2g7ninalgl" path="res://Cards/cardTemplate.tscn" id="1_n86wy"]
 
 [node name="PlayedCards" type="Node2D" unique_id=1589944436]
-script = ExtResource("1_7pqsq")
 
 [node name="Card1" parent="." unique_id=2115273943 instance=ExtResource("1_n86wy")]
 position = Vector2(-52, 0)

@@ -21,32 +21,27 @@ const ranks: Array = [
 	'K', 
 	'A']
 	
-func setCards(newCard: Node, cardDict: Dictionary, cardNodes: Dictionary) -> void:
-	for card in cardDict:
-		if cardDict[card] == null:
-			cardDict[card] = newCard
-			changeCardSprite(cardNodes[card], cardDict[card])
+func setCards(newCard: Dictionary, cardNodes: Array) -> void:
+	for card in cardNodes:
+		if card.checkData():
+			card.setData(newCard['suit'], newCard['rank'])
+			changeCardSprite(card)
 			break
-			
 	
-func moveUpCards(cardDict: Dictionary, cardNodes: Dictionary) -> void:
-	var pastKey = 'Card1'
-	var currentKey
-	for key in range(2, len(cardDict) + 1):
-		currentKey = 'Card' + str(key)
-		cardDict[pastKey] = cardDict[currentKey]
-		changeCardSprite(cardNodes[pastKey],cardDict[pastKey])
-		cardDict[currentKey] = null
-		pastKey = currentKey
+func moveUpCards(cardNodes: Array) -> void:
+	for key in range(1, len(cardNodes)):
+		cardNodes[key - 1].setData(cardNodes[key]['suit'], cardNodes[key]['rank'])
+		changeCardSprite(cardNodes[key - 1])
+		cardNodes[key].resetData()
 	
-func checkSpace(cardDict: Dictionary) -> bool:
+func checkSpace(cardNodes: Array) -> bool:
 	var hasSpace: bool = false
-	for card in cardDict:
-		if cardDict[card] == null:
+	for card in cardNodes:
+		if card.checkData():
 			hasSpace = true
 	return hasSpace
 
-func changeCardSprite(cardNode: Node, newCard: Node) -> void:
+func changeCardSprite(cardNode: Node) -> void:
 	var cardSuit: Node = cardNode.get_node("Suit")
 	var cardRankTL: Node = cardNode.get_node("RankTopLeft")
 	var cardRankBR: Node = cardNode.get_node("RankBotRight")
@@ -54,9 +49,9 @@ func changeCardSprite(cardNode: Node, newCard: Node) -> void:
 	cardRankTL.show()
 	cardRankBR.show()
 	
-	cardSuit.frame = CardData.suits.find(newCard.suit)
-	cardRankTL.frame = CardData.ranks.find(newCard.rank)
-	cardRankBR.frame = CardData.ranks.find(newCard.rank)
+	cardSuit.frame = CardData.suits.find(cardNode.suit)
+	cardRankTL.frame = CardData.ranks.find(cardNode.rank)
+	cardRankBR.frame = CardData.ranks.find(cardNode.rank)
 	
 func hideCards(cardNode: Node) -> void:
 	var cardSuit: Node = cardNode.get_node("Suit")
@@ -65,3 +60,5 @@ func hideCards(cardNode: Node) -> void:
 	cardSuit.hide()
 	cardRankTL.hide()
 	cardRankBR.hide()
+	cardNode.rank = ''
+	cardNode.suit = ''

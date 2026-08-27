@@ -4,14 +4,12 @@ extends CharacterBody2D
 @export var jump_velocity: float = -350.0
 
 @onready var animNode: Node = $AnimationPlayer
-@onready var cardNode: Node = $CardManager
+@onready var deckNode: Node = $DeckManager
 @onready var pendCards: Node = get_node('/root/Main/HUD/PendCardsControl/PendCards')
 @onready var playedCards: Node = get_node('/root/Main/HUD/UserUIControl/PlayedCards')
 
-@onready var pendDict: Dictionary = pendCards.pendDict
-@onready var playedDict: Dictionary = playedCards.playedDict
-var pendNodes: Dictionary
-var playedNodes: Dictionary
+@onready var pendNodes: Array = pendCards.get_children()
+@onready var playedNodes: Array = playedCards.get_children()
 
 var attack: bool = false
 var direction: float
@@ -59,23 +57,17 @@ func flip_sprite() -> void:
 		$Sprite2D.flip_h = false
 		
 func setPendCard() -> void:
-	while CardData.checkSpace(pendDict):
-		CardData.setCards(cardNode.moveCard(), 
-		pendDict, pendNodes)
+	while CardData.checkSpace(pendNodes):
+		CardData.setCards(deckNode.moveCard(), pendNodes)
 		
 func setPlayedCard() -> void:
-	if CardData.checkSpace(playedDict) and pendDict['Card1'] != null:
-		CardData.setCards(cardNode.playCard(pendDict, pendNodes), playedDict, playedNodes)
+	if CardData.checkSpace(playedNodes) and not CardData.checkSpace(pendNodes):
+		CardData.setCards(deckNode.playCard(pendNodes), playedNodes)
 		moveUpPendCards()
 
 func moveUpPendCards() -> void:
-	CardData.moveUpCards(pendDict, pendNodes)
+	CardData.moveUpCards(pendNodes)
 	setPendCard()
-
-
-func defineNodeVariables():
-	pendNodes = pendCards.nodeDict
-	playedNodes = playedCards.nodeDict
 
 func _on_animation_player_animation_finished(anim_name: StringName) -> void:
 	if anim_name == "Attack_1":

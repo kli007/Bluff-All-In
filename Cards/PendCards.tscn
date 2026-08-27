@@ -1,28 +1,32 @@
 [gd_scene format=3 uid="uid://ce7wj45lpekfs"]
 
-[ext_resource type="Script" uid="uid://bv0ff2g0k36wi" path="res://Cards/pend_cards.gd" id="1_dey5u"]
 [ext_resource type="PackedScene" uid="uid://buu2g7ninalgl" path="res://Cards/cardTemplate.tscn" id="2_gft8p"]
 
 [node name="PendCards" type="Node2D" unique_id=1641465469]
-script = ExtResource("1_dey5u")
+
+[node name="Card1" parent="." unique_id=2057459721 instance=ExtResource("2_gft8p")]
+z_index = 6
+position = Vector2(-24, 34)
+
+[node name="Card2" parent="." unique_id=1881961864 instance=ExtResource("2_gft8p")]
+z_index = 5
+position = Vector2(-10, 25)
+
+[node name="Card3" parent="." unique_id=1589033400 instance=ExtResource("2_gft8p")]
+z_index = 4
+position = Vector2(4, 16)
+
+[node name="Card4" parent="." unique_id=1504589718 instance=ExtResource("2_gft8p")]
+z_index = 3
+position = Vector2(18, 7)
+
+[node name="Card5" parent="." unique_id=1038231509 instance=ExtResource("2_gft8p")]
+z_index = 2
+position = Vector2(32, -2)
+
+[node name="Card6" parent="." unique_id=1497725715 instance=ExtResource("2_gft8p")]
+z_index = 1
+position = Vector2(46, -11)
 
 [node name="Card7" parent="." unique_id=2115273943 instance=ExtResource("2_gft8p")]
 position = Vector2(60, -20)
-
-[node name="Card6" parent="." unique_id=1497725715 instance=ExtResource("2_gft8p")]
-position = Vector2(46, -11)
-
-[node name="Card5" parent="." unique_id=1038231509 instance=ExtResource("2_gft8p")]
-position = Vector2(32, -2)
-
-[node name="Card4" parent="." unique_id=1504589718 instance=ExtResource("2_gft8p")]
-position = Vector2(18, 7)
-
-[node name="Card3" parent="." unique_id=1589033400 instance=ExtResource("2_gft8p")]
-position = Vector2(4, 16)
-
-[node name="Card2" parent="." unique_id=1881961864 instance=ExtResource("2_gft8p")]
-position = Vector2(-10, 25)
-
-[node name="Card1" parent="." unique_id=2057459721 instance=ExtResource("2_gft8p")]
-position = Vector2(-24, 34)
