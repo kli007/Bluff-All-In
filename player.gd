@@ -5,14 +5,15 @@ extends CharacterBody2D
 
 @onready var animNode: Node = $AnimationPlayer
 @onready var deckNode: Node = $DeckManager
-@onready var pendCards: Node = get_node('/root/Main/HUD/PendCardsControl/PendCards')
-@onready var playedCards: Node = get_node('/root/Main/HUD/UserUIControl/PlayedCards')
 
-@onready var pendNodes: Array = pendCards.get_children()
-@onready var playedNodes: Array = playedCards.get_children()
+@onready var pendNodes: Array = get_node('/root/Main/HUD/PendCardsControl/PendCards').get_children()
+@onready var playedNodes: Array = get_node('/root/Main/HUD/UserUIControl/PlayedCards').get_children()
 
 var attack: bool = false
 var direction: float
+
+func _ready() -> void:
+	setPendCard()
 
 func _physics_process(delta: float) -> void:
 	# Add the gravity.
@@ -27,8 +28,10 @@ func _physics_process(delta: float) -> void:
 		setPlayedCard()
 		attack = true
 		animNode.play("Attack_1")
-	if Input.is_action_just_pressed("Trick") and is_on_floor():
-		setPendCard()
+	if Input.is_action_just_pressed("Trick"):
+		deckNode.deleteDeck()
+	if Input.is_action_just_pressed("Showdown"):
+		showdownPlayedCards()
 		
 	if direction and animNode.name != 'Jump':
 		velocity.x = direction * speed
@@ -57,17 +60,23 @@ func flip_sprite() -> void:
 		$Sprite2D.flip_h = false
 		
 func setPendCard() -> void:
-	while CardData.checkSpace(pendNodes):
+	while CardData.checkSpace(pendNodes) and not deckNode.checkDeck():
 		CardData.setCards(deckNode.moveCard(), pendNodes)
 		
 func setPlayedCard() -> void:
-	if CardData.checkSpace(playedNodes) and not CardData.checkSpace(pendNodes):
+	if CardData.checkSpace(playedNodes) and not CardData.checkEmpty(pendNodes):
 		CardData.setCards(deckNode.playCard(pendNodes), playedNodes)
 		moveUpPendCards()
 
 func moveUpPendCards() -> void:
 	CardData.moveUpCards(pendNodes)
 	setPendCard()
+	
+func showdownPlayedCards() -> void:
+	if not CardData.checkEmpty(playedNodes):
+		CardData.showdownCards(playedNodes)
+	else:
+		print('error emply play field')
 
 func _on_animation_player_animation_finished(anim_name: StringName) -> void:
 	if anim_name == "Attack_1":
