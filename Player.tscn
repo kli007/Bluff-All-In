@@ -2,6 +2,7 @@
 
 [ext_resource type="Script" uid="uid://bwlmc0nr51w2g" path="res://player.gd" id="1_kpjcp"]
 [ext_resource type="Texture2D" uid="uid://udm78ito0yap" path="res://Assets/Sprite/Player/spriteSheet.png" id="2_kpjcp"]
+[ext_resource type="Script" uid="uid://ws0antd52kaf" path="res://Cards/deck_manager.gd" id="3_kne1u"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_ptm0p"]
 size = Vector2(20, 29)
@@ -125,5 +126,8 @@ shape = SubResource("RectangleShape2D_ptm0p")
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="." unique_id=1926398530]
 libraries/ = SubResource("AnimationLibrary_e80uo")
+
+[node name="DeckManager" type="Node" parent="." unique_id=1570210766]
+script = ExtResource("3_kne1u")
 
 [connection signal="animation_finished" from="AnimationPlayer" to="." method="_on_animation_player_animation_finished"]

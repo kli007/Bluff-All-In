@@ -1,9 +1,13 @@
 [gd_scene format=3 uid="uid://bf21dgh6rbsk4"]
 
 [ext_resource type="PackedScene" uid="uid://bjaqw7tc8s4am" path="res://TestArea.tscn" id="1_ig7tw"]
+[ext_resource type="Script" uid="uid://2eckjdluntd6" path="res://main.gd" id="1_lquwl"]
 [ext_resource type="PackedScene" uid="uid://d20v3s7mqbsg5" path="res://Player.tscn" id="2_0xm2m"]
+[ext_resource type="PackedScene" uid="uid://bc4g2w3j8inqx" path="res://Cards/PlayedCards.tscn" id="3_1bvp3"]
+[ext_resource type="PackedScene" uid="uid://ce7wj45lpekfs" path="res://Cards/PendCards.tscn" id="3_h2yge"]
 
 [node name="Main" type="Node" unique_id=1517588686]
+script = ExtResource("1_lquwl")
 
 [node name="TestArea" parent="." unique_id=512090307 instance=ExtResource("1_ig7tw")]
 position = Vector2(191, 7)
@@ -16,3 +20,26 @@ remote_path = NodePath("../../Camera2D")
 
 [node name="Camera2D" type="Camera2D" parent="." unique_id=919362061]
 position = Vector2(99, 16)
+
+[node name="HUD" type="CanvasLayer" parent="." unique_id=1448757649]
+
+[node name="UserUIControl" type="Control" parent="HUD" unique_id=77239967]
+layout_mode = 3
+anchors_preset = 0
+offset_right = 257.0
+offset_bottom = 114.0
+
+[node name="PlayedCards" parent="HUD/UserUIControl" unique_id=1589944436 instance=ExtResource("3_1bvp3")]
+position = Vector2(64, 84)
+
+[node name="PendCardsControl" type="Control" parent="HUD" unique_id=1218590380]
+layout_mode = 3
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -367.0
+offset_bottom = 195.0
+grow_horizontal = 0
+
+[node name="PendCards" parent="HUD/PendCardsControl" unique_id=1641465469 instance=ExtResource("3_h2yge")]
+position = Vector2(282, 41)
