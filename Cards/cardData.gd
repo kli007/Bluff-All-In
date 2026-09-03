@@ -28,7 +28,7 @@ func setCards(newCard: Dictionary, cardNodes: Array) -> void:
 			changeCardSprite(card)
 			break
 	
-func moveUpCards(cardNodes: Array) -> void:
+func moveUpCards(cardNodes: Array) -> void: #change this to two for loops to move card up if current is empty
 	var lastCard: Node = cardNodes.back()
 	var currentCard: Node
 	for key in (len(cardNodes) - 1):

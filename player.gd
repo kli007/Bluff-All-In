@@ -34,15 +34,17 @@ func _physics_process(delta: float) -> void:
 		setPlayedCard()
 		attack = true
 		animNode.play("Attack_1")
+		
 	if Input.is_action_just_pressed("Trick"):
 		deckNode.deleteDeck()
-	if Input.is_action_just_pressed("Burn"):
-		if Input.is_action_just_pressed("Showdown"):
+		
+	if Input.is_action_just_pressed("Burn") and Input.is_action_just_pressed("Temp"):
 			burnCards('heal')
-		elif not is_on_floor():
-			burnCards('jump')
-		else:
-			burnCards('dash')
+	elif Input.is_action_just_pressed("Burn") and not is_on_floor():
+		burnCards('jump')
+	elif Input.is_action_just_pressed("Burn"):
+		burnCards('dash')
+		
 	if Input.is_action_just_pressed("Showdown"):
 		showdownPlayedCards()
 		
