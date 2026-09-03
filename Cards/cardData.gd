@@ -40,18 +40,11 @@ func moveUpCards(cardNodes: Array) -> void:
 			changeCardSprite(currentCard)
 	hideCards(lastCard)
 
-func checkSpace(cardNodes: Array) -> bool:
-	var hasSpace: bool = false
+func checkSpace(cardNodes: Array) -> int:
+	var hasSpace: int = 0
 	for card in cardNodes:
 		if card.checkData():
-			hasSpace = true
-	return hasSpace
-	
-func checkEmpty(cardNodes: Array):
-	var hasSpace: bool = true
-	for card in cardNodes:
-		if not card.checkData():
-			hasSpace = false
+			hasSpace += 1
 	return hasSpace
 	
 func changeCardSprite(cardNode: Node) -> void:
