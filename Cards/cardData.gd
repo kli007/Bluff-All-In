@@ -28,17 +28,20 @@ func setCards(newCard: Dictionary, cardNodes: Array) -> void:
 			changeCardSprite(card)
 			break
 	
-func moveUpCards(cardNodes: Array) -> void: #change this to two for loops to move card up if current is empty
-	var lastCard: Node = cardNodes.back()
-	var currentCard: Node
-	for key in (len(cardNodes) - 1):
-		currentCard = cardNodes[key]
-		currentCard.setData(cardNodes[key + 1]['suit'], cardNodes[key + 1]['rank'])
-		if currentCard.checkData():
+func moveUpCards(cardNodes: Array) -> void:
+	var nodeMax: int = len(cardNodes)
+	for key in range(nodeMax):
+		var currentCard: Node = cardNodes[key]
+		var nextKey: int = key + 1
+		if currentCard == cardNodes.back():
 			hideCards(currentCard)
-		else:
-			changeCardSprite(currentCard)
-	hideCards(lastCard)
+		elif currentCard.checkData():
+			for nextCard in cardNodes.slice(nextKey, nodeMax):
+				if not nextCard.checkData():
+					currentCard.setData(nextCard.suit, nextCard.rank)
+					changeCardSprite(currentCard)
+					hideCards(nextCard)
+					break
 
 func checkSpace(cardNodes: Array) -> int:
 	var hasSpace: int = 0

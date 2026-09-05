@@ -16,7 +16,6 @@ func jumpBurn(playedNodes: Array) -> void:
 	CardData.hideCards(burnCard)
 	
 func healBurn(playedNodes: Array) -> void:
-	print('heal')
 	var burnCards: Array
 	if CardData.checkSpace(playedNodes) > 1:
 		burnCards = playedNodes.slice(0,3)
@@ -24,5 +23,6 @@ func healBurn(playedNodes: Array) -> void:
 		burnCards = playedNodes.slice(1,4)
 	for card in burnCards:
 		CardData.hideCards(card)
+	CardData.moveUpCards(playedNodes)
 	
 	
