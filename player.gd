@@ -9,13 +9,14 @@ extends CharacterBody2D
 @onready var pendNodes: Array = get_node('/root/Main/HUD/PendCardsControl/PendCards').get_children()
 @onready var playedNodes: Array = get_node('/root/Main/HUD/UserUIControl/PlayedCards').get_children()
 
-
 var attack: bool = false
 var direction: float
 
-const MAX_PLAYED_CARDS = 5
-const MAX_PEND_CARDS = 7
-const HEAL_BURN_MINIMUM = 2
+const MAX_PLAYED_CARDS: int = 5
+const MAX_PEND_CARDS: int = 7
+const HEAL_BURN_MINIMUM: int = 2
+
+var currentTrick = {'rank': 'Increase', 'suit': ''}
 
 func _ready() -> void:
 	setPendCard()
@@ -35,8 +36,10 @@ func _physics_process(delta: float) -> void:
 		attack = true
 		animNode.play("Attack_1")
 		
-	if Input.is_action_just_pressed("Trick"):
+	if Input.is_action_just_pressed("Delete"):
 		deckNode.deleteDeck()
+	if Input.is_action_just_pressed("Trick"):
+		trickCards()
 		
 	if Input.is_action_just_pressed("Burn") and Input.is_action_just_pressed("Temp"):
 			burnCards('heal')
@@ -93,7 +96,7 @@ func showdownPlayedCards() -> void:
 	else:
 		print('error emply play field')
 		
-func burnCards(action: String):
+func burnCards(action: String) -> void:
 	match action:
 		'dash':
 			if CardData.checkSpace(playedNodes) < MAX_PLAYED_CARDS:
@@ -105,6 +108,10 @@ func burnCards(action: String):
 			if CardData.checkSpace(playedNodes) <= HEAL_BURN_MINIMUM:
 				BurnManager.healBurn(playedNodes)
 	
+func trickCards() -> void:
+	if CardData.checkSpace(playedNodes) and CardData.checkSpace(pendNodes) < MAX_PEND_CARDS:
+		TrickManager.mainManager(pendNodes.front(), currentTrick['rank'], currentTrick['suit'])
+		setPlayedCard()
 
 func _on_animation_player_animation_finished(anim_name: StringName) -> void:
 	if anim_name == "Attack_1":
