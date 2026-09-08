@@ -26,30 +26,7 @@ func _physics_process(delta: float) -> void:
 	if not is_on_floor():
 		velocity += get_gravity() * delta
 		
-	direction = Input.get_axis("Move_Left", "Move_Right")
-	
-	if Input.is_action_just_pressed("Move_Jump") and is_on_floor():
-		velocity.y = jump_velocity
-		
-	if Input.is_action_just_pressed("Attack") and is_on_floor():
-		setPlayedCard()
-		attack = true
-		animNode.play("Attack_1")
-		
-	if Input.is_action_just_pressed("Delete"):
-		deckNode.deleteDeck()
-	if Input.is_action_just_pressed("Trick"):
-		trickCards()
-		
-	if Input.is_action_just_pressed("Burn") and Input.is_action_just_pressed("Temp"):
-			burnCards('heal')
-	elif Input.is_action_just_pressed("Burn") and not is_on_floor():
-		burnCards('jump')
-	elif Input.is_action_just_pressed("Burn"):
-		burnCards('dash')
-		
-	if Input.is_action_just_pressed("Showdown"):
-		showdownPlayedCards()
+	controls()
 		
 	if direction and animNode.name != 'Jump':
 		velocity.x = direction * speed
@@ -82,37 +59,61 @@ func setPendCard() -> void:
 		CardData.setCards(deckNode.moveCard(), pendNodes)
 		
 func setPlayedCard() -> void:
-	if CardData.checkSpace(playedNodes) and CardData.checkSpace(pendNodes) < MAX_PEND_CARDS:
-		CardData.setCards(deckNode.playCard(pendNodes), playedNodes)
-		moveUpPendCards()
+	CardData.setCards(deckNode.playCard(pendNodes), playedNodes)
+	moveUpPendCards()
 
 func moveUpPendCards() -> void:
 	CardData.moveUpCards(pendNodes)
 	setPendCard()
 	
 func showdownPlayedCards() -> void:
-	if CardData.checkSpace(playedNodes) < MAX_PLAYED_CARDS:
 		CardData.showdownCards(playedNodes)
-	else:
-		print('error emply play field')
 		
 func burnCards(action: String) -> void:
 	match action:
 		'dash':
-			if CardData.checkSpace(playedNodes) < MAX_PLAYED_CARDS:
-				BurnManager.dashBurn(playedNodes)
+			BurnManager.dashBurn(playedNodes)
 		'jump':
-			if CardData.checkSpace(playedNodes) < MAX_PLAYED_CARDS:
-				BurnManager.jumpBurn(playedNodes)
+			BurnManager.jumpBurn(playedNodes)
 		'heal':
-			if CardData.checkSpace(playedNodes) <= HEAL_BURN_MINIMUM:
-				BurnManager.healBurn(playedNodes)
+			BurnManager.healBurn(playedNodes)
 	
 func trickCards() -> void:
-	if CardData.checkSpace(playedNodes) and CardData.checkSpace(pendNodes) < MAX_PEND_CARDS:
-		TrickManager.mainManager(pendNodes.front(), currentTrick['rank'], currentTrick['suit'])
-		setPlayedCard()
+	TrickManager.mainManager(pendNodes.front(), currentTrick['rank'], currentTrick['suit'])
+	setPlayedCard()
 
 func _on_animation_player_animation_finished(anim_name: StringName) -> void:
 	if anim_name == "Attack_1":
 		attack = false
+		
+		
+func controls() -> void:
+	direction = Input.get_axis("Move_Left", "Move_Right")
+	
+	if Input.is_action_just_pressed("Move_Jump") and is_on_floor():
+		velocity.y = jump_velocity
+		
+	if Input.is_action_just_pressed("Delete"):
+		deckNode.deleteDeck()
+		
+	if CardData.checkSpace(playedNodes) and CardData.checkSpace(pendNodes) < MAX_PEND_CARDS:
+		if Input.is_action_just_pressed("Attack") and is_on_floor():
+			setPlayedCard()
+			attack = true
+			animNode.play("Attack_1")
+		if Input.is_action_just_pressed("Trick"):
+			trickCards()
+		
+	if CardData.checkSpace(playedNodes) <= HEAL_BURN_MINIMUM:
+		if Input.is_action_just_pressed("Burn") and Input.is_action_just_pressed("Temp"):
+			burnCards('heal')
+			
+	if CardData.checkSpace(playedNodes) < MAX_PLAYED_CARDS:
+		if Input.is_action_just_pressed("Burn") and not is_on_floor():
+			burnCards('jump')
+		elif Input.is_action_just_pressed("Burn"):
+			burnCards('dash')
+	
+	if CardData.checkSpace(playedNodes) < MAX_PLAYED_CARDS:
+		if Input.is_action_just_pressed("Showdown"):
+			showdownPlayedCards()
