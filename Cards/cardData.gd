@@ -29,18 +29,27 @@ func setCards(newCard: Dictionary, cardNodes: Array) -> void:
 			break
 	
 func moveUpCards(cardNodes: Array) -> void:
-	for key in range(1, len(cardNodes)):
-		cardNodes[key - 1].setData(cardNodes[key]['suit'], cardNodes[key]['rank'])
-		changeCardSprite(cardNodes[key - 1])
-		cardNodes[key].resetData()
-	
-func checkSpace(cardNodes: Array) -> bool:
-	var hasSpace: bool = false
+	var nodeMax: int = len(cardNodes)
+	for key in range(nodeMax):
+		var currentCard: Node = cardNodes[key]
+		var nextKey: int = key + 1
+		if currentCard == cardNodes.back():
+			hideCards(currentCard)
+		elif currentCard.checkData():
+			for nextCard in cardNodes.slice(nextKey, nodeMax):
+				if not nextCard.checkData():
+					currentCard.setData(nextCard.suit, nextCard.rank)
+					changeCardSprite(currentCard)
+					hideCards(nextCard)
+					break
+
+func checkSpace(cardNodes: Array) -> int:
+	var hasSpace: int = 0
 	for card in cardNodes:
 		if card.checkData():
-			hasSpace = true
+			hasSpace += 1
 	return hasSpace
-
+	
 func changeCardSprite(cardNode: Node) -> void:
 	var cardSuit: Node = cardNode.get_node("Suit")
 	var cardRankTL: Node = cardNode.get_node("RankTopLeft")
@@ -62,3 +71,8 @@ func hideCards(cardNode: Node) -> void:
 	cardRankBR.hide()
 	cardNode.rank = ''
 	cardNode.suit = ''
+	cardNode.resetData()
+	
+func showdownCards(playedNodes: Array) -> void:
+	for card in playedNodes:
+		hideCards(card)
