@@ -1,6 +1,7 @@
 [gd_scene format=3 uid="uid://d20v3s7mqbsg5"]
 
-[ext_resource type="Script" uid="uid://bwlmc0nr51w2g" path="res://player.gd" id="1_kpjcp"]
+[ext_resource type="Script" uid="uid://bwlmc0nr51w2g" path="res://Player/player.gd" id="1_kpjcp"]
+[ext_resource type="Script" uid="uid://gxdj8l1ahlhk" path="res://Player/health.gd" id="2_ddoul"]
 [ext_resource type="Texture2D" uid="uid://udm78ito0yap" path="res://Assets/Sprite/Player/spriteSheet.png" id="2_kpjcp"]
 [ext_resource type="Script" uid="uid://ws0antd52kaf" path="res://Cards/deck_manager.gd" id="3_kne1u"]
 
@@ -115,6 +116,10 @@ _data = {
 [node name="Player" type="CharacterBody2D" unique_id=789404969]
 script = ExtResource("1_kpjcp")
 
+[node name="Health" type="Node" parent="." unique_id=819642966]
+script = ExtResource("2_ddoul")
+health = null
+
 [node name="Sprite2D" type="Sprite2D" parent="." unique_id=2086113604]
 texture = ExtResource("2_kpjcp")
 hframes = 12
@@ -130,4 +135,14 @@ libraries/ = SubResource("AnimationLibrary_e80uo")
 [node name="DeckManager" type="Node" parent="." unique_id=1570210766]
 script = ExtResource("3_kne1u")
 
+[node name="AttackTimer" type="Timer" parent="." unique_id=2107694017]
+
+[node name="DashTimer" type="Timer" parent="." unique_id=25833316]
+
+[node name="TrickTimer" type="Timer" parent="." unique_id=1662899448]
+
+[node name="BurnTimer" type="Timer" parent="." unique_id=491267351]
+wait_time = 0.2
+
 [connection signal="animation_finished" from="AnimationPlayer" to="." method="_on_animation_player_animation_finished"]
+[connection signal="timeout" from="BurnTimer" to="." method="_on_burn_timer_timeout"]

@@ -1,6 +1,7 @@
 extends CharacterBody2D
 
 @export var speed: float = 200.0
+@export var DashSpeed: float = 800.0
 @export var jump_velocity: float = -350.0
 
 @onready var animNode: Node = $AnimationPlayer
@@ -9,12 +10,18 @@ extends CharacterBody2D
 @onready var pendNodes: Array = get_node('/root/Main/HUD/PendCardsControl/PendCards').get_children()
 @onready var playedNodes: Array = get_node('/root/Main/HUD/UserUIControl/PlayedCards').get_children()
 
+@onready var spawnLocation: Vector2 = global_position
+
 var attack: bool = false
 var direction: float
+var lastDirection: float
+var isBurnDashing: bool = false
 
 const MAX_PLAYED_CARDS: int = 5
 const MAX_PEND_CARDS: int = 7
 const HEAL_BURN_MINIMUM: int = 2
+
+const NORMAL_SPEED: float = 200.0
 
 var currentTrick = {'rank': 'Increase', 'suit': ''}
 
@@ -28,10 +35,13 @@ func _physics_process(delta: float) -> void:
 		
 	controls()
 		
-	if direction and animNode.name != 'Jump':
-		velocity.x = direction * speed
+	if isBurnDashing:
+		velocity.x = lastDirection * DashSpeed
 	else:
-		velocity.x = move_toward(velocity.x, 0, speed)
+		if direction and animNode.name != 'Jump':
+			velocity.x = direction * speed
+		else:
+			velocity.x = move_toward(velocity.x, 0, speed)
 
 	if not attack:
 		move_and_slide()
@@ -88,8 +98,12 @@ func _on_animation_player_animation_finished(anim_name: StringName) -> void:
 		
 		
 func controls() -> void:
-	direction = Input.get_axis("Move_Left", "Move_Right")
+	if not isBurnDashing:
+		direction = Input.get_axis("Move_Left", "Move_Right")
 	
+	if direction:
+		lastDirection = direction
+
 	if Input.is_action_just_pressed("Move_Jump") and is_on_floor():
 		velocity.y = jump_velocity
 		
@@ -112,8 +126,18 @@ func controls() -> void:
 		if Input.is_action_just_pressed("Burn") and not is_on_floor():
 			burnCards('jump')
 		elif Input.is_action_just_pressed("Burn"):
+			isBurnDashing = true
 			burnCards('dash')
+			$BurnTimer.start()
 	
 	if CardData.checkSpace(playedNodes) < MAX_PLAYED_CARDS:
 		if Input.is_action_just_pressed("Showdown"):
 			showdownPlayedCards()
+	
+	
+func _on_burn_timer_timeout() -> void:
+	isBurnDashing = false
+	velocity.x = 0
+	
+func respawn(location: Vector2) -> void:
+	position = location
