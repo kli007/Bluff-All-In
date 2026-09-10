@@ -14,6 +14,8 @@ extends CharacterBody2D
 
 @onready var spawnLocation: Vector2 = global_position
 
+var projectile = preload("res://Player/projectile.tscn")
+
 var attack: bool = false
 var direction: float
 var lastDirection: float
@@ -24,10 +26,11 @@ var isActioning: bool = false
 const MAX_PLAYED_CARDS: int = 5
 const MAX_PEND_CARDS: int = 7
 const HEAL_BURN_MINIMUM: int = 2
-
-const NORMAL_SPEED: float = 200.0
+const MAX_PROJ_COUNT: int = 4
 
 var currentTrick = {'rank': 'Increase', 'suit': ''}
+
+var projectileCount: int = 0
 
 func _ready() -> void:
 	setPendCard()
@@ -123,7 +126,10 @@ func controls() -> void:
 			animNode.play("Attack_1")
 			isActioning = true
 		if Input.is_action_just_pressed("Trick") and not isActioning:
-			trickCards()
+			create_projectile(lastDirection)
+			if projectileCount >= MAX_PROJ_COUNT:
+				trickCards()
+				projectileCount = 0
 			isActioning = true
 		
 	if CardData.checkSpace(playedNodes) <= HEAL_BURN_MINIMUM:
@@ -158,3 +164,12 @@ func _on_burn_timer_timeout() -> void:
 	
 func respawn(location: Vector2) -> void:
 	position = location
+	
+func create_projectile(direction: float):
+	var Proj = get_parent().get_node("ProjectileManager")
+	var new_projectile = projectile.instantiate()
+	#new_projectile.scale = Vector2(0.2, 0.2)
+	new_projectile.global_position = global_position
+	new_projectile.lock_on_to_player(direction, self, Proj)
+	Proj.call_deferred("add_child", new_projectile)
+	projectileCount += 1

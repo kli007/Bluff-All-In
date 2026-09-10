@@ -1,0 +1,20 @@
+[gd_scene format=3 uid="uid://xt7doyw6x2ox"]
+
+[ext_resource type="Script" uid="uid://bi67wj2e2wj7v" path="res://Player/projectile.gd" id="1_7k6uo"]
+[ext_resource type="Texture2D" uid="uid://bbedbd08thbv8" path="res://Assets/Sprite/Player/projectile.png" id="1_o11rv"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_5sqx0"]
+
+[node name="Projectile" type="CharacterBody2D" unique_id=37306840]
+script = ExtResource("1_7k6uo")
+
+[node name="Sprite2D" type="Sprite2D" parent="." unique_id=1030241480]
+texture = ExtResource("1_o11rv")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=409154479]
+shape = SubResource("RectangleShape2D_5sqx0")
+
+[node name="VisibleOnScreenNotifier2D" type="VisibleOnScreenNotifier2D" parent="." unique_id=1185933287]
+rect = Rect2(-6, -6, 12, 12)
+
+[connection signal="screen_exited" from="VisibleOnScreenNotifier2D" to="." method="_on_visible_on_screen_notifier_2d_screen_exited"]
