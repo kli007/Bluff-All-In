@@ -6,6 +6,8 @@ extends CharacterBody2D
 
 @onready var animNode: Node = $AnimationPlayer
 @onready var deckNode: Node = $DeckManager
+@onready var health: Node = $Health
+@onready var burnTime: Node = $BurnTimer
 
 @onready var pendNodes: Array = get_node('/root/Main/HUD/PendCardsControl/PendCards').get_children()
 @onready var playedNodes: Array = get_node('/root/Main/HUD/UserUIControl/PlayedCards').get_children()
@@ -16,6 +18,8 @@ var attack: bool = false
 var direction: float
 var lastDirection: float
 var isBurnDashing: bool = false
+
+var isActioning: bool = false
 
 const MAX_PLAYED_CARDS: int = 5
 const MAX_PEND_CARDS: int = 7
@@ -30,6 +34,8 @@ func _ready() -> void:
 
 func _physics_process(delta: float) -> void:
 	# Add the gravity.
+	
+	isActioning = false
 	if not is_on_floor():
 		velocity += get_gravity() * delta
 		
@@ -111,28 +117,39 @@ func controls() -> void:
 		deckNode.deleteDeck()
 		
 	if CardData.checkSpace(playedNodes) and CardData.checkSpace(pendNodes) < MAX_PEND_CARDS:
-		if Input.is_action_just_pressed("Attack") and is_on_floor():
+		if Input.is_action_just_pressed("Attack") and is_on_floor() and not isActioning:
 			setPlayedCard()
 			attack = true
 			animNode.play("Attack_1")
-		if Input.is_action_just_pressed("Trick"):
+			isActioning = true
+		if Input.is_action_just_pressed("Trick") and not isActioning:
 			trickCards()
+			isActioning = true
 		
 	if CardData.checkSpace(playedNodes) <= HEAL_BURN_MINIMUM:
-		if Input.is_action_just_pressed("Burn") and Input.is_action_just_pressed("Temp"):
+		if Input.is_action_just_pressed("Burn") and Input.is_action_pressed("Temp") and not isActioning:
+			health.changeHealth(30.0)
 			burnCards('heal')
+			isActioning = true
 			
 	if CardData.checkSpace(playedNodes) < MAX_PLAYED_CARDS:
-		if Input.is_action_just_pressed("Burn") and not is_on_floor():
+		if Input.is_action_just_pressed("Burn") and not is_on_floor() and not isActioning:
+			velocity.y = jump_velocity
 			burnCards('jump')
-		elif Input.is_action_just_pressed("Burn"):
+			isActioning = true
+		elif Input.is_action_just_pressed("Burn") and not isActioning:
 			isBurnDashing = true
 			burnCards('dash')
-			$BurnTimer.start()
+			burnTime.start()
+			isActioning = true
 	
 	if CardData.checkSpace(playedNodes) < MAX_PLAYED_CARDS:
-		if Input.is_action_just_pressed("Showdown"):
+		if Input.is_action_just_pressed("Showdown") and not isActioning:
 			showdownPlayedCards()
+			isActioning = true
+			
+	if Input.is_action_pressed("DeleteHealthDebug"):
+		health.changeHealth(-1.0)
 	
 	
 func _on_burn_timer_timeout() -> void:
