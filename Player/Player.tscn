@@ -4,6 +4,7 @@
 [ext_resource type="Script" uid="uid://gxdj8l1ahlhk" path="res://Player/health.gd" id="2_ddoul"]
 [ext_resource type="Texture2D" uid="uid://udm78ito0yap" path="res://Assets/Sprite/Player/spriteSheet.png" id="2_kpjcp"]
 [ext_resource type="Script" uid="uid://ws0antd52kaf" path="res://Cards/deck_manager.gd" id="3_kne1u"]
+[ext_resource type="Script" uid="uid://dos6c6reryimp" path="res://Player/projectile_manager.gd" id="4_8g4oa"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_ptm0p"]
 size = Vector2(20, 29)
@@ -118,12 +119,12 @@ script = ExtResource("1_kpjcp")
 
 [node name="HealthManager" type="Node" parent="." unique_id=819642966]
 script = ExtResource("2_ddoul")
-health = null
 
 [node name="DeckManager" type="Node" parent="." unique_id=1570210766]
 script = ExtResource("3_kne1u")
 
 [node name="ProjectileManager" type="Node" parent="." unique_id=1281690732]
+script = ExtResource("4_8g4oa")
 
 [node name="Sprite2D" type="Sprite2D" parent="." unique_id=2086113604]
 texture = ExtResource("2_kpjcp")

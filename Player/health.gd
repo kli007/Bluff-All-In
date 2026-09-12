@@ -12,7 +12,3 @@ func changeHealth(difference: float) -> void:
 		#respawn here
 		health = maxHealth
 	health_changed.emit()
-	
-	
-func getHealth() -> float:
-	return health

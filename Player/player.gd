@@ -8,13 +8,12 @@ extends CharacterBody2D
 @onready var deckNode: Node = $DeckManager
 @onready var health: Node = $HealthManager
 @onready var burnTime: Node = $BurnTimer
+@onready var projectiles: Node = $ProjectileManager
 
-@onready var pendNodes: Array = get_node('/root/Main/HUD/PendCardsControl/PendCards').get_children()
-@onready var playedNodes: Array = get_node('/root/Main/HUD/UserUIControl/PlayedCards').get_children()
+@onready var pendNodes: Array = get_node('%HUD/PendCardsControl/PendCards').get_children()
+@onready var playedNodes: Array = get_node('%HUD/UserUIControl/PlayedCards').get_children()
 
 @onready var spawnLocation: Vector2 = global_position
-
-var projectile = preload("res://Player/projectile.tscn")
 
 var attack: bool = false
 var direction: float
@@ -26,20 +25,14 @@ var isActioning: bool = false
 const MAX_PLAYED_CARDS: int = 5
 const MAX_PEND_CARDS: int = 7
 const HEAL_BURN_MINIMUM: int = 2
-const MAX_PROJ_COUNT: int = 4
 
-var currentTrick = {'rank': 'Increase', 'suit': ''}
-
-var projectileCount: int = 0 # can be changed later
-var currentProjTime: float = 0.0
-var justReloaded: bool = false
+var currentTrick: Dictionary = {'rank': 'Increase', 'suit': ''}
 
 func _ready() -> void:
 	setPendCard()
 
 func _physics_process(delta: float) -> void:
 	# Add the gravity.
-	
 	isActioning = false
 	if not is_on_floor():
 		velocity += get_gravity() * delta
@@ -107,7 +100,14 @@ func _on_animation_player_animation_finished(anim_name: StringName) -> void:
 	if anim_name == "Attack_1":
 		attack = false
 		
+func _on_burn_timer_timeout() -> void:
+	isBurnDashing = false
+	velocity.x = 0
+	
+func respawn(location: Vector2) -> void:
+	position = location
 		
+
 func controls(deltaTime: float) -> void:
 	if not isBurnDashing:
 		direction = Input.get_axis("Move_Left", "Move_Right")
@@ -128,26 +128,18 @@ func controls(deltaTime: float) -> void:
 			animNode.play("Attack_1")
 			isActioning = true
 			
-		if Input.is_action_just_pressed("Trick") and projectileCount and not isActioning:
-			if projectileCount > 0:
-				create_projectile(lastDirection)
-				if projectileCount == 0:
-					trickCards()
+			
+		if Input.is_action_just_pressed("Trick") and projectiles.projectileCount and not isActioning:
+			projectiles.create_projectile(self, lastDirection, global_position)
+			if not projectiles.projectileCount:
+				trickCards()
 			isActioning = true
 		
-		
-		if Input.is_action_pressed("Trick") and not justReloaded:
-			currentProjTime += deltaTime
-			if currentProjTime >= 4.0:
-				justReloaded = true
-				print('reload')
+		if Input.is_action_pressed("Trick"):
+			projectiles.reloadProjectiles(deltaTime)
 			
 		if Input.is_action_just_released("Trick"):
-			if justReloaded:
-				projectileCount = MAX_PROJ_COUNT
-				currentProjTime = 0.0
-				justReloaded = false
-				
+			projectiles.releaseReload()
 		
 	if CardData.checkSpace(playedNodes) <= HEAL_BURN_MINIMUM:
 		if Input.is_action_just_pressed("Burn") and Input.is_action_pressed("Temp") and not isActioning:
@@ -175,17 +167,5 @@ func controls(deltaTime: float) -> void:
 		health.changeHealth(-1.0)
 	
 	
-func _on_burn_timer_timeout() -> void:
-	isBurnDashing = false
-	velocity.x = 0
+
 	
-func respawn(location: Vector2) -> void:
-	position = location
-	
-func create_projectile(player_dir: float):
-	var Proj = get_parent().get_node("ProjectileGroup")
-	var new_projectile = projectile.instantiate()
-	new_projectile.global_position = global_position
-	new_projectile.lock_on_to_player(player_dir, self, Proj)
-	Proj.call_deferred("add_child", new_projectile)
-	projectileCount -= 1

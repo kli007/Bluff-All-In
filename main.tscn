@@ -6,6 +6,7 @@
 [ext_resource type="PackedScene" uid="uid://bc4g2w3j8inqx" path="res://Cards/PlayedCards.tscn" id="3_1bvp3"]
 [ext_resource type="PackedScene" uid="uid://ce7wj45lpekfs" path="res://Cards/PendCards.tscn" id="3_h2yge"]
 [ext_resource type="Script" uid="uid://bupjwinwws13a" path="res://Player/player_health.gd" id="5_7mycd"]
+[ext_resource type="Script" uid="uid://vqjxie4pbklg" path="res://player_projectiles.gd" id="6_272bh"]
 
 [node name="Main" type="Node" unique_id=1517588686]
 script = ExtResource("1_lquwl")
@@ -23,6 +24,7 @@ remote_path = NodePath("../../Camera2D")
 position = Vector2(99, 16)
 
 [node name="HUD" type="CanvasLayer" parent="." unique_id=1448757649]
+unique_name_in_owner = true
 
 [node name="UserUIControl" type="Control" parent="HUD" unique_id=77239967]
 layout_mode = 3
@@ -37,9 +39,16 @@ position = Vector2(64, 84)
 layout_mode = 0
 offset_left = -1.0
 offset_right = 219.0
-offset_bottom = 51.0
+offset_bottom = 28.0
 text = "PlayerHealth: "
 script = ExtResource("5_7mycd")
+
+[node name="PlayerProjectiles" type="Label" parent="HUD/UserUIControl" unique_id=1768357784]
+layout_mode = 0
+offset_top = 23.0
+offset_right = 185.0
+offset_bottom = 53.0
+script = ExtResource("6_272bh")
 
 [node name="PendCardsControl" type="Control" parent="HUD" unique_id=1218590380]
 layout_mode = 3
