@@ -6,7 +6,7 @@ extends CharacterBody2D
 
 @onready var animNode: Node = $AnimationPlayer
 @onready var deckNode: Node = $DeckManager
-@onready var health: Node = $Health
+@onready var health: Node = $HealthManager
 @onready var burnTime: Node = $BurnTimer
 
 @onready var pendNodes: Array = get_node('/root/Main/HUD/PendCardsControl/PendCards').get_children()
@@ -30,7 +30,9 @@ const MAX_PROJ_COUNT: int = 4
 
 var currentTrick = {'rank': 'Increase', 'suit': ''}
 
-var projectileCount: int = 0
+var projectileCount: int = 0 # can be changed later
+var currentProjTime: float = 0.0
+var justReloaded: bool = false
 
 func _ready() -> void:
 	setPendCard()
@@ -42,7 +44,7 @@ func _physics_process(delta: float) -> void:
 	if not is_on_floor():
 		velocity += get_gravity() * delta
 		
-	controls()
+	controls(delta)
 		
 	if isBurnDashing:
 		velocity.x = lastDirection * DashSpeed
@@ -106,7 +108,7 @@ func _on_animation_player_animation_finished(anim_name: StringName) -> void:
 		attack = false
 		
 		
-func controls() -> void:
+func controls(deltaTime: float) -> void:
 	if not isBurnDashing:
 		direction = Input.get_axis("Move_Left", "Move_Right")
 	
@@ -125,12 +127,27 @@ func controls() -> void:
 			attack = true
 			animNode.play("Attack_1")
 			isActioning = true
-		if Input.is_action_just_pressed("Trick") and not isActioning:
-			create_projectile(lastDirection)
-			if projectileCount >= MAX_PROJ_COUNT:
-				trickCards()
-				projectileCount = 0
+			
+		if Input.is_action_just_pressed("Trick") and projectileCount and not isActioning:
+			if projectileCount > 0:
+				create_projectile(lastDirection)
+				if projectileCount == 0:
+					trickCards()
 			isActioning = true
+		
+		
+		if Input.is_action_pressed("Trick") and not justReloaded:
+			currentProjTime += deltaTime
+			if currentProjTime >= 4.0:
+				justReloaded = true
+				print('reload')
+			
+		if Input.is_action_just_released("Trick"):
+			if justReloaded:
+				projectileCount = MAX_PROJ_COUNT
+				currentProjTime = 0.0
+				justReloaded = false
+				
 		
 	if CardData.checkSpace(playedNodes) <= HEAL_BURN_MINIMUM:
 		if Input.is_action_just_pressed("Burn") and Input.is_action_pressed("Temp") and not isActioning:
@@ -165,11 +182,10 @@ func _on_burn_timer_timeout() -> void:
 func respawn(location: Vector2) -> void:
 	position = location
 	
-func create_projectile(direction: float):
-	var Proj = get_parent().get_node("ProjectileManager")
+func create_projectile(player_dir: float):
+	var Proj = get_parent().get_node("ProjectileGroup")
 	var new_projectile = projectile.instantiate()
-	#new_projectile.scale = Vector2(0.2, 0.2)
 	new_projectile.global_position = global_position
-	new_projectile.lock_on_to_player(direction, self, Proj)
+	new_projectile.lock_on_to_player(player_dir, self, Proj)
 	Proj.call_deferred("add_child", new_projectile)
-	projectileCount += 1
+	projectileCount -= 1

@@ -10,7 +10,7 @@ var projNode: Node
 func _ready():
 	add_collision_exception_with(player)
 
-func _process(delta: float):
+func _process(_delta: float):
 	for proj in projNode.get_children():
 		add_collision_exception_with(proj)
 		
@@ -19,7 +19,7 @@ func _process(delta: float):
 	for i in get_slide_collision_count():
 			var collision = get_slide_collision(i)
 			if(collision.get_collider().has_method("decrementHealth")):
-				var target = collision.get_collider()
+				var _target = collision.get_collider()
 				#target.decrementHealth(damage)
 				#target.knockback(direction, 500, 0.1) 
 			queue_free()

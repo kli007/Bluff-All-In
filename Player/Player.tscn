@@ -116,9 +116,14 @@ _data = {
 [node name="Player" type="CharacterBody2D" unique_id=789404969]
 script = ExtResource("1_kpjcp")
 
-[node name="Health" type="Node" parent="." unique_id=819642966]
+[node name="HealthManager" type="Node" parent="." unique_id=819642966]
 script = ExtResource("2_ddoul")
 health = null
+
+[node name="DeckManager" type="Node" parent="." unique_id=1570210766]
+script = ExtResource("3_kne1u")
+
+[node name="ProjectileManager" type="Node" parent="." unique_id=1281690732]
 
 [node name="Sprite2D" type="Sprite2D" parent="." unique_id=2086113604]
 texture = ExtResource("2_kpjcp")
@@ -131,9 +136,6 @@ shape = SubResource("RectangleShape2D_ptm0p")
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="." unique_id=1926398530]
 libraries/ = SubResource("AnimationLibrary_e80uo")
-
-[node name="DeckManager" type="Node" parent="." unique_id=1570210766]
-script = ExtResource("3_kne1u")
 
 [node name="AttackTimer" type="Timer" parent="." unique_id=2107694017]
 
