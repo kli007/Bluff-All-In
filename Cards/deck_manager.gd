@@ -31,3 +31,33 @@ func checkDeck() -> bool:
 func deleteDeck() -> void:
 	print('deleted deck')
 	activeArray = []
+	
+func checkHand(playedNodes: Array) -> String:
+	return 'hello'
+
+func checkTPair(hand: Array) -> bool:
+	var nodeMax: int = hand.size()
+	var isTPair: bool = false
+	var pairCards: Dictionary
+	for key in range(nodeMax - 1):
+		var currentCard: String = hand[key].rank
+		var nextKey: int = key + 1
+		for next in hand.slice(nextKey, nodeMax):
+			var nextCard = next.rank
+			if currentCard == nextCard and currentCard != '':
+				pairCards[currentCard] = 0
+	if pairCards.size() >= 2:
+		isTPair = true
+	return isTPair
+	
+func checkPair(hand: Array) -> bool:
+	var nodeMax: int = hand.size()
+	var isPair: bool = false
+	for key in range(nodeMax - 1):
+		var currentCard: String = hand[key].rank
+		var nextKey: int = key + 1
+		for next in hand.slice(nextKey, nodeMax):
+			var nextCard = next.rank
+			if currentCard == nextCard and currentCard != '':
+				isPair = true
+	return isPair

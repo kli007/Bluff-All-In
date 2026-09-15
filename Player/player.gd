@@ -160,6 +160,7 @@ func controls(deltaTime: float) -> void:
 	
 	if CardData.checkSpace(playedNodes) < MAX_PLAYED_CARDS:
 		if Input.is_action_just_pressed("Showdown") and not isActioning:
+			print(deckNode.checkTPair(playedNodes))
 			showdownPlayedCards()
 			isActioning = true
 			

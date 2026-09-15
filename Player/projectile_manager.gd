@@ -8,7 +8,8 @@ signal reload_status
 
 var justReloaded: bool = false
 var currentProjTime: float = 0.0
-const MAX_PROJ_COUNT: int = 4  # can be changed later
+const MAX_PROJ_COUNT: int = 1  # can be changed later
+const RELOAD_TIME: float = 1.0
 
 func create_projectile(playerNode, playerDirection: float, playerGP: Vector2) -> void:
 	var Proj = get_parent().get_parent().get_node("ProjectileGroup")
@@ -22,7 +23,7 @@ func create_projectile(playerNode, playerDirection: float, playerGP: Vector2) ->
 func reloadProjectiles(delta: float) -> void:
 	if not justReloaded:
 		currentProjTime += delta
-		if currentProjTime >= 4.0:
+		if currentProjTime >= RELOAD_TIME:
 			justReloaded = true
 			reload_status.emit()
 
