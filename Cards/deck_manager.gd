@@ -32,32 +32,46 @@ func deleteDeck() -> void:
 	print('deleted deck')
 	activeArray = []
 	
-func checkHand(playedNodes: Array) -> String:
-	return 'hello'
-
-func checkTPair(hand: Array) -> bool:
+func checkHand(playedNodes: Array) -> void:
+	var matches = checkHelper(playedNodes)
+	if checkPairs(playedNodes, matches, 2):
+		print('Two Pair')
+	elif checkPairs(playedNodes, matches, 1):
+		print('Pair')
+	else:
+		print('High Card')
+		
+func checkHelper(hand: Array) -> Dictionary: #we can reuse this code a bunch
 	var nodeMax: int = hand.size()
-	var isTPair: bool = false
-	var pairCards: Dictionary
-	for key in range(nodeMax - 1):
-		var currentCard: String = hand[key].rank
-		var nextKey: int = key + 1
-		for next in hand.slice(nextKey, nodeMax):
-			var nextCard = next.rank
-			if currentCard == nextCard and currentCard != '':
-				pairCards[currentCard] = 0
-	if pairCards.size() >= 2:
-		isTPair = true
-	return isTPair
+	var matchingCards: Dictionary
 	
-func checkPair(hand: Array) -> bool:
-	var nodeMax: int = hand.size()
-	var isPair: bool = false
-	for key in range(nodeMax - 1):
-		var currentCard: String = hand[key].rank
-		var nextKey: int = key + 1
-		for next in hand.slice(nextKey, nodeMax):
-			var nextCard = next.rank
-			if currentCard == nextCard and currentCard != '':
-				isPair = true
-	return isPair
+	for key in nodeMax:
+		var currentRank: String = hand[key].rank
+		if matchingCards.has(currentRank):
+			matchingCards[currentRank] += 1
+		else:
+			matchingCards[currentRank] = 1
+	return matchingCards
+	
+func checkPairs(hand: Array, matches: Dictionary, max: int) -> bool:
+	var currentPairs: int = 0
+	for key in matches.keys():
+		if matches[key] == 2:
+			currentPairs += 1
+			
+	if currentPairs >= max:
+		return true
+	else:
+		return false
+		
+func checkKinds(hand: Array) -> bool:
+	return false
+
+func checkStraight(hand: Array) -> bool:
+	return false
+
+func checkFlush(hand: Array) -> bool:
+	return false
+	
+func checkFHouse(hand: Array) -> bool:
+	return false
