@@ -76,3 +76,10 @@ func hideCards(cardNode: Node) -> void:
 func showdownCards(playedNodes: Array) -> void:
 	for card in playedNodes:
 		hideCards(card)
+		
+func exportCardList(cardArray: Array) -> Array:
+	var returnArray: Array = []
+	for card in cardArray:
+		returnArray.append({'Rank': card.rank, 'Suit': card.suit})
+	return returnArray
+	

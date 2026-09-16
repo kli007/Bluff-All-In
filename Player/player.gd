@@ -29,6 +29,7 @@ const HEAL_BURN_MINIMUM: int = 2
 var currentTrick: Dictionary = {'rank': 'Increase', 'suit': ''}
 
 func _ready() -> void:
+	SaveManager.data_capture.connect(on_save_capture)
 	setPendCard()
 
 func _physics_process(delta: float) -> void:
@@ -166,7 +167,16 @@ func controls(deltaTime: float) -> void:
 			
 	if Input.is_action_pressed("DeleteHealthDebug"):
 		health.changeHealth(-1.0)
+		
+	if Input.is_action_just_pressed("Save Game"):
+		SaveManager.saveGame()
+		
 	
 	
-
+func on_save_capture(data: SaveData) -> void:
+	data.player_health = health.health
+	data.player_location = global_position
+	data.current_deck = deckNode.activeArray
+	data.pend_cards = CardData.exportCardList(pendNodes)
+	data.played_cards = CardData.exportCardList(playedNodes)
 	
