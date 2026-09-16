@@ -33,3 +33,7 @@ func releaseReload() -> void:
 		currentProjTime = 0.0
 		justReloaded = false
 		proj_changed.emit()
+		
+func setProjectiles(newProjs: int) -> void:
+	projectileCount = newProjs
+	proj_changed.emit()

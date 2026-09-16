@@ -4,43 +4,44 @@
 
 [resource]
 script = ExtResource("1_seo37")
-player_location = Vector2(158.99997, 36.99089)
-current_deck = ["Hearts3", "Spades9", "SpadesJ", "SpadesK", "Hearts2", "ClubsQ", "Diamonds2", "DiamondsJ", "DiamondsQ", "Hearts9", "Diamonds9", "Hearts7", "Diamonds10", "Clubs3", "HeartsJ", "ClubsK", "Clubs7", "Hearts10", "Diamonds8", "Clubs9", "Clubs5", "HeartsQ", "Diamonds6", "Hearts5", "Spades3", "HeartsA", "Spades8", "Diamonds7", "DiamondsK", "Clubs8", "ClubsJ", "Clubs10", "Hearts6", "HeartsK", "Spades7", "SpadesQ", "ClubsA", "Diamonds5", "DiamondsA", "Spades10"]
+player_location = Vector2(205.66656, 36.99089)
+player_projectiles = 1
+current_deck = ["Clubs2", "SpadesK", "Clubs3", "DiamondsQ", "Hearts10", "Diamonds10", "Spades8", "Hearts3", "Diamonds6", "ClubsQ", "SpadesQ", "Hearts6", "SpadesA", "Spades7", "Clubs10", "Diamonds4", "Spades6", "Diamonds9", "Hearts5", "HeartsJ", "Clubs7", "DiamondsJ", "Spades4", "ClubsA", "DiamondsK", "Diamonds8", "Clubs6", "Diamonds7", "Clubs9", "Hearts7", "ClubsK", "Clubs5", "ClubsJ", "Hearts2", "Hearts4", "DiamondsA", "Hearts8", "Hearts9", "SpadesJ", "HeartsK", "Spades2", "Clubs4"]
 pend_cards = [{
-"Rank": "6",
-"Suit": "Clubs"
+"rank": "3",
+"suit": "Spades"
 }, {
-"Rank": "2",
-"Suit": "Clubs"
+"rank": "5",
+"suit": "Spades"
 }, {
-"Rank": "4",
-"Suit": "Clubs"
+"rank": "8",
+"suit": "Clubs"
 }, {
-"Rank": "4",
-"Suit": "Spades"
+"rank": "3",
+"suit": "Diamonds"
 }, {
-"Rank": "6",
-"Suit": "Spades"
+"rank": "2",
+"suit": "Diamonds"
 }, {
-"Rank": "8",
-"Suit": "Hearts"
+"rank": "9",
+"suit": "Spades"
 }, {
-"Rank": "A",
-"Suit": "Spades"
+"rank": "5",
+"suit": "Diamonds"
 }]
 played_cards = [{
-"Rank": "4",
-"Suit": "Hearts"
+"rank": "A",
+"suit": "Hearts"
 }, {
-"Rank": "5",
-"Suit": "Spades"
+"rank": "10",
+"suit": "Spades"
 }, {
-"Rank": "3",
-"Suit": "Diamonds"
+"rank": "Q",
+"suit": "Hearts"
 }, {
-"Rank": "4",
-"Suit": "Diamonds"
+"rank": "",
+"suit": ""
 }, {
-"Rank": "2",
-"Suit": "Spades"
+"rank": "",
+"suit": ""
 }]

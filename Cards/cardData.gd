@@ -69,17 +69,15 @@ func hideCards(cardNode: Node) -> void:
 	cardSuit.hide()
 	cardRankTL.hide()
 	cardRankBR.hide()
-	cardNode.rank = ''
-	cardNode.suit = ''
 	cardNode.resetData()
 	
-func showdownCards(playedNodes: Array) -> void:
-	for card in playedNodes:
+func removeCards(cardNodes: Array) -> void:
+	for card in cardNodes:
 		hideCards(card)
 		
 func exportCardList(cardArray: Array) -> Array:
 	var returnArray: Array = []
 	for card in cardArray:
-		returnArray.append({'Rank': card.rank, 'Suit': card.suit})
+		returnArray.append({'rank': card.rank, 'suit': card.suit})
 	return returnArray
 	

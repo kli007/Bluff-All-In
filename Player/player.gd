@@ -6,9 +6,9 @@ extends CharacterBody2D
 
 @onready var animNode: Node = $AnimationPlayer
 @onready var deckNode: Node = $DeckManager
-@onready var health: Node = $HealthManager
+@onready var healthNode: Node = $HealthManager
 @onready var burnTime: Node = $BurnTimer
-@onready var projectiles: Node = $ProjectileManager
+@onready var projNode: Node = $ProjectileManager
 
 @onready var pendNodes: Array = get_node('%HUD/PendCardsControl/PendCards').get_children()
 @onready var playedNodes: Array = get_node('%HUD/UserUIControl/PlayedCards').get_children()
@@ -30,6 +30,7 @@ var currentTrick: Dictionary = {'rank': 'Increase', 'suit': ''}
 
 func _ready() -> void:
 	SaveManager.data_capture.connect(on_save_capture)
+	SaveManager.data_dispense.connect(on_save_dispense)
 	setPendCard()
 
 func _physics_process(delta: float) -> void:
@@ -82,7 +83,7 @@ func moveUpPendCards() -> void:
 	setPendCard()
 	
 func showdownPlayedCards() -> void:
-		CardData.showdownCards(playedNodes)
+		CardData.removeCards(playedNodes)
 		
 func burnCards(action: String) -> void:
 	match action:
@@ -130,21 +131,21 @@ func controls(deltaTime: float) -> void:
 			isActioning = true
 			
 			
-		if Input.is_action_just_pressed("Trick") and projectiles.projectileCount and not isActioning:
-			projectiles.create_projectile(self, lastDirection, global_position)
-			if not projectiles.projectileCount:
+		if Input.is_action_just_pressed("Trick") and projNode.projectileCount and not isActioning:
+			projNode.create_projectile(self, lastDirection, global_position)
+			if not projNode.projectileCount:
 				trickCards()
 			isActioning = true
 		
 		if Input.is_action_pressed("Trick"):
-			projectiles.reloadProjectiles(deltaTime)
+			projNode.reloadProjectiles(deltaTime)
 			
 		if Input.is_action_just_released("Trick"):
-			projectiles.releaseReload()
+			projNode.releaseReload()
 		
 	if CardData.checkSpace(playedNodes) <= HEAL_BURN_MINIMUM:
 		if Input.is_action_just_pressed("Burn") and Input.is_action_pressed("Temp") and not isActioning:
-			health.changeHealth(30.0)
+			healthNode.changeHealth(30.0)
 			burnCards('heal')
 			isActioning = true
 			
@@ -166,17 +167,33 @@ func controls(deltaTime: float) -> void:
 			isActioning = true
 			
 	if Input.is_action_pressed("DeleteHealthDebug"):
-		health.changeHealth(-1.0)
+		healthNode.changeHealth(-1.0)
 		
 	if Input.is_action_just_pressed("Save Game"):
 		SaveManager.saveGame()
-		
+	
+	if Input.is_action_just_pressed("Load Game" ):
+		SaveManager.loadGame()
 	
 	
 func on_save_capture(data: SaveData) -> void:
-	data.player_health = health.health
+	data.player_health = healthNode.health
 	data.player_location = global_position
+	data.player_projectiles = projNode.projectileCount
 	data.current_deck = deckNode.activeArray
 	data.pend_cards = CardData.exportCardList(pendNodes)
 	data.played_cards = CardData.exportCardList(playedNodes)
 	
+func on_save_dispense(data: SaveData) -> void:
+	healthNode.setHealth(data.player_health)
+	global_position = data.player_location
+	projNode.setProjectiles(data.player_projectiles)
+	deckNode.activeArray = data.current_deck
+	load_cards(data.pend_cards, pendNodes)
+	load_cards(data.played_cards, playedNodes)
+		
+func load_cards(cardArray: Array, cardNodes: Array) -> void:
+	CardData.removeCards(cardNodes)
+	for card in cardArray:
+		if card['rank'] != '' and card['suit'] != '':
+			CardData.setCards(card, cardNodes)
