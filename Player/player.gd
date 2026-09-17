@@ -26,7 +26,7 @@ const MAX_PLAYED_CARDS: int = 5
 const MAX_PEND_CARDS: int = 7
 const HEAL_BURN_MINIMUM: int = 2
 
-var currentTrick: Dictionary = {'rank': 'Increase', 'suit': ''}
+var currentTrick: Dictionary = {'rank': '3', 'suit': ''}
 
 func _ready() -> void:
 	SaveManager.data_capture.connect(on_save_capture)
