@@ -4,42 +4,43 @@
 
 [resource]
 script = ExtResource("1_seo37")
-player_location = Vector2(192.38516, 36.955273)
-current_deck = ["Hearts4", "Spades10", "Diamonds7", "Clubs2", "ClubsJ", "Clubs9", "SpadesJ", "Hearts8", "ClubsQ", "Clubs6", "Spades9", "Diamonds2", "HeartsQ", "Spades5", "SpadesQ", "Clubs4", "DiamondsQ", "ClubsA", "Spades4", "Hearts2", "Diamonds6", "DiamondsK", "Hearts6", "HeartsJ", "HeartsK", "Hearts10", "DiamondsJ", "ClubsK", "Clubs7", "Diamonds4", "Clubs5"]
+player_health = 50.0
+player_location = Vector2(107.23987, 36.956413)
+current_deck = ["Hearts4", "Hearts3", "ClubsK", "ClubsA", "Spades5", "Diamonds2", "Diamonds10", "Diamonds7", "Hearts8", "Spades10", "Diamonds3", "HeartsA", "SpadesQ", "Clubs3", "DiamondsQ", "Spades3", "DiamondsJ", "Clubs7", "Hearts9", "Clubs5", "Spades4"]
 pend_cards = [{
-"rank": "10",
-"suit": "Clubs"
+"rank": "7",
+"suit": "Hearts"
 }, {
 "rank": "A",
 "suit": "Spades"
 }, {
-"rank": "6",
-"suit": "Spades"
-}, {
-"rank": "3",
-"suit": "Diamonds"
-}, {
-"rank": "3",
-"suit": "Spades"
-}, {
-"rank": "K",
-"suit": "Spades"
-}, {
-"rank": "7",
-"suit": "Hearts"
-}]
-played_cards = [{
-"rank": "10",
-"suit": "Hearts"
-}, {
-"rank": "9",
-"suit": "Hearts"
-}, {
 "rank": "J",
 "suit": "Hearts"
 }, {
-"rank": "8",
-"suit": "Hearts"
+"rank": "2",
+"suit": "Spades"
+}, {
+"rank": "9",
+"suit": "Diamonds"
+}, {
+"rank": "7",
+"suit": "Spades"
+}, {
+"rank": "J",
+"suit": "Clubs"
+}]
+played_cards = [{
+"rank": "",
+"suit": ""
+}, {
+"rank": "",
+"suit": ""
+}, {
+"rank": "",
+"suit": ""
+}, {
+"rank": "",
+"suit": ""
 }, {
 "rank": "",
 "suit": ""

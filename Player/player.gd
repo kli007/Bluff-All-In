@@ -7,7 +7,7 @@ extends CharacterBody2D
 @onready var animNode: Node = $AnimationPlayer
 @onready var deckNode: Node = $DeckManager
 @onready var healthNode: Node = $HealthManager
-@onready var burnTime: Node = $BurnTimer
+@onready var dashTime: Node = $DashTimer
 @onready var projNode: Node = $ProjectileManager
 
 @onready var pendNodes: Array = get_node('%HUD/PendCardsControl/PendCards').get_children()
@@ -18,7 +18,8 @@ extends CharacterBody2D
 var attack: bool = false
 var direction: float
 var lastDirection: float
-var isBurnDashing: bool = false
+var isDashing: bool = false
+var burnActive: bool = false
 
 var isActioning: bool = false
 
@@ -41,7 +42,7 @@ func _physics_process(delta: float) -> void:
 		
 	controls(delta)
 		
-	if isBurnDashing:
+	if isDashing:
 		velocity.x = lastDirection * DashSpeed
 	else:
 		if direction and animNode.name != 'Jump':
@@ -101,17 +102,19 @@ func trickCards() -> void:
 func _on_animation_player_animation_finished(anim_name: StringName) -> void:
 	if anim_name == "Attack_1":
 		attack = false
-		
-func _on_burn_timer_timeout() -> void:
-	isBurnDashing = false
-	velocity.x = 0
+
 	
 func respawn(location: Vector2) -> void:
 	position = location
 		
+		
+func _on_dash_timer_timeout() -> void:
+	isDashing = false
+	velocity.x = 0
+
 
 func controls(deltaTime: float) -> void:
-	if not isBurnDashing:
+	if not isDashing:
 		direction = Input.get_axis("Move_Left", "Move_Right")
 	
 	if direction:
@@ -131,40 +134,47 @@ func controls(deltaTime: float) -> void:
 			isActioning = true
 			
 			
-		if Input.is_action_just_pressed("Trick") and projNode.projectileCount and not isActioning:
-			projNode.create_projectile(self, lastDirection, global_position)
-			if not projNode.projectileCount:
-				trickCards()
+		if Input.is_action_just_pressed("Trick") and not isActioning:
+			if burnActive and CardData.checkSpace(playedNodes) < MAX_PLAYED_CARDS:
+				burnCards('jump')
+				burnActive = false
+			elif projNode.projectileCount:
+				projNode.create_projectile(self, lastDirection, global_position)
+				if not projNode.projectileCount:
+					trickCards()
 			isActioning = true
-		
-		if Input.is_action_pressed("Trick"):
+		if Input.is_action_pressed("Trick") and not burnActive:
 			projNode.reloadProjectiles(deltaTime)
-			
-		if Input.is_action_just_released("Trick"):
+		if Input.is_action_just_released("Trick") and not burnActive:
 			projNode.releaseReload()
 		
-	if CardData.checkSpace(playedNodes) <= HEAL_BURN_MINIMUM:
-		if Input.is_action_just_pressed("Burn") and Input.is_action_pressed("Temp") and not isActioning:
-			healthNode.changeHealth(30.0)
-			burnCards('heal')
-			isActioning = true
-			
-	if CardData.checkSpace(playedNodes) < MAX_PLAYED_CARDS:
-		if Input.is_action_just_pressed("Burn") and not is_on_floor() and not isActioning:
-			velocity.y = jump_velocity
-			burnCards('jump')
-			isActioning = true
-		elif Input.is_action_just_pressed("Burn") and not isActioning:
-			isBurnDashing = true
-			burnCards('dash')
-			burnTime.start()
-			isActioning = true
+	if Input.is_action_pressed('Burn'):
+		burnActive = true
+	elif Input.is_action_just_released('Burn'):
+		burnActive = false
 	
-	if CardData.checkSpace(playedNodes) < MAX_PLAYED_CARDS:
-		if Input.is_action_just_pressed("Showdown") and not isActioning:
+	if Input.is_action_just_pressed("Dash") and not isActioning:
+		if burnActive and CardData.checkSpace(playedNodes) < MAX_PLAYED_CARDS:
+			burnCards('dash')
+			burnActive = false
+		isDashing = true
+		dashTime.start()
+		isActioning = true
+			
+	'''velocity.y = jump_velocity
+	burnCards('jump')
+	isActioning = true rework double jump later'''
+	
+	if Input.is_action_just_pressed("Showdown") and not isActioning:
+		if burnActive:
+			if CardData.checkSpace(playedNodes) <= HEAL_BURN_MINIMUM:
+				healthNode.changeHealth(30.0)
+				burnCards('heal')
+				burnActive = false
+		elif CardData.checkSpace(playedNodes) < MAX_PLAYED_CARDS:
 			deckNode.checkHand(playedNodes)
 			showdownPlayedCards()
-			isActioning = true
+		isActioning = true
 			
 	if Input.is_action_pressed("DeleteHealthDebug"):
 		healthNode.changeHealth(-1.0)
