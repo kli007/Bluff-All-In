@@ -26,6 +26,7 @@ var isActioning: bool = false
 const MAX_PLAYED_CARDS: int = 5
 const MAX_PEND_CARDS: int = 7
 const HEAL_BURN_MINIMUM: int = 2
+const SWORD_DAMAGE: float = 15.0
 
 var currentTrick: Dictionary = {'rank': '3', 'suit': ''}
 
@@ -67,9 +68,9 @@ func animation_control() -> void:
 	
 func flip_sprite() -> void:
 	if direction < 0:
-		$Sprite2D.flip_h = true
+		$PlayerSprite.flip_h = true
 	if direction > 0:
-		$Sprite2D.flip_h = false
+		$PlayerSprite.flip_h = false
 		
 func setPendCard() -> void:
 	while CardData.checkSpace(pendNodes) and not deckNode.checkDeck():
@@ -111,6 +112,10 @@ func respawn(location: Vector2) -> void:
 func _on_dash_timer_timeout() -> void:
 	isDashing = false
 	velocity.x = 0
+
+func _on_hurtbox_body_entered(body: Node2D) -> void:
+	if body is CharacterBody2D and body.name != 'Player':
+		body.health.changeHealth(-SWORD_DAMAGE)
 
 
 func controls(deltaTime: float) -> void:

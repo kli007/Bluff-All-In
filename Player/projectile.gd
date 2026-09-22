@@ -1,31 +1,23 @@
-extends CharacterBody2D
+extends Area2D
 
-var damage
-var speed: float = 350.0
+const DAMAGE: float = 10.0
+const SPEED: float = 350.0
 
-var direction: float
+var direction: Vector2
 var player: Node2D
 var projNode: Node
+var exceptionArray: Array
 
-func _ready():
-	add_collision_exception_with(player)
-
-func _process(_delta: float):
+func _ready() -> void:
+	exceptionArray.append(player)
 	for proj in projNode.get_children():
-		add_collision_exception_with(proj)
-		
-	velocity.x = direction * speed
-	move_and_slide()
-	for i in get_slide_collision_count():
-			var collision = get_slide_collision(i)
-			if(collision.get_collider().has_method("decrementHealth")):
-				var _target = collision.get_collider()
-				#target.decrementHealth(damage)
-				#target.knockback(direction, 500, 0.1) 
-			queue_free()
+		exceptionArray.append(proj)
+
+func _physics_process(delta: float) -> void:
+	position += direction * SPEED * delta
 
 func lock_on_to_player(player_dir: float, playerNode:Node2D, projectileNode:Node):
-	direction = player_dir
+	direction = Vector2(cos(deg_to_rad(player_dir)), sin(deg_to_rad(player_dir)))
 	player = playerNode
 	projNode = projectileNode
 	
@@ -33,3 +25,11 @@ func lock_on_to_player(player_dir: float, playerNode:Node2D, projectileNode:Node
 func _on_visible_on_screen_notifier_2d_screen_exited() -> void:
 	#print('removed')
 	queue_free()
+
+
+func _on_body_entered(body: Node2D) -> void:
+	if exceptionArray.has(body):
+		return
+	elif body is CharacterBody2D:
+		body.health.changeHealth(-DAMAGE)
+		queue_free()

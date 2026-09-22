@@ -16,3 +16,7 @@ func changeHealth(difference: float) -> void:
 func setHealth(newHealth: float) -> void:
 	var difference: float = newHealth - health
 	changeHealth(difference)
+	
+func setMaxHealth(newMax: float) -> void:
+	maxHealth = newMax
+	health = maxHealth

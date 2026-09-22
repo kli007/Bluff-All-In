@@ -5,6 +5,7 @@
 [ext_resource type="PackedScene" uid="uid://d20v3s7mqbsg5" path="res://Player/Player.tscn" id="2_0xm2m"]
 [ext_resource type="PackedScene" uid="uid://bc4g2w3j8inqx" path="res://Cards/PlayedCards.tscn" id="3_1bvp3"]
 [ext_resource type="PackedScene" uid="uid://ce7wj45lpekfs" path="res://Cards/PendCards.tscn" id="3_h2yge"]
+[ext_resource type="PackedScene" uid="uid://d12prubm8tkvv" path="res://Enemy/enemyTemplate.tscn" id="4_kek77"]
 [ext_resource type="Script" uid="uid://bupjwinwws13a" path="res://Player/player_health.gd" id="5_7mycd"]
 [ext_resource type="Script" uid="uid://vqjxie4pbklg" path="res://player_projectiles.gd" id="6_272bh"]
 [ext_resource type="Script" uid="uid://c78x4guohu2ek" path="res://player_combo.gd" id="8_5vw27"]
@@ -20,6 +21,9 @@ position = Vector2(99, 16)
 
 [node name="RemoteTransform2D" type="RemoteTransform2D" parent="Player" unique_id=226148389]
 remote_path = NodePath("../../Camera2D")
+
+[node name="EnemyTemplate" parent="." unique_id=688067766 instance=ExtResource("4_kek77")]
+position = Vector2(245, 23)
 
 [node name="Camera2D" type="Camera2D" parent="." unique_id=919362061]
 position = Vector2(99, 16)

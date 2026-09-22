@@ -1,6 +1,35 @@
 [gd_scene format=3 uid="uid://d12prubm8tkvv"]
 
 [ext_resource type="Script" uid="uid://d2l3fyyy71f83" path="res://Enemy/enemy_template.gd" id="1_yweyh"]
+[ext_resource type="Script" uid="uid://gxdj8l1ahlhk" path="res://Player/health.gd" id="2_xdilo"]
+[ext_resource type="Texture2D" uid="uid://c21ql7rvqyj60" path="res://Assets/Sprite/Enemy/scary-scarecrow-with-hoe-bba6.png" id="3_4edni"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_5sqx0"]
+size = Vector2(58, 69)
 
 [node name="EnemyTemplate" type="CharacterBody2D" unique_id=688067766]
 script = ExtResource("1_yweyh")
+
+[node name="HealthManager" type="Node" parent="." unique_id=1670032901]
+script = ExtResource("2_xdilo")
+
+[node name="Sprite2D" type="Sprite2D" parent="." unique_id=233537534]
+texture = ExtResource("3_4edni")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=6955810]
+position = Vector2(-1, -2)
+shape = SubResource("RectangleShape2D_5sqx0")
+
+[node name="HealthControl" type="Control" parent="." unique_id=1438825831]
+layout_mode = 3
+anchors_preset = 0
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="HealthLabel" type="Label" parent="HealthControl" unique_id=255970598]
+layout_mode = 0
+offset_left = -30.0
+offset_top = -60.0
+offset_right = 29.0
+offset_bottom = -37.0
+horizontal_alignment = 1
