@@ -86,7 +86,7 @@ func checkHelper(hand: Array) -> Dictionary: #we can reuse this code a bunch
 func checkPairs(matches: Dictionary, needed: int) -> bool:
 	var currentPairs: int = 0
 	for key in matches.keys():
-		if matches[key] == 2:
+		if matches[key] == 2 and key != '':
 			currentPairs += 1
 			
 	if currentPairs >= needed:
@@ -97,7 +97,7 @@ func checkPairs(matches: Dictionary, needed: int) -> bool:
 func checkKinds(matches: Dictionary, needed: int) -> bool:
 	var isKinds: bool = false
 	for key in matches.keys():
-		if matches[key] == needed:
+		if matches[key] == needed and key != '':
 			isKinds = true
 			break
 	return isKinds
@@ -114,6 +114,8 @@ func checkStraight(hand: Array) -> bool:
 		isStraight = false
 	else:
 		rankArray.sort()
+		if rankArray == [0, 1, 2, 3, 12]:
+			return true
 		for key in range(rankArray.size() - 1):
 			if rankArray[key] + 1 != rankArray[key + 1]:
 				isStraight = false
@@ -123,7 +125,7 @@ func checkStraight(hand: Array) -> bool:
 func checkFlush(hand: Array) -> bool:
 	var isFlush: bool = true
 	for key in range(hand.size() - 1):
-		if hand[key].suit != hand[key + 1].suit:
+		if hand[key].suit != hand[key + 1].suit or hand[key].suit == '':
 			isFlush = false
 			break
 	return isFlush

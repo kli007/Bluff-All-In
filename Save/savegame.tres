@@ -29,7 +29,7 @@ pend_cards = [{
 "suit": "Hearts"
 }]
 played_cards = [{
-"rank": "6",
+"rank": "A",
 "suit": "Hearts"
 }, {
 "rank": "5",
