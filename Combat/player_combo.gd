@@ -7,5 +7,5 @@ func _ready() -> void:
 	text = "Last Played Combo"
 	
 	
-func _on_player_combo_changed() -> void:
-	text = "Last Played Combo: " + playerCombo.lastPlayedHand
+func _on_player_combo_changed(playedHand: String) -> void:
+	text = "Last Played Combo: " + playedHand

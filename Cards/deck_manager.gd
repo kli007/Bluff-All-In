@@ -35,40 +35,41 @@ func deleteDeck() -> void:
 	print('deleted deck')
 	activeArray = []
 	
-func checkHand(playedNodes: Array) -> String:
-	var returnHand: String
-	
+func checkHand(playedNodes: Array) -> void:
+	var emitHand: String
 	var matches = checkHelper(playedNodes)
+	
 	if checkStraight(playedNodes) and checkFlush(playedNodes):
-		lastPlayedHand = 'Straight Flush'
-		returnHand = 'SF'
+		lastPlayedHand = 'SF'
+		emitHand = 'Straight Flush'
 	elif checkKinds(matches, 4):
-		lastPlayedHand = '4 of a Kind'
-		returnHand = '4kind'
+		lastPlayedHand = '4kind'
+		emitHand = '4 of a Kind'
 	elif checkKinds(matches, 3) and checkPairs(matches, 1):
-		lastPlayedHand = 'Full House'
-		returnHand = 'FH'
+		lastPlayedHand = 'FH'
+		emitHand = 'Full House'
 	elif checkFlush(playedNodes):
-		lastPlayedHand = 'Flush'
-		returnHand = 'flush'
+		lastPlayedHand = 'flush'
+		emitHand = 'Flush'
 	elif checkStraight(playedNodes):
-		lastPlayedHand = 'Straight'
-		returnHand = 'straight'
+		lastPlayedHand = 'straight'
+		emitHand = 'Straight'
 	elif checkKinds(matches, 3):
-		lastPlayedHand = '3 of a Kind'
-		returnHand = '3kind'
+		lastPlayedHand = '3kind'
+		emitHand = '3 of a Kind'
 	elif checkPairs(matches, 2):
-		lastPlayedHand = 'Two Pair'
-		returnHand = '2pair'
+		lastPlayedHand = '2pair'
+		emitHand = 'Two Pair'
 	elif checkPairs(matches, 1):
-		lastPlayedHand = 'Pair'
-		returnHand = 'pair'
+		lastPlayedHand = 'pair'
+		emitHand = 'Pair'
 	else:
-		lastPlayedHand = 'High Card'
-		returnHand = 'HC'
+		lastPlayedHand = 'HC'
+		emitHand = 'High Card'
 		
-	comboChanged.emit()
-	return ("hand_" + returnHand + "_dmg")
+	lastPlayedHand = ("hand_" + lastPlayedHand + "_dmg")
+	comboChanged.emit(emitHand)
+	
 	
 		
 func checkHelper(hand: Array) -> Dictionary: #we can reuse this code a bunch

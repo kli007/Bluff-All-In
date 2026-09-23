@@ -8,6 +8,7 @@ extends CharacterBody2D
 @onready var deckNode: Node = $DeckManager
 @onready var healthNode: Node = $HealthManager
 @onready var dashTime: Node = $DashTimer
+@onready var trickTime: Node = $TrickTimer
 @onready var projNode: Node = $ProjectileManager
 @onready var visNode: Node = $VisualManager
 
@@ -16,13 +17,12 @@ extends CharacterBody2D
 
 @onready var spawnLocation: Vector2 = global_position
 
-var attack: bool = false
 var direction: Vector2
 var lastDirection: Vector2 = Vector2.RIGHT
 var isDashing: bool = false
 var burnActive: bool = false
 
-var isActioning: bool = false
+var isActioning: String = ''
 
 const MAX_PLAYED_CARDS: int = 5
 const MAX_PEND_CARDS: int = 7
@@ -37,13 +37,12 @@ func _ready() -> void:
 
 func _physics_process(delta: float) -> void:
 	# Add the gravity.
-	isActioning = false
 	if not is_on_floor():
 		velocity += get_gravity() * delta
 		
 	controls(delta)
 		
-	if isDashing:
+	if isActioning == 'dash':
 		velocity.x = lastDirection.x * DashSpeed
 	else:
 		if direction and animNode.name != 'Jump':
@@ -51,7 +50,7 @@ func _physics_process(delta: float) -> void:
 		else:
 			velocity.x = move_toward(velocity.x, 0, speed)
 
-	if not attack:
+	if isActioning != 'attack' and isActioning != 'showdown':
 		move_and_slide()
 		animation_control()
 		flip_sprite()
@@ -101,8 +100,8 @@ func trickCards() -> void:
 	setPlayedCard()
 
 func _on_animation_player_animation_finished(anim_name: StringName) -> void:
-	if anim_name == "Attack_1":
-		attack = false
+	if anim_name == "Attack_1" or anim_name == "Showdown":
+		isActioning = ''
 
 	
 func respawn(location: Vector2) -> void:
@@ -110,12 +109,22 @@ func respawn(location: Vector2) -> void:
 		
 		
 func _on_dash_timer_timeout() -> void:
-	isDashing = false
+	isActioning = ''
 	velocity.x = 0
+	
+func _on_trick_timer_timeout() -> void:
+	isActioning = ''
+
 
 func _on_hurtbox_body_entered(body: Node2D) -> void:
+	var damage: String
+	match isActioning:
+		"attack":
+			damage = 'player_atk_dmg'
+		'showdown':
+			damage = deckNode.lastPlayedHand
 	if body is CharacterBody2D and body.name != 'Player':
-		CombatManager.dealDamage('player_atk_dmg', 'medium_kb', body, global_position)
+		CombatManager.dealDamage(damage, 'medium_kb', body, global_position)
 
 func controls(deltaTime: float) -> void:
 	if not isDashing:
@@ -133,24 +142,24 @@ func controls(deltaTime: float) -> void:
 	if CardData.checkSpace(playedNodes) and CardData.checkSpace(pendNodes) < MAX_PEND_CARDS:
 		if Input.is_action_just_pressed("Attack") and is_on_floor() and not isActioning:
 			setPlayedCard()
-			attack = true
 			animNode.play("Attack_1")
-			isActioning = true
+			isActioning = 'attack'
 			
 			
-		if Input.is_action_just_pressed("Trick") and not isActioning:
-			if burnActive and CardData.checkSpace(playedNodes) < MAX_PLAYED_CARDS:
-				burnCards('jump')
-				burnActive = false
-			elif projNode.projectileCount:
-				projNode.create_projectile(self, lastDirection, global_position)
-				if not projNode.projectileCount:
-					trickCards()
-			isActioning = true
-		if Input.is_action_pressed("Trick") and not burnActive:
-			projNode.reloadProjectiles(deltaTime)
-		if Input.is_action_just_released("Trick") and not burnActive:
-			projNode.releaseReload()
+	if Input.is_action_just_pressed("Trick") and not isActioning:
+		if burnActive and (CardData.checkSpace(playedNodes) < MAX_PLAYED_CARDS):
+			burnCards('jump')
+			burnActive = false
+		elif projNode.projectileCount and CardData.checkSpace(pendNodes) < MAX_PEND_CARDS:
+			projNode.create_projectile(self, lastDirection, global_position)
+			if not projNode.projectileCount:
+				trickCards()
+			trickTime.start()
+			isActioning = 'trick'
+	if Input.is_action_pressed("Trick") and not burnActive:
+		projNode.reloadProjectiles(deltaTime)
+	if Input.is_action_just_released("Trick") and not burnActive:
+		projNode.releaseReload()
 		
 	if Input.is_action_pressed('Burn'):
 		burnActive = true
@@ -161,9 +170,8 @@ func controls(deltaTime: float) -> void:
 		if burnActive and CardData.checkSpace(playedNodes) < MAX_PLAYED_CARDS:
 			burnCards('dash')
 			burnActive = false
-		isDashing = true
 		dashTime.start()
-		isActioning = true
+		isActioning = 'dash'
 			
 	'''velocity.y = jump_velocity
 	burnCards('jump')
@@ -176,10 +184,10 @@ func controls(deltaTime: float) -> void:
 				burnCards('heal')
 				burnActive = false
 		elif CardData.checkSpace(playedNodes) < MAX_PLAYED_CARDS:
-			CombatManager.checkInValues(deckNode.checkHand(playedNodes))
+			animNode.play("Showdown")
+			deckNode.checkHand(playedNodes)
 			showdownPlayedCards()
-			
-		isActioning = true
+			isActioning = 'showdown'
 			
 	if Input.is_action_pressed("DeleteHealthDebug"):
 		healthNode.changeHealth(-1.0)
