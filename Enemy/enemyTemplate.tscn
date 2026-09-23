@@ -1,7 +1,7 @@
 [gd_scene format=3 uid="uid://d12prubm8tkvv"]
 
 [ext_resource type="Script" uid="uid://d2l3fyyy71f83" path="res://Enemy/enemy_template.gd" id="1_yweyh"]
-[ext_resource type="Script" uid="uid://gxdj8l1ahlhk" path="res://Player/health.gd" id="2_xdilo"]
+[ext_resource type="Script" uid="uid://gxdj8l1ahlhk" path="res://Health/health.gd" id="2_xdilo"]
 [ext_resource type="Texture2D" uid="uid://c21ql7rvqyj60" path="res://Assets/Sprite/Enemy/scary-scarecrow-with-hoe-bba6.png" id="3_4edni"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_5sqx0"]

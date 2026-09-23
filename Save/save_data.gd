@@ -6,4 +6,4 @@ extends Resource
 @export var player_projectiles: int = 0
 @export var current_deck: Array = []
 @export var pend_cards: Array = []
-@export var played_cards: Array =[]
+@export var played_cards: Array = []

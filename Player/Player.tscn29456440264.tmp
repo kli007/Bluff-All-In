@@ -4,7 +4,7 @@
 [ext_resource type="Script" uid="uid://gxdj8l1ahlhk" path="res://Health/health.gd" id="2_ddoul"]
 [ext_resource type="Texture2D" uid="uid://udm78ito0yap" path="res://Assets/Sprite/Player/spriteSheet.png" id="2_kpjcp"]
 [ext_resource type="Script" uid="uid://ws0antd52kaf" path="res://Cards/deck_manager.gd" id="3_kne1u"]
-[ext_resource type="Script" uid="uid://dos6c6reryimp" path="res://Projectiles/projectile_manager.gd" id="4_8g4oa"]
+[ext_resource type="Script" uid="uid://dos6c6reryimp" path="res://Combat/projectile_manager.gd" id="4_8g4oa"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_5sqx0"]
 size = Vector2(20, 22.666668)
@@ -192,6 +192,9 @@ _data = {
 
 [node name="Player" type="CharacterBody2D" unique_id=789404969]
 script = ExtResource("1_kpjcp")
+speed = null
+DashSpeed = null
+jump_velocity = null
 
 [node name="HealthManager" type="Node" parent="." unique_id=819642966]
 script = ExtResource("2_ddoul")

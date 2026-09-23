@@ -1,5 +1,5 @@
 extends Node
-var projectile = preload("res://Player/projectile.tscn")
+var projectile = preload("res://Projectiles/projectile.tscn")
 
 signal proj_changed
 signal reload_status

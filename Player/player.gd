@@ -27,8 +27,6 @@ var isActioning: bool = false
 const MAX_PLAYED_CARDS: int = 5
 const MAX_PEND_CARDS: int = 7
 const HEAL_BURN_MINIMUM: int = 2
-const SWORD_DAMAGE: float = 15.0
-const SMALL_KNOCKBACK: float = 100.0
 
 var currentTrick: Dictionary = {'rank': '3', 'suit': ''}
 
@@ -87,7 +85,7 @@ func moveUpPendCards() -> void:
 	setPendCard()
 	
 func showdownPlayedCards() -> void:
-		CardData.removeCards(playedNodes)
+	CardData.removeCards(playedNodes)
 		
 func burnCards(action: String) -> void:
 	match action:
@@ -117,7 +115,7 @@ func _on_dash_timer_timeout() -> void:
 
 func _on_hurtbox_body_entered(body: Node2D) -> void:
 	if body is CharacterBody2D and body.name != 'Player':
-		body.takeDamage(SWORD_DAMAGE, SMALL_KNOCKBACK, global_position)
+		CombatManager.dealDamage('player_atk_dmg', 'medium_kb', body, global_position)
 
 func controls(deltaTime: float) -> void:
 	if not isDashing:
@@ -178,8 +176,9 @@ func controls(deltaTime: float) -> void:
 				burnCards('heal')
 				burnActive = false
 		elif CardData.checkSpace(playedNodes) < MAX_PLAYED_CARDS:
-			deckNode.checkHand(playedNodes)
+			CombatManager.checkInValues(deckNode.checkHand(playedNodes))
 			showdownPlayedCards()
+			
 		isActioning = true
 			
 	if Input.is_action_pressed("DeleteHealthDebug"):

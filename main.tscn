@@ -6,9 +6,9 @@
 [ext_resource type="PackedScene" uid="uid://bc4g2w3j8inqx" path="res://Cards/PlayedCards.tscn" id="3_1bvp3"]
 [ext_resource type="PackedScene" uid="uid://ce7wj45lpekfs" path="res://Cards/PendCards.tscn" id="3_h2yge"]
 [ext_resource type="PackedScene" uid="uid://d12prubm8tkvv" path="res://Enemy/enemyTemplate.tscn" id="4_kek77"]
-[ext_resource type="Script" uid="uid://bupjwinwws13a" path="res://Player/player_health.gd" id="5_7mycd"]
-[ext_resource type="Script" uid="uid://vqjxie4pbklg" path="res://player_projectiles.gd" id="6_272bh"]
-[ext_resource type="Script" uid="uid://c78x4guohu2ek" path="res://player_combo.gd" id="8_5vw27"]
+[ext_resource type="Script" uid="uid://bupjwinwws13a" path="res://Health/player_health.gd" id="5_7mycd"]
+[ext_resource type="Script" uid="uid://vqjxie4pbklg" path="res://Projectiles/player_projectiles.gd" id="6_272bh"]
+[ext_resource type="Script" uid="uid://c78x4guohu2ek" path="res://Combat/player_combo.gd" id="8_5vw27"]
 
 [node name="Main" type="Node" unique_id=1517588686]
 script = ExtResource("1_lquwl")
@@ -18,6 +18,9 @@ position = Vector2(191, 7)
 
 [node name="Player" parent="." unique_id=789404969 instance=ExtResource("2_0xm2m")]
 position = Vector2(99, 16)
+speed = 200.0
+DashSpeed = 800.0
+jump_velocity = -350.0
 
 [node name="RemoteTransform2D" type="RemoteTransform2D" parent="Player" unique_id=226148389]
 remote_path = NodePath("../../Camera2D")

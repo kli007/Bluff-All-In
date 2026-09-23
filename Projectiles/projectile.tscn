@@ -1,15 +1,15 @@
 [gd_scene format=3 uid="uid://xt7doyw6x2ox"]
 
-[ext_resource type="Script" uid="uid://bi67wj2e2wj7v" path="res://Player/projectile.gd" id="1_7k6uo"]
-[ext_resource type="Texture2D" uid="uid://bbedbd08thbv8" path="res://Assets/Sprite/Player/projectile.png" id="1_o11rv"]
+[ext_resource type="Script" uid="uid://bi67wj2e2wj7v" path="res://Projectiles/projectile.gd" id="1_ggq0q"]
+[ext_resource type="Texture2D" uid="uid://bbedbd08thbv8" path="res://Assets/Sprite/Player/projectile.png" id="2_08w86"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_5sqx0"]
 
 [node name="Projectile" type="Area2D" unique_id=1628043726]
-script = ExtResource("1_7k6uo")
+script = ExtResource("1_ggq0q")
 
 [node name="Sprite2D" type="Sprite2D" parent="." unique_id=1030241480]
-texture = ExtResource("1_o11rv")
+texture = ExtResource("2_08w86")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=409154479]
 shape = SubResource("RectangleShape2D_5sqx0")
