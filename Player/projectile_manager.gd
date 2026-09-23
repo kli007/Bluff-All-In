@@ -8,10 +8,10 @@ signal reload_status
 
 var justReloaded: bool = false
 var currentProjTime: float = 0.0
-const MAX_PROJ_COUNT: int = 1  # can be changed later
+const MAX_PROJ_COUNT: int = 4  # can be changed later
 const RELOAD_TIME: float = 1.0
 
-func create_projectile(playerNode, playerDirection: float, playerGP: Vector2) -> void:
+func create_projectile(playerNode: Node, playerDirection: Vector2, playerGP: Vector2) -> void:
 	var Proj = get_parent().get_parent().get_node("ProjectileGroup")
 	var new_projectile = projectile.instantiate()
 	new_projectile.global_position = playerGP

@@ -10,20 +10,19 @@ var exceptionArray: Array
 
 func _ready() -> void:
 	exceptionArray.append(player)
-	for proj in projNode.get_children():
-		exceptionArray.append(proj)
-
+	'''for proj in projNode.get_children():
+		exceptionArray.append(proj) #may not be necessary? projectiles are all area 2d
+'''
 func _physics_process(delta: float) -> void:
 	position += direction * SPEED * delta
 
-func lock_on_to_player(player_dir: float, playerNode:Node2D, projectileNode:Node):
-	direction = Vector2(cos(deg_to_rad(player_dir)), sin(deg_to_rad(player_dir)))
+func lock_on_to_player(player_dir: Vector2, playerNode:Node2D, projectileNode:Node):
+	direction = player_dir
 	player = playerNode
 	projNode = projectileNode
 	
 
 func _on_visible_on_screen_notifier_2d_screen_exited() -> void:
-	#print('removed')
 	queue_free()
 
 
@@ -31,5 +30,5 @@ func _on_body_entered(body: Node2D) -> void:
 	if exceptionArray.has(body):
 		return
 	elif body is CharacterBody2D:
-		body.health.changeHealth(-DAMAGE)
+		body.takeDamage(DAMAGE, 0, Vector2(0,0))
 		queue_free()

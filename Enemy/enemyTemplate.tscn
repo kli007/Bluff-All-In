@@ -5,7 +5,7 @@
 [ext_resource type="Texture2D" uid="uid://c21ql7rvqyj60" path="res://Assets/Sprite/Enemy/scary-scarecrow-with-hoe-bba6.png" id="3_4edni"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_5sqx0"]
-size = Vector2(58, 69)
+size = Vector2(31, 61)
 
 [node name="EnemyTemplate" type="CharacterBody2D" unique_id=688067766]
 script = ExtResource("1_yweyh")
@@ -17,7 +17,7 @@ script = ExtResource("2_xdilo")
 texture = ExtResource("3_4edni")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=6955810]
-position = Vector2(-1, -2)
+position = Vector2(-0.5, -0.5)
 shape = SubResource("RectangleShape2D_5sqx0")
 
 [node name="HealthControl" type="Control" parent="." unique_id=1438825831]
@@ -33,3 +33,9 @@ offset_top = -60.0
 offset_right = 29.0
 offset_bottom = -37.0
 horizontal_alignment = 1
+
+[node name="KnockbackTimer" type="Timer" parent="." unique_id=27881761]
+wait_time = 0.2
+one_shot = true
+
+[connection signal="timeout" from="KnockbackTimer" to="." method="_on_knockback_timer_timeout"]

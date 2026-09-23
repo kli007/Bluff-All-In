@@ -9,6 +9,7 @@ extends CharacterBody2D
 @onready var healthNode: Node = $HealthManager
 @onready var dashTime: Node = $DashTimer
 @onready var projNode: Node = $ProjectileManager
+@onready var visNode: Node = $VisualManager
 
 @onready var pendNodes: Array = get_node('%HUD/PendCardsControl/PendCards').get_children()
 @onready var playedNodes: Array = get_node('%HUD/UserUIControl/PlayedCards').get_children()
@@ -16,8 +17,8 @@ extends CharacterBody2D
 @onready var spawnLocation: Vector2 = global_position
 
 var attack: bool = false
-var direction: float
-var lastDirection: float
+var direction: Vector2
+var lastDirection: Vector2 = Vector2.RIGHT
 var isDashing: bool = false
 var burnActive: bool = false
 
@@ -27,6 +28,7 @@ const MAX_PLAYED_CARDS: int = 5
 const MAX_PEND_CARDS: int = 7
 const HEAL_BURN_MINIMUM: int = 2
 const SWORD_DAMAGE: float = 15.0
+const SMALL_KNOCKBACK: float = 100.0
 
 var currentTrick: Dictionary = {'rank': '3', 'suit': ''}
 
@@ -44,10 +46,10 @@ func _physics_process(delta: float) -> void:
 	controls(delta)
 		
 	if isDashing:
-		velocity.x = lastDirection * DashSpeed
+		velocity.x = lastDirection.x * DashSpeed
 	else:
 		if direction and animNode.name != 'Jump':
-			velocity.x = direction * speed
+			velocity.x = direction.x * speed
 		else:
 			velocity.x = move_toward(velocity.x, 0, speed)
 
@@ -67,10 +69,10 @@ func animation_control() -> void:
 		animNode.play('Idle')
 	
 func flip_sprite() -> void:
-	if direction < 0:
-		$PlayerSprite.flip_h = true
-	if direction > 0:
-		$PlayerSprite.flip_h = false
+	if direction.x < 0:
+		visNode.scale.x = -1
+	if direction.x > 0:
+		visNode.scale.x = 1
 		
 func setPendCard() -> void:
 	while CardData.checkSpace(pendNodes) and not deckNode.checkDeck():
@@ -115,12 +117,11 @@ func _on_dash_timer_timeout() -> void:
 
 func _on_hurtbox_body_entered(body: Node2D) -> void:
 	if body is CharacterBody2D and body.name != 'Player':
-		body.health.changeHealth(-SWORD_DAMAGE)
-
+		body.takeDamage(SWORD_DAMAGE, SMALL_KNOCKBACK, global_position)
 
 func controls(deltaTime: float) -> void:
 	if not isDashing:
-		direction = Input.get_axis("Move_Left", "Move_Right")
+		direction.x = Input.get_axis("Move_Left", "Move_Right")
 	
 	if direction:
 		lastDirection = direction
