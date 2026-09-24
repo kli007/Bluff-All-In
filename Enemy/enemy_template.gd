@@ -6,6 +6,7 @@ const MAX_HEALTH = 300
 @onready var hLabel = $HealthControl/HealthLabel
 @onready var health = $HealthManager
 @onready var knockTimer = $KnockbackTimer
+@onready var spawnLocation: Vector2 = global_position
 
 var isKnockback: bool = false
 var knockbackVelocity: Vector2
@@ -44,3 +45,7 @@ func _on_knockback_timer_timeout() -> void:
 	
 func movement() -> void:
 	return
+
+func respawn(new_location: Vector2) -> void:
+	global_position = new_location
+	health.setHealth(MAX_HEALTH)

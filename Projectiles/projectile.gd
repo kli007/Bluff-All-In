@@ -8,6 +8,8 @@ var player: Node2D
 var projNode: Node
 var exceptionArray: Array
 
+signal hitTarget
+
 func _ready() -> void:
 	exceptionArray.append(player)
 	'''for proj in projNode.get_children():
@@ -21,14 +23,13 @@ func lock_on_to_player(player_dir: Vector2, playerNode:Node2D, projectileNode:No
 	player = playerNode
 	projNode = projectileNode
 	
-
 func _on_visible_on_screen_notifier_2d_screen_exited() -> void:
 	queue_free()
-
 
 func _on_body_entered(body: Node2D) -> void:
 	if exceptionArray.has(body):
 		return
 	elif body is CharacterBody2D:
 		CombatManager.dealDamage('player_proj_dmg', 'small_kb', body, global_position)
+		hitTarget.emit()
 		queue_free()

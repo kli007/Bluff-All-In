@@ -1,7 +1,8 @@
 extends Node
 
-signal comboChanged
+
 var lastPlayedHand: String = ''
+var emitHand: String = ''
 
 var cardDict: Dictionary = {} #This holds all the scenes for each individual card, never changes
 var activeArray: Array = [] # This hold the name of current cards in deck, changed
@@ -36,7 +37,6 @@ func deleteDeck() -> void:
 	activeArray = []
 	
 func checkHand(playedNodes: Array) -> void:
-	var emitHand: String
 	var matches = checkHelper(playedNodes)
 	
 	if checkStraight(playedNodes) and checkFlush(playedNodes):
@@ -68,8 +68,6 @@ func checkHand(playedNodes: Array) -> void:
 		emitHand = 'High Card'
 		
 	lastPlayedHand = ("hand_" + lastPlayedHand + "_dmg")
-	comboChanged.emit(emitHand)
-	
 	
 		
 func checkHelper(hand: Array) -> Dictionary: #we can reuse this code a bunch

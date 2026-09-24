@@ -17,9 +17,10 @@ extends CharacterBody2D
 
 @onready var spawnLocation: Vector2 = global_position
 
+signal comboChanged
+
 var direction: Vector2
 var lastDirection: Vector2 = Vector2.RIGHT
-var isDashing: bool = false
 var burnActive: bool = false
 
 var isActioning: String = ''
@@ -36,10 +37,6 @@ func _ready() -> void:
 	setPendCard()
 
 func _physics_process(delta: float) -> void:
-	# Add the gravity.
-	if not is_on_floor():
-		velocity += get_gravity() * delta
-		
 	controls(delta)
 		
 	if isActioning == 'dash':
@@ -54,7 +51,9 @@ func _physics_process(delta: float) -> void:
 		move_and_slide()
 		animation_control()
 		flip_sprite()
-	
+		if not is_on_floor():
+			velocity += get_gravity() * delta
+		
 func animation_control() -> void:
 	if velocity.y < 0:
 		animNode.play('Jump')
@@ -103,10 +102,8 @@ func _on_animation_player_animation_finished(anim_name: StringName) -> void:
 	if anim_name == "Attack_1" or anim_name == "Showdown":
 		isActioning = ''
 
-	
 func respawn(location: Vector2) -> void:
 	position = location
-		
 		
 func _on_dash_timer_timeout() -> void:
 	isActioning = ''
@@ -115,19 +112,22 @@ func _on_dash_timer_timeout() -> void:
 func _on_trick_timer_timeout() -> void:
 	isActioning = ''
 
-
 func _on_hurtbox_body_entered(body: Node2D) -> void:
 	var damage: String
+	var comboSignal: String
 	match isActioning:
 		"attack":
 			damage = 'player_atk_dmg'
+			comboSignal = 'Attack'
 		'showdown':
 			damage = deckNode.lastPlayedHand
+			comboSignal = deckNode.emitHand
 	if body is CharacterBody2D and body.name != 'Player':
+		comboChanged.emit(comboSignal)
 		CombatManager.dealDamage(damage, 'medium_kb', body, global_position)
 
 func controls(deltaTime: float) -> void:
-	if not isDashing:
+	if isActioning != 'dash':
 		direction.x = Input.get_axis("Move_Left", "Move_Right")
 	
 	if direction:
@@ -139,13 +139,12 @@ func controls(deltaTime: float) -> void:
 	if Input.is_action_just_pressed("Delete"):
 		deckNode.deleteDeck()
 		
-	if CardData.checkSpace(playedNodes) and CardData.checkSpace(pendNodes) < MAX_PEND_CARDS:
-		if Input.is_action_just_pressed("Attack") and is_on_floor() and not isActioning:
+	if Input.is_action_just_pressed("Attack") and not isActioning:
+		if CardData.checkSpace(playedNodes) and CardData.checkSpace(pendNodes) < MAX_PEND_CARDS:
 			setPlayedCard()
 			animNode.play("Attack_1")
 			isActioning = 'attack'
-			
-			
+	
 	if Input.is_action_just_pressed("Trick") and not isActioning:
 		if burnActive and (CardData.checkSpace(playedNodes) < MAX_PLAYED_CARDS):
 			burnCards('jump')
