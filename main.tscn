@@ -8,7 +8,7 @@
 [ext_resource type="PackedScene" uid="uid://d12prubm8tkvv" path="res://Enemy/enemyTemplate.tscn" id="4_kek77"]
 [ext_resource type="Script" uid="uid://bupjwinwws13a" path="res://Health/player_health.gd" id="5_7mycd"]
 [ext_resource type="Script" uid="uid://vqjxie4pbklg" path="res://Projectiles/player_projectiles.gd" id="6_272bh"]
-[ext_resource type="Script" uid="uid://c78x4guohu2ek" path="res://Combat/player_combo.gd" id="8_5vw27"]
+[ext_resource type="PackedScene" uid="uid://c6gwf1rure1a0" path="res://Combat/player_combo.tscn" id="9_kek77"]
 
 [node name="Main" type="Node" unique_id=1517588686]
 script = ExtResource("1_lquwl")
@@ -67,13 +67,11 @@ grow_horizontal = 0
 [node name="PendCards" parent="HUD/PendCardsControl" unique_id=1641465469 instance=ExtResource("3_h2yge")]
 position = Vector2(282, 41)
 
-[node name="PlayerCombo" type="Label" parent="HUD/PendCardsControl" unique_id=1821746738]
+[node name="PlayerCombo" parent="HUD/PendCardsControl" unique_id=2032755852 instance=ExtResource("9_kek77")]
 layout_mode = 0
-offset_left = 239.0
-offset_top = 112.0
-offset_right = 366.0
-offset_bottom = 286.0
-autowrap_mode = 3
-script = ExtResource("8_5vw27")
+offset_left = 237.0
+offset_top = 111.0
+offset_right = 364.0
+offset_bottom = 285.0
 
 [node name="ProjectileGroup" type="Node" parent="." unique_id=621505026]

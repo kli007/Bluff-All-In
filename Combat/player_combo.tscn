@@ -1,0 +1,28 @@
+[gd_scene format=3 uid="uid://c6gwf1rure1a0"]
+
+[ext_resource type="Script" uid="uid://c78x4guohu2ek" path="res://Combat/player_combo.gd" id="1_1qgdp"]
+
+[node name="PlayerCombo" type="Label" unique_id=2032755852]
+offset_left = 239.0
+offset_top = 112.0
+offset_right = 369.0
+offset_bottom = 287.0
+autowrap_mode = 3
+script = ExtResource("1_1qgdp")
+
+[node name="ComboTimeBar" type="ProgressBar" parent="." unique_id=64927081]
+layout_mode = 0
+offset_top = -11.0
+offset_right = 130.0
+max_value = 5.0
+show_percentage = false
+
+[node name="ComboTimer" type="Timer" parent="." unique_id=1158403714]
+wait_time = 5.0
+one_shot = true
+
+[node name="BufferTimer" type="Timer" parent="." unique_id=1690631915]
+one_shot = true
+
+[connection signal="timeout" from="ComboTimer" to="." method="_on_combo_timer_timeout"]
+[connection signal="timeout" from="BufferTimer" to="." method="_on_buffer_timer_timeout"]
