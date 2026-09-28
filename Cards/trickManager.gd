@@ -29,6 +29,9 @@ func changeRank(current: String, trick: String) -> String:
 		'Decrease':
 			if key > RANKMIN: 
 				returnRank = CardData.ranks[key - 1]
+		_:#just for matching
+			if trick != '':
+				returnRank = trick
 	return(returnRank)
 	
 func changeSuit(current: String, trick: String) -> String:
@@ -45,4 +48,7 @@ func changeSuit(current: String, trick: String) -> String:
 				returnSuit = CardData.suits[SUITEND]
 			else:
 				returnSuit = CardData.suits[key - 1]
+		_: #just for matching
+			if trick != '':
+				returnSuit = trick
 	return(returnSuit)

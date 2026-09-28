@@ -10,7 +10,7 @@ func setData(inSuit, inRank) -> void:
 func resetData() -> void:
 	suit = ''
 	rank = ''
-	
+
 func checkData() -> bool:
 	if rank == '' and suit == '':
 		return true
