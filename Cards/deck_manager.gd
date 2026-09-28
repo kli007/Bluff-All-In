@@ -39,7 +39,10 @@ func deleteDeck() -> void:
 func checkHand(playedNodes: Array) -> void:
 	var matches = checkHelper(playedNodes)
 	
-	if checkStraight(playedNodes) and checkFlush(playedNodes):
+	if checkRoyal(playedNodes) and checkFlush(playedNodes):
+		lastPlayedHand = 'RF'
+		emitHand = 'Royal Flush'
+	elif checkStraight(playedNodes) and checkFlush(playedNodes):
 		lastPlayedHand = 'SF'
 		emitHand = 'Straight Flush'
 	elif checkKinds(matches, 4):
@@ -128,3 +131,15 @@ func checkFlush(hand: Array) -> bool:
 			isFlush = false
 			break
 	return isFlush
+	
+func checkRoyal(hand: Array) -> bool:
+	var rankArray: Array = []
+	for card in hand:
+		var newRank: String = card.rank
+		if newRank != '':
+			rankArray.append(CardData.ranks.find(newRank))
+	rankArray.sort()
+	if rankArray == [8, 9, 10, 11, 12]:
+		return true
+	else:
+		return false

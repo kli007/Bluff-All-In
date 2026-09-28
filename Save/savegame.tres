@@ -29,18 +29,18 @@ pend_cards = [{
 "suit": "Clubs"
 }]
 played_cards = [{
-"rank": "4",
+"rank": "10",
+"suit": "Clubs"
+}, {
+"rank": "J",
+"suit": "Clubs"
+}, {
+"rank": "Q",
+"suit": "Clubs"
+}, {
+"rank": "K",
 "suit": "Clubs"
 }, {
 "rank": "A",
-"suit": "Diamonds"
-}, {
-"rank": "4",
-"suit": "Hearts"
-}, {
-"rank": "7",
 "suit": "Clubs"
-}, {
-"rank": "4",
-"suit": "Spades"
 }]

@@ -18,6 +18,7 @@ extends CharacterBody2D
 @onready var spawnLocation: Vector2 = global_position
 
 signal comboChanged
+signal needMultiplier
 
 var direction: Vector2
 var lastDirection: Vector2 = Vector2.RIGHT
@@ -83,8 +84,9 @@ func moveUpPendCards() -> void:
 	setPendCard()
 	
 func showdownPlayedCards() -> void:
+	needMultiplier.emit()
 	CardData.removeCards(playedNodes)
-		
+	
 func burnCards(action: String) -> void:
 	match action:
 		'dash':
@@ -124,7 +126,7 @@ func _on_hurtbox_body_entered(body: Node2D) -> void:
 			comboSignal = deckNode.emitHand
 	if body is CharacterBody2D and body.name != 'Player':
 		comboChanged.emit(comboSignal)
-		CombatManager.dealDamage(damage, 'medium_kb', body, global_position)
+		CombatManager.dealDamage(damage, body, global_position)
 
 func controls(deltaTime: float) -> void:
 	if isActioning != 'dash':
