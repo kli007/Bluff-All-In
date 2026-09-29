@@ -75,3 +75,5 @@ offset_right = 364.0
 offset_bottom = 285.0
 
 [node name="ProjectileGroup" type="Node" parent="." unique_id=621505026]
+
+[node name="ItemGroup" type="Node" parent="." unique_id=1675475672]

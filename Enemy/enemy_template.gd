@@ -1,21 +1,27 @@
+class_name Enemy
 extends CharacterBody2D
-const SPEED = 300.0
-const JUMP_VELOCITY = -400.0
-const MAX_HEALTH = 30000
+
+var cards: Resource = preload("res://Cards/dropCard.tscn")
 
 @onready var hLabel = $HealthControl/HealthLabel
 @onready var health = $HealthManager
 @onready var knockTimer = $KnockbackTimer
 @onready var spawnLocation: Vector2 = global_position
 
+@export var speed: float = 300.0
+@export var jump_velocity: float = -400.0
+@export var max_health: float = 30000.0
+@export var cardDrop: int = 5
+
 var isKnockback: bool = false
 var knockbackVelocity: Vector2
+
 
 func _ready() -> void:
 	health.health_changed.connect(_on_enemy_health_changed)
 	health.health_empty.connect(death)
-	health.setMaxHealth(MAX_HEALTH)
-	hLabel.text = str("Health: ", MAX_HEALTH)
+	health.setMaxHealth(max_health)
+	hLabel.text = str("Health: ", max_health)
 	
 func _physics_process(delta: float) -> void:
 	if not is_on_floor():
@@ -49,7 +55,20 @@ func movement() -> void:
 
 func respawn(new_location: Vector2) -> void:
 	global_position = new_location
-	health.setHealth(MAX_HEALTH)
+	health.setHealth(max_health)
 	
 func death() -> void:
+	spawnCards()
 	queue_free()
+	
+func spawnCards() -> void:
+	var newCards: Array
+	for card in cardDrop:
+		var newSuit: String = CardData.suits.pick_random()
+		var newRank: String = CardData.ranks.pick_random()
+		newCards.append(newSuit + newRank)
+	var items: Node = get_node("/root/Main/ItemGroup")
+	var spawnedCards: Area2D = cards.instantiate()
+	spawnedCards.setCardList(newCards)
+	spawnedCards.global_position = global_position
+	items.call_deferred('add_child', spawnedCards)
