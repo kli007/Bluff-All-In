@@ -1,54 +1,17 @@
 [gd_scene format=3 uid="uid://ddcrwp75cqmlj"]
 
+[ext_resource type="PackedScene" uid="uid://d12prubm8tkvv" path="res://Enemy/enemyTemplate.tscn" id="1_1ixul"]
 [ext_resource type="Script" uid="uid://dbgjm0lbtpsgg" path="res://Enemy/charger_enemy.gd" id="1_rsn3l"]
-[ext_resource type="Script" uid="uid://gxdj8l1ahlhk" path="res://Health/health.gd" id="2_l7mol"]
-[ext_resource type="Texture2D" uid="uid://c21ql7rvqyj60" path="res://Assets/Sprite/Enemy/scary-scarecrow-with-hoe-bba6.png" id="3_umc6k"]
 
-[sub_resource type="RectangleShape2D" id="RectangleShape2D_rsn3l"]
-size = Vector2(37, 64)
-
-[sub_resource type="RectangleShape2D" id="RectangleShape2D_7ec7l"]
-size = Vector2(31, 61)
-
-[node name="ChargerEnemy" type="CharacterBody2D" unique_id=1026819394]
+[node name="ChargerEnemy" unique_id=688067766 instance=ExtResource("1_1ixul")]
 script = ExtResource("1_rsn3l")
+charge_speed = 400.0
+charge_damage = ""
 
-[node name="HealthManager" type="Node" parent="." unique_id=341740004]
-script = ExtResource("2_l7mol")
+[node name="FloorRay" type="RayCast2D" parent="VisualManager" parent_id_path=PackedInt32Array(526043560) index="2" unique_id=2114168476]
+target_position = Vector2(50, 35)
 
-[node name="VisualManager" type="Node2D" parent="." unique_id=1144371883]
-
-[node name="EnemySprite" type="Sprite2D" parent="VisualManager" unique_id=2067505741]
-texture = ExtResource("3_umc6k")
-
-[node name="HitBox" type="Area2D" parent="VisualManager/EnemySprite" unique_id=650062422]
-
-[node name="DamageCollision" type="CollisionShape2D" parent="VisualManager/EnemySprite/HitBox" unique_id=84045186]
-position = Vector2(-0.5, -2)
-shape = SubResource("RectangleShape2D_rsn3l")
-
-[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=389709685]
-position = Vector2(-0.5, -0.5)
-shape = SubResource("RectangleShape2D_7ec7l")
-
-[node name="HealthControl" type="Control" parent="." unique_id=1275084901]
-layout_mode = 3
-anchors_preset = 0
-offset_right = 40.0
-offset_bottom = 40.0
-
-[node name="HealthLabel" type="Label" parent="HealthControl" unique_id=300323859]
-layout_mode = 0
-offset_left = -30.0
-offset_top = -60.0
-offset_right = 29.0
-offset_bottom = -37.0
-horizontal_alignment = 1
-
-[node name="KnockbackTimer" type="Timer" parent="." unique_id=789817564]
-wait_time = 0.2
+[node name="WalkTimer" type="Timer" parent="." index="6" unique_id=1326325305]
 one_shot = true
 
-[node name="ChargeTimer" type="Timer" parent="." unique_id=798467967]
-
-[node name="AnimationPlayer" type="AnimationPlayer" parent="." unique_id=1100121991]
+[connection signal="timeout" from="WalkTimer" to="." method="_on_walk_timer_timeout"]

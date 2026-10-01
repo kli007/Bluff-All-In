@@ -12,11 +12,6 @@ size = Vector2(25, 56)
 
 [node name="EnemyTemplate" type="CharacterBody2D" unique_id=688067766]
 script = ExtResource("1_yweyh")
-damage = null
-speed = null
-jump_velocity = null
-max_health = null
-cardDrop = null
 
 [node name="HealthManager" type="Node" parent="." unique_id=1670032901]
 script = ExtResource("2_xdilo")

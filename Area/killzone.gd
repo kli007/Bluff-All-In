@@ -1,8 +1,9 @@
 extends Area2D
 
 func _on_body_entered(body: Node2D) -> void:
+	print(body.get_class())
 	if body.name == "Player":
 		body.healthNode.changeHealth(-50.0)
 		body.respawn(body.spawnLocation)
-	if body.name == "EnemyTemplate":
+	if body.is_class("CharacterBody2D"):
 		body.respawn(body.spawnLocation)
