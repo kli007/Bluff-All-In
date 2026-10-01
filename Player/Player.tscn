@@ -7,7 +7,7 @@
 [ext_resource type="Script" uid="uid://dos6c6reryimp" path="res://Projectiles/projectile_manager.gd" id="4_8g4oa"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_5sqx0"]
-size = Vector2(20, 22.666668)
+size = Vector2(25, 22.666668)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_ptm0p"]
 size = Vector2(20, 29)
@@ -31,7 +31,7 @@ tracks/0/keys = {
 tracks/1/type = "value"
 tracks/1/imported = false
 tracks/1/enabled = true
-tracks/1/path = NodePath("VisualManager/Hurtbox/DamageCollision:disabled")
+tracks/1/path = NodePath("VisualManager/Hitbox/DamageCollision:disabled")
 tracks/1/interp = 1
 tracks/1/loop_wrap = true
 tracks/1/keys = {
@@ -43,7 +43,7 @@ tracks/1/keys = {
 tracks/2/type = "value"
 tracks/2/imported = false
 tracks/2/enabled = true
-tracks/2/path = NodePath("VisualManager/Hurtbox/DamageCollision:position")
+tracks/2/path = NodePath("VisualManager/Hitbox/DamageCollision:position")
 tracks/2/interp = 1
 tracks/2/loop_wrap = true
 tracks/2/keys = {
@@ -55,7 +55,7 @@ tracks/2/keys = {
 tracks/3/type = "value"
 tracks/3/imported = false
 tracks/3/enabled = true
-tracks/3/path = NodePath("VisualManager/Hurtbox/DamageCollision:scale")
+tracks/3/path = NodePath("VisualManager/Hitbox/DamageCollision:scale")
 tracks/3/interp = 1
 tracks/3/loop_wrap = true
 tracks/3/keys = {
@@ -146,7 +146,7 @@ tracks/0/keys = {
 tracks/1/type = "value"
 tracks/1/imported = false
 tracks/1/enabled = true
-tracks/1/path = NodePath("VisualManager/Hurtbox/DamageCollision:disabled")
+tracks/1/path = NodePath("VisualManager/Hitbox/DamageCollision:disabled")
 tracks/1/interp = 1
 tracks/1/loop_wrap = true
 tracks/1/keys = {
@@ -158,7 +158,7 @@ tracks/1/keys = {
 tracks/2/type = "value"
 tracks/2/imported = false
 tracks/2/enabled = true
-tracks/2/path = NodePath("VisualManager/Hurtbox/DamageCollision:position")
+tracks/2/path = NodePath("VisualManager/Hitbox/DamageCollision:position")
 tracks/2/interp = 1
 tracks/2/loop_wrap = true
 tracks/2/keys = {
@@ -170,7 +170,7 @@ tracks/2/keys = {
 tracks/3/type = "value"
 tracks/3/imported = false
 tracks/3/enabled = true
-tracks/3/path = NodePath("VisualManager/Hurtbox/DamageCollision:scale")
+tracks/3/path = NodePath("VisualManager/Hitbox/DamageCollision:scale")
 tracks/3/interp = 1
 tracks/3/loop_wrap = true
 tracks/3/keys = {
@@ -182,7 +182,7 @@ tracks/3/keys = {
 tracks/4/type = "value"
 tracks/4/imported = false
 tracks/4/enabled = true
-tracks/4/path = NodePath("VisualManager/Hurtbox/DamageCollision:shape")
+tracks/4/path = NodePath("VisualManager/Hitbox/DamageCollision:shape")
 tracks/4/interp = 1
 tracks/4/loop_wrap = true
 tracks/4/keys = {
@@ -201,7 +201,7 @@ length = 0.5
 tracks/0/type = "value"
 tracks/0/imported = false
 tracks/0/enabled = true
-tracks/0/path = NodePath("VisualManager/Hurtbox/DamageCollision:shape")
+tracks/0/path = NodePath("VisualManager/Hitbox/DamageCollision:shape")
 tracks/0/interp = 1
 tracks/0/loop_wrap = true
 tracks/0/keys = {
@@ -213,7 +213,7 @@ tracks/0/keys = {
 tracks/1/type = "value"
 tracks/1/imported = false
 tracks/1/enabled = true
-tracks/1/path = NodePath("VisualManager/Hurtbox/DamageCollision:disabled")
+tracks/1/path = NodePath("VisualManager/Hitbox/DamageCollision:disabled")
 tracks/1/interp = 1
 tracks/1/loop_wrap = true
 tracks/1/keys = {
@@ -253,9 +253,9 @@ texture = ExtResource("2_kpjcp")
 hframes = 12
 vframes = 10
 
-[node name="Hurtbox" type="Area2D" parent="VisualManager" unique_id=910777301]
+[node name="Hitbox" type="Area2D" parent="VisualManager" unique_id=910777301]
 
-[node name="DamageCollision" type="CollisionShape2D" parent="VisualManager/Hurtbox" unique_id=1685693537]
+[node name="DamageCollision" type="CollisionShape2D" parent="VisualManager/Hitbox" unique_id=1685693537]
 position = Vector2(0, 4)
 shape = SubResource("RectangleShape2D_5sqx0")
 disabled = true
@@ -279,7 +279,12 @@ one_shot = true
 wait_time = 0.2
 one_shot = true
 
-[connection signal="body_entered" from="VisualManager/Hurtbox" to="." method="_on_hurtbox_body_entered"]
+[node name="KnockbackTimer" type="Timer" parent="." unique_id=351078600]
+wait_time = 0.2
+one_shot = true
+
+[connection signal="body_entered" from="VisualManager/Hitbox" to="." method="_on_hurtbox_body_entered"]
 [connection signal="animation_finished" from="AnimationPlayer" to="." method="_on_animation_player_animation_finished"]
 [connection signal="timeout" from="DashTimer" to="." method="_on_dash_timer_timeout"]
 [connection signal="timeout" from="TrickTimer" to="." method="_on_trick_timer_timeout"]
+[connection signal="timeout" from="KnockbackTimer" to="." method="_on_knockback_timer_timeout"]

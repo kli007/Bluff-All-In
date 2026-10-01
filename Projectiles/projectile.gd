@@ -30,6 +30,6 @@ func _on_body_entered(body: Node2D) -> void:
 	if exceptionArray.has(body):
 		return
 	elif body is CharacterBody2D:
-		CombatManager.dealDamage('player_proj_dmg', body, global_position)
+		CombatManager.dealDamage('player_proj_dmg', body, global_position, "Player")
 		hitTarget.emit()
 		queue_free()

@@ -3,6 +3,7 @@ extends CharacterBody2D
 @export var speed: float = 200.0
 @export var DashSpeed: float = 800.0
 @export var jump_velocity: float = -350.0
+@export var knockbackVelocity: Vector2
 
 @onready var animNode: Node = $AnimationPlayer
 @onready var deckNode: Node = $DeckManager
@@ -11,6 +12,7 @@ extends CharacterBody2D
 @onready var trickTime: Node = $TrickTimer
 @onready var projNode: Node = $ProjectileManager
 @onready var visNode: Node = $VisualManager
+@onready var knockTimer: Node = $KnockbackTimer
 
 @onready var pendNodes: Array = get_node('%HUD/PendCardsControl/PendCards').get_children()
 @onready var playedNodes: Array = get_node('%HUD/UserUIControl/PlayedCards').get_children()
@@ -23,6 +25,7 @@ signal needMultiplier
 var direction: Vector2
 var lastDirection: Vector2 = Vector2.RIGHT
 var burnActive: bool = false
+var isKnockback: bool = false
 
 var isActioning: String = ''
 
@@ -40,7 +43,9 @@ func _ready() -> void:
 func _physics_process(delta: float) -> void:
 	controls(delta)
 		
-	if isActioning == 'dash':
+	if isKnockback:
+		velocity.x = knockbackVelocity.x
+	elif isActioning == 'dash':
 		velocity.x = lastDirection.x * DashSpeed
 	else:
 		if direction and animNode.name != 'Jump':
@@ -114,6 +119,22 @@ func _on_dash_timer_timeout() -> void:
 func _on_trick_timer_timeout() -> void:
 	isActioning = ''
 
+func takeDamage(damage: float, knockback: float, playerPos: Vector2) -> void:
+	healthNode.changeHealth(-damage)
+	takeKnockback(knockback, playerPos)
+	
+func takeKnockback(knockForce: float, playerPos: Vector2) -> void:
+	var knockbackDir = (global_position - playerPos).normalized()
+	knockbackVelocity = knockbackDir * knockForce
+	knockTimer.start()
+	isKnockback = true
+
+func _on_knockback_timer_timeout() -> void:
+	velocity.x = 0
+	isKnockback = false
+	
+
+
 func _on_hurtbox_body_entered(body: Node2D) -> void:
 	var damage: String
 	var comboSignal: String
@@ -126,7 +147,7 @@ func _on_hurtbox_body_entered(body: Node2D) -> void:
 			comboSignal = deckNode.emitHand
 	if body is CharacterBody2D and body.name != 'Player':
 		comboChanged.emit(comboSignal)
-		CombatManager.dealDamage(damage, body, global_position)
+		CombatManager.dealDamage(damage, body, global_position, self.name)
 
 func controls(deltaTime: float) -> void:
 	if isActioning != 'dash':

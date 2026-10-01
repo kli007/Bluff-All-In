@@ -1,6 +1,6 @@
 class_name Enemy
 extends CharacterBody2D
-
+#need to change hurt and hit boxes and add damage to enemy
 var cards: Resource = preload("res://Cards/dropCard.tscn")
 
 @onready var hLabel = $HealthControl/HealthLabel
@@ -8,7 +8,8 @@ var cards: Resource = preload("res://Cards/dropCard.tscn")
 @onready var knockTimer = $KnockbackTimer
 @onready var spawnLocation: Vector2 = global_position
 
-@export var speed: float = 300.0
+@export var damage: String = 'enemy_small_contact_dmg'
+@export var speed: float = 150.0
 @export var jump_velocity: float = -400.0
 @export var max_health: float = 30000.0
 @export var cardDrop: int = 5
@@ -72,3 +73,8 @@ func spawnCards() -> void:
 	spawnedCards.setCardList(newCards)
 	spawnedCards.global_position = global_position
 	items.call_deferred('add_child', spawnedCards)
+
+
+func _on_hit_box_body_entered(body: Node2D) -> void:
+	if body.name == "Player":
+		CombatManager.dealDamage(damage, body, global_position, self.name)

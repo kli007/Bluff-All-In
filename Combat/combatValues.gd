@@ -8,6 +8,8 @@ extends Resource
 @export var player_atk_dmg: float = 15.0
 @export var player_proj_dmg: float = 10.0
 
+@export var enemy_small_contact_dmg: float = 10.0
+
 @export var hand_HC_dmg: float = 15.0
 @export var hand_pair_dmg: float = 16.0
 @export var hand_2pair_dmg: float = 34.0
@@ -34,7 +36,7 @@ extends Resource
 
 func getKnockback(damageType: String) -> float:
 	match damageType:
-		"player_atk_dmg", "player_proj_dmg", "hand_HC_dmg", "hand_pair_dmg":
+		"player_atk_dmg", "player_proj_dmg", "hand_HC_dmg", "hand_pair_dmg", "enemy_small_contact_dmg":
 			return small_kb
 		"hand_Tpair_dmg", "hand_3kind_dmg", "hand_straight_dmg", "hand_flush_dmg":
 			return medium_kb
