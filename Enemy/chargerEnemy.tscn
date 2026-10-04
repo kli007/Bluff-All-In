@@ -14,4 +14,13 @@ target_position = Vector2(50, 35)
 [node name="WalkTimer" type="Timer" parent="." index="6" unique_id=1326325305]
 one_shot = true
 
+[node name="DelayTimer" type="Timer" parent="." index="7" unique_id=1084724012]
+one_shot = true
+
+[node name="LookTimer" type="Timer" parent="." index="8" unique_id=1451109742]
+wait_time = 0.5
+one_shot = true
+
 [connection signal="timeout" from="WalkTimer" to="." method="_on_walk_timer_timeout"]
+[connection signal="timeout" from="DelayTimer" to="." method="_on_delay_timer_timeout"]
+[connection signal="timeout" from="LookTimer" to="." method="_on_look_timer_timeout"]
