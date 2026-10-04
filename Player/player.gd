@@ -27,13 +27,15 @@ var lastDirection: Vector2 = Vector2.RIGHT
 var burnActive: bool = false
 var isKnockback: bool = false
 
-var isActioning: String = ''
+var isActioning: State = State.NOTHING
 
 const MAX_PLAYED_CARDS: int = 5
 const MAX_PEND_CARDS: int = 7
 const HEAL_BURN_MINIMUM: int = 2
 
 var currentTrick: Dictionary = {'rank': '3', 'suit': ''}
+
+enum State {ATTACK, DASH, JUMP, SHOWDOWN, TRICK, NOTHING}
 
 func _ready() -> void:
 	SaveManager.data_capture.connect(on_save_capture)
@@ -45,7 +47,7 @@ func _physics_process(delta: float) -> void:
 		
 	if isKnockback:
 		velocity.x = knockbackVelocity.x
-	elif isActioning == 'dash':
+	elif isActioning == State.DASH:
 		velocity.x = lastDirection.x * DashSpeed
 	else:
 		if direction and animNode.name != 'Jump':
@@ -53,7 +55,7 @@ func _physics_process(delta: float) -> void:
 		else:
 			velocity.x = move_toward(velocity.x, 0, speed)
 
-	if isActioning != 'attack' and isActioning != 'showdown':
+	if isActioning != State.ATTACK and isActioning != State.SHOWDOWN:
 		move_and_slide()
 		animation_control()
 		flip_sprite()
@@ -107,17 +109,17 @@ func trickCards() -> void:
 
 func _on_animation_player_animation_finished(anim_name: StringName) -> void:
 	if anim_name == "Attack_1" or anim_name == "Showdown":
-		isActioning = ''
+		isActioning = State.NOTHING
 
 func respawn(location: Vector2) -> void:
 	position = location
 		
 func _on_dash_timer_timeout() -> void:
-	isActioning = ''
+	isActioning = State.NOTHING
 	velocity.x = 0
 	
 func _on_trick_timer_timeout() -> void:
-	isActioning = ''
+	isActioning = State.NOTHING
 
 func takeDamage(damage: float, knockback: float, playerPos: Vector2) -> void:
 	healthNode.changeHealth(-damage)
@@ -139,10 +141,10 @@ func _on_hurtbox_body_entered(body: Node2D) -> void:
 	var damage: String
 	var comboSignal: String
 	match isActioning:
-		"attack":
+		State.ATTACK:
 			damage = 'player_atk_dmg'
 			comboSignal = 'Attack'
-		'showdown':
+		State.SHOWDOWN:
 			damage = deckNode.lastPlayedHand
 			comboSignal = deckNode.emitHand
 	if body is CharacterBody2D and body.name != 'Player':
@@ -150,7 +152,7 @@ func _on_hurtbox_body_entered(body: Node2D) -> void:
 		CombatManager.dealDamage(damage, body, global_position, self.name)
 
 func controls(deltaTime: float) -> void:
-	if isActioning != 'dash':
+	if isActioning != State.DASH:
 		direction.x = Input.get_axis("Move_Left", "Move_Right")
 	
 	if direction:
@@ -162,13 +164,13 @@ func controls(deltaTime: float) -> void:
 	if Input.is_action_just_pressed("Delete"):
 		deckNode.deleteDeck()
 		
-	if Input.is_action_just_pressed("Attack") and not isActioning:
+	if Input.is_action_just_pressed("Attack") and isActioning == State.NOTHING:
 		if CardData.checkSpace(playedNodes) and CardData.checkSpace(pendNodes) < MAX_PEND_CARDS:
 			setPlayedCard()
 			animNode.play("Attack_1")
-			isActioning = 'attack'
+			isActioning = State.ATTACK
 	
-	if Input.is_action_just_pressed("Trick") and not isActioning:
+	if Input.is_action_just_pressed("Trick") and isActioning == State.NOTHING:
 		if burnActive and (CardData.checkSpace(playedNodes) < MAX_PLAYED_CARDS):
 			burnCards('jump')
 			burnActive = false
@@ -177,7 +179,7 @@ func controls(deltaTime: float) -> void:
 			if not projNode.projectileCount:
 				trickCards()
 			trickTime.start()
-			isActioning = 'trick'
+			isActioning = State.TRICK
 	if Input.is_action_pressed("Trick") and not burnActive:
 		projNode.reloadProjectiles(deltaTime)
 	if Input.is_action_just_released("Trick") and not burnActive:
@@ -188,18 +190,18 @@ func controls(deltaTime: float) -> void:
 	elif Input.is_action_just_released('Burn'):
 		burnActive = false
 	
-	if Input.is_action_just_pressed("Dash") and not isActioning:
+	if Input.is_action_just_pressed("Dash") and isActioning == State.NOTHING:
 		if burnActive and CardData.checkSpace(playedNodes) < MAX_PLAYED_CARDS:
 			burnCards('dash')
 			burnActive = false
 		dashTime.start()
-		isActioning = 'dash'
+		isActioning = State.DASH
 			
 	'''velocity.y = jump_velocity
 	burnCards('jump')
 	isActioning = true rework double jump later'''
 	
-	if Input.is_action_just_pressed("Showdown") and not isActioning:
+	if Input.is_action_just_pressed("Showdown") and isActioning == State.NOTHING:
 		if burnActive:
 			if CardData.checkSpace(playedNodes) <= HEAL_BURN_MINIMUM:
 				healthNode.changeHealth(30.0)
@@ -209,7 +211,7 @@ func controls(deltaTime: float) -> void:
 			animNode.play("Showdown")
 			deckNode.checkHand(playedNodes)
 			showdownPlayedCards()
-			isActioning = 'showdown'
+			isActioning = State.SHOWDOWN
 			
 	if Input.is_action_pressed("DeleteHealthDebug"):
 		healthNode.changeHealth(-1.0)
