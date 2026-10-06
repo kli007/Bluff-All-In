@@ -38,6 +38,7 @@ func _on_player_combo_changed(playedHand: String) -> void:
 	
 func _on_combo_timer_timeout() -> void:
 	text = 'Combo: '
+	rankLabel.text = ''
 	combat.resetAccumDmg()
 	lastActions.clear()
 

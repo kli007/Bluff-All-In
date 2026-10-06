@@ -1,0 +1,19 @@
+[gd_scene format=3 uid="uid://b50wyppa5jr5i"]
+
+[ext_resource type="Texture2D" uid="uid://dr32x1m2hcl24" path="res://Assets/Sprite/Card/cardBlank.png" id="1_7yu63"]
+[ext_resource type="Script" uid="uid://rpjkoyv21r5" path="res://Cards/drop_card.gd" id="1_lqtlr"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_5sqx0"]
+size = Vector2(25, 35)
+
+[node name="DropCard" type="Area2D" unique_id=485831532]
+script = ExtResource("1_lqtlr")
+
+[node name="Sprite2D" type="Sprite2D" parent="." unique_id=466205293]
+texture = ExtResource("1_7yu63")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=1610808605]
+position = Vector2(0.5, 0.5)
+shape = SubResource("RectangleShape2D_5sqx0")
+
+[connection signal="body_entered" from="." to="." method="_on_body_entered"]

@@ -5,15 +5,17 @@ var accumDamage: float
 
 signal accumDmgChange
 
-func dealDamage(damageType: String, body: Node, pos: Vector2) -> void:
+func dealDamage(damageType: String, body: Node, pos: Vector2, origin: String) -> void:
 	var knockback: float = values.getKnockback(damageType)
 	var damage: float = values.get(damageType)
-	if comboMultiplier != 0.0:
-		damage *= comboMultiplier
-		comboMultiplier = 0.0
+	if origin == "Player":
+		if comboMultiplier != 0.0:
+			damage *= comboMultiplier
+			comboMultiplier = 0.0
+		accumDamage += damage
+		accumDmgChange.emit()
 	body.takeDamage(damage, knockback, pos)
-	accumDamage += damage
-	accumDmgChange.emit()
+	
 
 func checkInValues(checkName: String) -> void:
 	print(checkName)

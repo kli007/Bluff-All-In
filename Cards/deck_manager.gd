@@ -29,6 +29,9 @@ func playCard(pendNodes: Array) -> Dictionary:
 	CardData.hideCards(pendNodes[0])
 	return transferCard
 	
+func addCards(newCards: Array) -> void:
+	activeArray += newCards
+	
 func checkDeck() -> bool:
 	return activeArray.is_empty()
 	
