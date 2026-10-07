@@ -6,6 +6,7 @@ extends CharacterBody2D
 @export var knockbackVelocity: Vector2
 
 @onready var animNode: Node = $AnimationPlayer
+@onready var effectNode: Node = $EffectsPlayer
 @onready var deckNode: Node = $DeckManager
 @onready var healthNode: Node = $HealthManager
 @onready var dashTime: Node = $DashTimer
@@ -58,6 +59,7 @@ func _physics_process(delta: float) -> void:
 	if isActioning != State.ATTACK and isActioning != State.SHOWDOWN:
 		move_and_slide()
 		animation_control()
+		effect_control()
 		flip_sprite()
 		if not is_on_floor():
 			velocity += get_gravity() * delta
@@ -71,6 +73,12 @@ func animation_control() -> void:
 		animNode.play('Move')
 	else:
 		animNode.play('Idle')
+		
+func effect_control() -> void:
+	if healthNode.isInvincible:
+		effectNode.play('Invincible')
+	else:
+		effectNode.play('RESET')
 	
 func flip_sprite() -> void:
 	if direction.x < 0:
@@ -122,8 +130,9 @@ func _on_trick_timer_timeout() -> void:
 	isActioning = State.NOTHING
 
 func takeDamage(damage: float, knockback: float, playerPos: Vector2) -> void:
-	healthNode.changeHealth(-damage)
+	healthNode.takeHit(-damage)
 	takeKnockback(knockback, playerPos)
+
 	
 func takeKnockback(knockForce: float, playerPos: Vector2) -> void:
 	var knockbackDir = (global_position - playerPos).normalized()
@@ -134,8 +143,6 @@ func takeKnockback(knockForce: float, playerPos: Vector2) -> void:
 func _on_knockback_timer_timeout() -> void:
 	velocity.x = 0
 	isKnockback = false
-	
-
 
 func _on_hurtbox_body_entered(body: Node2D) -> void:
 	var damage: String

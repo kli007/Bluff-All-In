@@ -3,8 +3,9 @@ extends CharacterBody2D
 #need to change hurt and hit boxes and add damage to enemy
 var cards: Resource = preload("res://Cards/dropCard.tscn")
 
+@onready var effectNode: AnimationPlayer = $EffectsPlayer
 @onready var hLabel: Label = $HealthControl/HealthLabel
-@onready var health: Node = $HealthManager
+@onready var healthNode: Node = $HealthManager
 @onready var knockTimer: Timer = $KnockbackTimer
 @onready var visNode: Node = $VisualManager
 @onready var spawnLocation: Vector2 = global_position
@@ -30,20 +31,27 @@ func _physics_process(delta: float) -> void:
 	else:
 		movement()
 		
+	effect_control()
 	flip_sprite()
 	move_and_slide()
 	
+func effect_control() -> void:
+	if healthNode.isInvincible:
+		effectNode.play('Invincible')
+	else:
+		effectNode.play('RESET')
+	
 func _on_enemy_health_changed() -> void:
-	hLabel.text = str("Health: ", health.health)
+	hLabel.text = str("Health: ", healthNode.health)
 	
 func startHealth() -> void:
-	health.health_changed.connect(_on_enemy_health_changed)
-	health.health_empty.connect(death)
-	health.setMaxHealth(max_health)
+	healthNode.health_changed.connect(_on_enemy_health_changed)
+	healthNode.health_empty.connect(death)
+	healthNode.setMaxHealth(max_health)
 	hLabel.text = str("Health: ", max_health)
 	
 func takeDamage(damage: float, knockback: float, playerPos: Vector2) -> void:
-	health.changeHealth(-damage)
+	healthNode.takeHit(-damage)
 	takeKnockback(knockback, playerPos)
 	
 func takeKnockback(knockForce: float, playerPos: Vector2) -> void:
@@ -61,7 +69,7 @@ func movement() -> void:
 
 func respawn(new_location: Vector2) -> void:
 	global_position = new_location
-	health.setHealth(max_health)
+	healthNode.setHealth(max_health)
 	
 func death() -> void:
 	spawnCards()

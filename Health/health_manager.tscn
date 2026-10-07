@@ -1,0 +1,11 @@
+[gd_scene format=3 uid="uid://dv27ekmvqvaal"]
+
+[ext_resource type="Script" uid="uid://gxdj8l1ahlhk" path="res://Health/health.gd" id="1_sohej"]
+
+[node name="HealthManager" type="Node" unique_id=1013381791]
+script = ExtResource("1_sohej")
+
+[node name="InvincTimer" type="Timer" parent="." unique_id=1962095054]
+one_shot = true
+
+[connection signal="timeout" from="InvincTimer" to="." method="_on_invinc_timer_timeout"]
