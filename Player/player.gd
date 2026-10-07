@@ -41,6 +41,8 @@ enum State {ATTACK, DASH, JUMP, SHOWDOWN, TRICK, NOTHING}
 func _ready() -> void:
 	SaveManager.data_capture.connect(on_save_capture)
 	SaveManager.data_dispense.connect(on_save_dispense)
+	healthNode.invincibility_started.connect(func() -> void: effectNode.play('Invincible'))
+	healthNode.invincibility_ended.connect(func() -> void: effectNode.play('RESET'))
 	setPendCard()
 
 func _physics_process(delta: float) -> void:
@@ -59,10 +61,10 @@ func _physics_process(delta: float) -> void:
 	if isActioning != State.ATTACK and isActioning != State.SHOWDOWN:
 		move_and_slide()
 		animation_control()
-		effect_control()
 		flip_sprite()
 		if not is_on_floor():
 			velocity += get_gravity() * delta
+	
 		
 func animation_control() -> void:
 	if velocity.y < 0:
@@ -74,11 +76,6 @@ func animation_control() -> void:
 	else:
 		animNode.play('Idle')
 		
-func effect_control() -> void:
-	if healthNode.isInvincible:
-		effectNode.play('Invincible')
-	else:
-		effectNode.play('RESET')
 	
 func flip_sprite() -> void:
 	if direction.x < 0:
@@ -129,10 +126,9 @@ func _on_dash_timer_timeout() -> void:
 func _on_trick_timer_timeout() -> void:
 	isActioning = State.NOTHING
 
-func takeDamage(damage: float, knockback: float, playerPos: Vector2) -> void:
-	healthNode.takeHit(-damage)
-	takeKnockback(knockback, playerPos)
-
+func takeDamage(damage: float, knockback: float, playerPos: Vector2, damageType: String) -> void:
+	if healthNode.takeHit(-damage, damageType):
+		takeKnockback(knockback, playerPos)
 	
 func takeKnockback(knockForce: float, playerPos: Vector2) -> void:
 	var knockbackDir = (global_position - playerPos).normalized()
@@ -154,7 +150,7 @@ func _on_hurtbox_body_entered(body: Node2D) -> void:
 		State.SHOWDOWN:
 			damage = deckNode.lastPlayedHand
 			comboSignal = deckNode.emitHand
-	if body is CharacterBody2D and body.name != 'Player':
+	if body is CharacterBody2D and body.name != 'Player' and not body.healthNode.isInvincible:
 		comboChanged.emit(comboSignal)
 		CombatManager.dealDamage(damage, body, global_position, self.name)
 

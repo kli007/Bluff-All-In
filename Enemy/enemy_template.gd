@@ -14,6 +14,8 @@ var cards: Resource = preload("res://Cards/dropCard.tscn")
 @export var speed: float = 150.0
 @export var jump_velocity: float = -400.0
 @export var max_health: float = 30000.0
+@export var max_hit_threshold: int = 5
+@export var invincibility_time: float = 300.0
 @export var cardDrop: int = 5
 
 var isKnockback: bool = false
@@ -21,6 +23,8 @@ var knockbackVelocity: Vector2
 var direction: Vector2
 
 func _ready() -> void:
+	healthNode.invincibility_started.connect(func() -> void: effectNode.play('Invincible'))
+	healthNode.invincibility_ended.connect(func() -> void: effectNode.play('RESET'))
 	startHealth()
 	
 func _physics_process(delta: float) -> void:
@@ -31,15 +35,9 @@ func _physics_process(delta: float) -> void:
 	else:
 		movement()
 		
-	effect_control()
 	flip_sprite()
 	move_and_slide()
 	
-func effect_control() -> void:
-	if healthNode.isInvincible:
-		effectNode.play('Invincible')
-	else:
-		effectNode.play('RESET')
 	
 func _on_enemy_health_changed() -> void:
 	hLabel.text = str("Health: ", healthNode.health)
@@ -47,12 +45,12 @@ func _on_enemy_health_changed() -> void:
 func startHealth() -> void:
 	healthNode.health_changed.connect(_on_enemy_health_changed)
 	healthNode.health_empty.connect(death)
-	healthNode.setMaxHealth(max_health)
+	healthNode.setAllValues(max_health, max_hit_threshold, invincibility_time)
 	hLabel.text = str("Health: ", max_health)
 	
-func takeDamage(damage: float, knockback: float, playerPos: Vector2) -> void:
-	healthNode.takeHit(-damage)
-	takeKnockback(knockback, playerPos)
+func takeDamage(damage: float, knockback: float, playerPos: Vector2, damageType: String) -> void:
+	if healthNode.takeHit(-damage, damageType):
+		takeKnockback(knockback, playerPos)
 	
 func takeKnockback(knockForce: float, playerPos: Vector2) -> void:
 	var knockbackDir = (global_position - playerPos).normalized()

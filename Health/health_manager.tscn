@@ -8,4 +8,9 @@ script = ExtResource("1_sohej")
 [node name="InvincTimer" type="Timer" parent="." unique_id=1962095054]
 one_shot = true
 
+[node name="HitTimer" type="Timer" parent="." unique_id=422334557]
+wait_time = 5.0
+one_shot = true
+
 [connection signal="timeout" from="InvincTimer" to="." method="_on_invinc_timer_timeout"]
+[connection signal="timeout" from="HitTimer" to="." method="_on_hit_timer_timeout"]

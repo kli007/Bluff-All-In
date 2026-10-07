@@ -18,6 +18,8 @@ var lookingCounter: int = 0
 var targetPosition: float
 
 func _ready() -> void:
+	healthNode.invincibility_started.connect(func() -> void: effectNode.play('Invincible'))
+	healthNode.invincibility_ended.connect(func() -> void: effectNode.play('RESET'))
 	playerRay.add_exception(self)
 	speed = 50
 	max_health = 50

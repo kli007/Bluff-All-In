@@ -39,7 +39,7 @@ func getKnockback(damageType: String) -> float:
 	match damageType:
 		"player_atk_dmg", "player_proj_dmg", "hand_HC_dmg", "hand_pair_dmg", "enemy_small_contact_dmg":
 			return small_kb
-		"enemy_small_attack_dmg", "hand_Tpair_dmg", "hand_3kind_dmg", "hand_straight_dmg", "hand_flush_dmg":
+		"enemy_small_attack_dmg", "hand_2pair_dmg", "hand_3kind_dmg", "hand_straight_dmg", "hand_flush_dmg":
 			return medium_kb
 		_:
 			return large_kb
@@ -57,3 +57,4 @@ func getRankMult(currentValue: float) -> String:
 		return "D"
 	else:
 		return "F"
+		

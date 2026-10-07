@@ -14,9 +14,8 @@ func dealDamage(damageType: String, body: Node, pos: Vector2, origin: String) ->
 			comboMultiplier = 0.0
 		accumDamage += damage
 		accumDmgChange.emit()
-	body.takeDamage(damage, knockback, pos)
+	body.takeDamage(damage, knockback, pos, damageType)
 	
-
 func checkInValues(checkName: String) -> void:
 	print(checkName)
 	if values.get(checkName) != null:
@@ -32,6 +31,17 @@ func resetAccumDmg() -> void:
 	
 func getRankText() -> String:
 	return values.getRankMult(accumDamage)
+	
+func getAttackPriority(attack: String) -> int:
+	match attack:
+		"player_atk_dmg", "player_proj_dmg":
+			return 1
+		"hand_HC_dmg", "hand_pair_dmg", "enemy_small_contact_dmg":
+			return 3
+		"enemy_small_attack_dmg", "hand_2pair_dmg", "hand_3kind_dmg":
+			return 5
+		_:
+			return 7
 	
 func getRankMultiplier(rank: String) -> float:
 	match rank:
