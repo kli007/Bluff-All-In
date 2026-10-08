@@ -68,7 +68,7 @@ func movement() -> void:
 
 func respawn(new_location: Vector2) -> void:
 	global_position = new_location
-	healthNode.setHealth(max_health)
+	healthNode.resetAllValues()
 	
 func death() -> void:
 	spawnCards()

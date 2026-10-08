@@ -52,6 +52,12 @@ func setAllValues(newMax: float, newThreshold: int, newIFrame: float) -> void:
 	iFrames = newIFrame
 	health = maxHealth
 	
+func resetAllValues() -> void:
+	setHealth(maxHealth)
+	currentHitPriority = 0
+	iTimer.stop()
+	hitTimer.stop()
+	
 func startInvincible() -> void:
 	isInvincible = true
 	iTimer.start(iFrames)

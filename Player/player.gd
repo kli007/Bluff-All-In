@@ -24,14 +24,18 @@ signal needMultiplier
 
 var direction: Vector2
 var lastDirection: Vector2 = Vector2.RIGHT
+var lookingDir: String = ''
 var burnActive: bool = false
 var isKnockback: bool = false
+var activeJumps: int = 3
 
 var isActioning: State = State.NOTHING
 
 const MAX_PLAYED_CARDS: int = 5
 const MAX_PEND_CARDS: int = 7
 const HEAL_BURN_MINIMUM: int = 2
+const MAX_JUMP_AVAILABLE: int = 3
+const ATTACK_ANIMATIONS: Array = ['Attack_1', 'Up_Attack', 'Down_Attack']
 
 var currentTrick: Dictionary = {'rank': '3', 'suit': ''}
 
@@ -63,6 +67,8 @@ func _physics_process(delta: float) -> void:
 		flip_sprite()
 		if not is_on_floor():
 			velocity += get_gravity() * delta
+		else:
+			activeJumps = MAX_JUMP_AVAILABLE
 	
 		
 func animation_control() -> void:
@@ -112,7 +118,7 @@ func trickCards() -> void:
 	setPlayedCard()
 
 func _on_animation_player_animation_finished(anim_name: StringName) -> void:
-	if anim_name == "Attack_1":
+	if anim_name in ATTACK_ANIMATIONS:
 		isActioning = State.NOTHING
 	if anim_name == "Showdown":
 		CombatManager.resetComboMult()
@@ -158,9 +164,21 @@ func controls(deltaTime: float) -> void:
 	
 	if direction:
 		lastDirection = direction
+		
+	if Input.is_action_pressed("Look_Up") and (lookingDir == '' or lookingDir == 'UP'):
+		lookingDir = 'UP'
+	elif Input.is_action_just_released("Look_Up"):
+		lookingDir = ''
+		
+	if Input.is_action_pressed("Look_Down") and (lookingDir == '' or lookingDir == 'DOWN'):
+		lookingDir = 'DOWN'
+	elif Input.is_action_just_released("Look_Down"):
+		lookingDir = ''
+		
 
-	if Input.is_action_just_pressed("Move_Jump") and is_on_floor():
+	if Input.is_action_just_pressed("Move_Jump") and activeJumps > 0:
 		velocity.y = jump_velocity
+		activeJumps -= 1
 		
 	if Input.is_action_just_pressed("Delete"):
 		deckNode.deleteDeck()
@@ -168,8 +186,18 @@ func controls(deltaTime: float) -> void:
 	if Input.is_action_just_pressed("Attack") and isActioning == State.NOTHING:
 		if CardData.checkSpace(playedNodes) and CardData.checkSpace(pendNodes) < MAX_PEND_CARDS:
 			setPlayedCard()
-			animNode.play("Attack_1")
 			isActioning = State.ATTACK
+			if not is_on_floor():
+				if lookingDir == 'DOWN':
+					animNode.play("Down_Attack")
+				else:
+					print('air rave')
+			else:
+				if lookingDir == 'UP':
+					animNode.play("Up_Attack")
+				else:
+					animNode.play("Attack_1")
+					
 	
 	if Input.is_action_just_pressed("Trick") and isActioning == State.NOTHING:
 		if burnActive and (CardData.checkSpace(playedNodes) < MAX_PLAYED_CARDS):
@@ -197,10 +225,6 @@ func controls(deltaTime: float) -> void:
 			burnActive = false
 		dashTime.start()
 		isActioning = State.DASH
-			
-	'''velocity.y = jump_velocity
-	burnCards('jump')
-	isActioning = true rework double jump later'''
 	
 	if Input.is_action_just_pressed("Showdown") and isActioning == State.NOTHING:
 		if burnActive:
