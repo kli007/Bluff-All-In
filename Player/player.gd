@@ -5,8 +5,8 @@ extends CharacterBody2D
 @export var jump_velocity: float = -350.0
 @export var knockbackVelocity: Vector2
 
-@onready var animNode: Node = $AnimationPlayer
-@onready var effectNode: Node = $EffectsPlayer
+@onready var animNode: AnimationPlayer = $AnimationPlayer
+@onready var effectNode: AnimationPlayer = $EffectsPlayer
 @onready var deckNode: Node = $DeckManager
 @onready var healthNode: Node = $HealthManager
 @onready var dashTime: Node = $DashTimer
@@ -20,7 +20,6 @@ extends CharacterBody2D
 
 @onready var spawnLocation: Vector2 = global_position
 
-signal comboChanged
 signal needMultiplier
 
 var direction: Vector2
@@ -113,7 +112,10 @@ func trickCards() -> void:
 	setPlayedCard()
 
 func _on_animation_player_animation_finished(anim_name: StringName) -> void:
-	if anim_name == "Attack_1" or anim_name == "Showdown":
+	if anim_name == "Attack_1":
+		isActioning = State.NOTHING
+	if anim_name == "Showdown":
+		CombatManager.resetComboMult()
 		isActioning = State.NOTHING
 
 func respawn(location: Vector2) -> void:
@@ -142,16 +144,12 @@ func _on_knockback_timer_timeout() -> void:
 
 func _on_hurtbox_body_entered(body: Node2D) -> void:
 	var damage: String
-	var comboSignal: String
 	match isActioning:
 		State.ATTACK:
 			damage = 'player_atk_dmg'
-			comboSignal = 'Attack'
 		State.SHOWDOWN:
 			damage = deckNode.lastPlayedHand
-			comboSignal = deckNode.emitHand
-	if body is CharacterBody2D and body.name != 'Player' and not body.healthNode.isInvincible:
-		comboChanged.emit(comboSignal)
+	if body is CharacterBody2D and body.name != 'Player':
 		CombatManager.dealDamage(damage, body, global_position, self.name)
 
 func controls(deltaTime: float) -> void:

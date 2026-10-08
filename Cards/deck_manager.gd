@@ -2,7 +2,6 @@ extends Node
 
 
 var lastPlayedHand: String = ''
-var emitHand: String = ''
 
 var cardDict: Dictionary = {} #This holds all the scenes for each individual card, never changes
 var activeArray: Array = [] # This hold the name of current cards in deck, changed
@@ -44,34 +43,24 @@ func checkHand(playedNodes: Array) -> void:
 	
 	if checkRoyal(playedNodes) and checkFlush(playedNodes):
 		lastPlayedHand = 'RF'
-		emitHand = 'Royal Flush'
 	elif checkStraight(playedNodes) and checkFlush(playedNodes):
 		lastPlayedHand = 'SF'
-		emitHand = 'Straight Flush'
 	elif checkKinds(matches, 4):
 		lastPlayedHand = '4kind'
-		emitHand = '4 of a Kind'
 	elif checkKinds(matches, 3) and checkPairs(matches, 1):
 		lastPlayedHand = 'FH'
-		emitHand = 'Full House'
 	elif checkFlush(playedNodes):
 		lastPlayedHand = 'flush'
-		emitHand = 'Flush'
 	elif checkStraight(playedNodes):
 		lastPlayedHand = 'straight'
-		emitHand = 'Straight'
 	elif checkKinds(matches, 3):
 		lastPlayedHand = '3kind'
-		emitHand = '3 of a Kind'
 	elif checkPairs(matches, 2):
 		lastPlayedHand = '2pair'
-		emitHand = 'Two Pair'
 	elif checkPairs(matches, 1):
 		lastPlayedHand = 'pair'
-		emitHand = 'Pair'
 	else:
 		lastPlayedHand = 'HC'
-		emitHand = 'High Card'
 		
 	lastPlayedHand = ("hand_" + lastPlayedHand + "_dmg")
 	

@@ -9,7 +9,6 @@ signal invincibility_ended
 @export var isInvincible: bool = false
 @export var currentHitPriority: int = 0
 
-
 @onready var iTimer: Timer = $InvincTimer
 @onready var hitTimer: Timer = $HitTimer
 
@@ -17,15 +16,21 @@ var maxHealth: float = 100.0
 var iFrames: float = .5
 var hitThreshold: int = 5
 
+const maxPriority: int = 6
+
+func checkIfHit(attackType: String) -> bool:
+	return CombatManager.getAttackPriority(attackType) > currentHitPriority
+
 func takeHit(difference: float, attack: String) -> bool:
 	if isInvincible:
-		if CombatManager.getAttackPriority(attack) < currentHitPriority:
+		if not checkIfHit(attack):
 			return false
 	else:
 		hitTimer.start()
 	changeHealth(difference)
 	currentHitPriority += CombatManager.getAttackPriority(attack)
-	if currentHitPriority > hitThreshold:
+	currentHitPriority = clampi(currentHitPriority, 0, maxPriority)
+	if currentHitPriority >= hitThreshold:
 		startInvincible()
 	return true
 		

@@ -37,11 +37,9 @@ func movement() -> void:
 		State.IDLE:
 			pass
 
-
 func walkingAround() -> void:
 	if walkTimer.is_stopped():
-		walkTimer.wait_time = randf_range(2.5, 5.5)
-		walkTimer.start()
+		walkTimer.start(randf_range(2.5, 5.5))
 		
 	if floorRay.is_colliding() and not is_on_wall():
 		velocity.x = direction.x * speed
@@ -84,8 +82,7 @@ func chargePlayer() -> void:
 func switchIdle(placeHolder: State) -> void:
 	nextAction = State.IDLE
 	changeState()
-	stateTimer.wait_time = 1.0
-	stateTimer.start()
+	stateTimer.start(1.0)
 	nextAction = placeHolder
 		
 func _on_state_timer_timeout() -> void:

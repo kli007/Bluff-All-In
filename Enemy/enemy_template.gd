@@ -15,7 +15,7 @@ var cards: Resource = preload("res://Cards/dropCard.tscn")
 @export var jump_velocity: float = -400.0
 @export var max_health: float = 30000.0
 @export var max_hit_threshold: int = 5
-@export var invincibility_time: float = 300.0
+@export var invincibility_time: float = 1.5
 @export var cardDrop: int = 5
 
 var isKnockback: bool = false
@@ -50,6 +50,7 @@ func startHealth() -> void:
 	
 func takeDamage(damage: float, knockback: float, playerPos: Vector2, damageType: String) -> void:
 	if healthNode.takeHit(-damage, damageType):
+		CombatManager.enemy_hit.emit(CombatManager.HIT_NAMES[damageType])
 		takeKnockback(knockback, playerPos)
 	
 func takeKnockback(knockForce: float, playerPos: Vector2) -> void:

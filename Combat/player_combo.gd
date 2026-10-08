@@ -17,9 +17,8 @@ const DISPLAY_LIMIT: int = 5
 
 func _ready() -> void:
 	player = get_node("/root/Main/Player")
-	player.comboChanged.connect(_on_player_combo_changed)
 	player.needMultiplier.connect(_pop_combat_value)
-	player.projNode.comboChanged.connect(_on_player_combo_changed)
+	combat.enemy_hit.connect(_on_player_combo_changed)
 	combat.accumDmgChange.connect(_check_rank)
 	text = "Combo: "
 	

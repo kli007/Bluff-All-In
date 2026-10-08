@@ -8,8 +8,6 @@ var player: Node2D
 var projNode: Node
 var exceptionArray: Array
 
-signal hitTarget
-
 func _ready() -> void:
 	exceptionArray.append(player)
 	'''for proj in projNode.get_children():
@@ -30,7 +28,5 @@ func _on_body_entered(body: Node2D) -> void:
 	if exceptionArray.has(body):
 		return
 	elif body is CharacterBody2D:
-		if not body.healthNode.isInvincible:
-			CombatManager.dealDamage('player_proj_dmg', body, global_position, "Player")
-			hitTarget.emit()
+		CombatManager.dealDamage('player_proj_dmg', body, global_position, "Player")
 		queue_free()

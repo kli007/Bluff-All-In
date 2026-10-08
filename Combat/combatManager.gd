@@ -3,29 +3,51 @@ var values: CombatValues = preload("res://Combat/combat_values.tres")
 var comboMultiplier: float = 0.0
 var accumDamage: float
 
-signal accumDmgChange
+signal accumDmgChange()
+signal enemy_hit(attack_type: String)
+
+const HIT_NAMES: Dictionary = {
+	"player_atk_dmg": "Attack",
+	"player_proj_dmg": "Projectile Hit",
+	"hand_HC_dmg": "High Card",
+	"hand_pair_dmg": "Pair",
+	"hand_2pair_dmg": "Two Pair",
+	"hand_3kind_dmg": "3 of a Kind",
+	"hand_straight_dmg": "Straight",
+	"hand_flush_dmg": "Flush",
+	"hand_FH_dmg": "Full House",
+	"hand_4kind_dmg": "4 of a Kind",
+	"hand_SF_dmg": "Straight Flush",
+	"hand_RF_dmg": "Royal Flush",
+}
 
 func dealDamage(damageType: String, body: Node, pos: Vector2, origin: String) -> void:
-	var knockback: float = values.getKnockback(damageType)
-	var damage: float = values.get(damageType)
-	if origin == "Player":
-		if comboMultiplier != 0.0:
-			damage *= comboMultiplier
-			comboMultiplier = 0.0
-		accumDamage += damage
-		accumDmgChange.emit()
-	body.takeDamage(damage, knockback, pos, damageType)
-	
-func checkInValues(checkName: String) -> void:
+	if not body.healthNode.isInvincible or body.healthNode.checkIfHit(damageType):
+		var knockback: float = values.getKnockback(damageType)
+		var damage: float = values.get(damageType)
+		if origin == "Player":
+			if comboMultiplier != 0.0:
+				damage *= comboMultiplier
+				resetComboMult()
+			accumDamage += damage
+			accumDmgChange.emit()
+		body.takeDamage(damage, knockback, pos, damageType)
+
+		
+func _checkInValues(checkName: String) -> void:
 	print(checkName)
 	if values.get(checkName) != null:
 		print("Yes, is working in values")
 	else:
 		print("No, something has gone wrong")
 		
+		
 func setComboMultiplier(comboChain: float) -> void:
 	comboMultiplier = 1.0 + comboChain/100.0
 	
+func resetComboMult() -> void:
+	comboMultiplier = 0.0
+
 func resetAccumDmg() -> void:
 	accumDamage = 0.0
 	
