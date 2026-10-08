@@ -4,7 +4,7 @@ const DAMAGE: float = 10.0
 const SPEED: float = 350.0
 
 var direction: Vector2
-var player: Node2D
+var player: CharacterBody2D
 var projNode: Node
 var exceptionArray: Array
 
@@ -16,7 +16,7 @@ func _ready() -> void:
 func _physics_process(delta: float) -> void:
 	position += direction * SPEED * delta
 
-func lock_on_to_player(player_dir: Vector2, playerNode:Node2D, projectileNode:Node):
+func lock_on_to_player(player_dir: Vector2, playerNode:Node2D, projectileNode:Node) -> void:
 	direction = player_dir
 	player = playerNode
 	projNode = projectileNode

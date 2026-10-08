@@ -7,9 +7,16 @@
 
 [node name="ChargerEnemy" unique_id=688067766 instance=ExtResource("1_1ixul")]
 script = ExtResource("1_rsn3l")
-charge_speed = 200.0
-charge_damage = "enemy_small_attack_dmg"
-charge_distance = 150.0
+charge_speed = null
+charge_damage = null
+charge_distance = null
+contact_damage = null
+speed = null
+jump_velocity = null
+max_health = null
+max_hit_threshold = null
+invincibility_time = null
+cardDrop = null
 
 [node name="FloorRay" type="RayCast2D" parent="VisualManager" parent_id_path=PackedInt32Array(526043560) index="2" unique_id=2114168476]
 visible = false

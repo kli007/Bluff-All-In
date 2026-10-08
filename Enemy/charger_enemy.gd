@@ -6,8 +6,8 @@ enum State {IDLE, WALK, CHARGE, LOOK}
 @export var charge_damage: String = "enemy_small_attack_dmg"
 @export var charge_distance: float = 150.0
 
-@onready var floorRay: Node = $VisualManager/FloorRay
-@onready var playerRay: Node = $VisualManager/PlayerRay
+@onready var floorRay: RayCast2D = $VisualManager/FloorRay
+@onready var playerRay: ShapeCast2D = $VisualManager/PlayerRay
 @onready var stateTimer: Timer = $StateTimer
 @onready var walkTimer: Timer = $WalkTimer
 @onready var lookTimer: Timer = $LookTimer

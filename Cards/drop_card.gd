@@ -2,7 +2,7 @@ extends Area2D
 
 var cardList: Array
 
-func setCardList(newList: Array):
+func setCardList(newList: Array) -> void:
 	cardList = newList
 	
 func _on_body_entered(body: Node2D) -> void:

@@ -7,7 +7,7 @@ var cards: Resource = preload("res://Cards/dropCard.tscn")
 @onready var hLabel: Label = $HealthControl/HealthLabel
 @onready var healthNode: Node = $HealthManager
 @onready var knockTimer: Timer = $KnockbackTimer
-@onready var visNode: Node = $VisualManager
+@onready var visNode: Node2D = $VisualManager
 @onready var spawnLocation: Vector2 = global_position
 
 @export var contact_damage: String = 'enemy_small_contact_dmg'

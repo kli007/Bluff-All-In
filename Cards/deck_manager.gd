@@ -1,6 +1,5 @@
 extends Node
 
-
 var lastPlayedHand: String = ''
 
 var cardDict: Dictionary = {} #This holds all the scenes for each individual card, never changes

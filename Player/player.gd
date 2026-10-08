@@ -9,11 +9,11 @@ extends CharacterBody2D
 @onready var effectNode: AnimationPlayer = $EffectsPlayer
 @onready var deckNode: Node = $DeckManager
 @onready var healthNode: Node = $HealthManager
-@onready var dashTime: Node = $DashTimer
-@onready var trickTime: Node = $TrickTimer
 @onready var projNode: Node = $ProjectileManager
-@onready var visNode: Node = $VisualManager
-@onready var knockTimer: Node = $KnockbackTimer
+@onready var visNode: Node2D = $VisualManager
+@onready var dashTime: Timer = $DashTimer
+@onready var trickTime: Timer = $TrickTimer
+@onready var knockTimer: Timer = $KnockbackTimer
 
 @onready var pendNodes: Array = get_node('%HUD/PendCardsControl/PendCards').get_children()
 @onready var playedNodes: Array = get_node('%HUD/UserUIControl/PlayedCards').get_children()

@@ -6,20 +6,18 @@ var isPlayHand: bool = false
 var comboChain: float = 0.0
 var rankMultiplier: float = 1.0 
 
-@onready var rankLabel: Node = $RankLabel
-@onready var comboTime: Node = $ComboTimer
-@onready var bufferTime: Node = $BufferTimer
-@onready var bar: Node = $ComboTimeBar
-
-var combat = CombatManager
+@onready var rankLabel: Label = $RankLabel
+@onready var comboTime: Timer = $ComboTimer
+@onready var bufferTime: Timer = $BufferTimer
+@onready var bar: ProgressBar = $ComboTimeBar
 
 const DISPLAY_LIMIT: int = 5
 
 func _ready() -> void:
 	player = get_node("/root/Main/Player")
 	player.needMultiplier.connect(_pop_combat_value)
-	combat.enemy_hit.connect(_on_player_combo_changed)
-	combat.accumDmgChange.connect(_check_rank)
+	CombatManager.enemy_hit.connect(_on_player_combo_changed)
+	CombatManager.accumDmgChange.connect(_check_rank)
 	text = "Combo: "
 	
 func _process(_delta: float) -> void:
@@ -38,20 +36,20 @@ func _on_player_combo_changed(playedHand: String) -> void:
 func _on_combo_timer_timeout() -> void:
 	text = 'Combo: '
 	rankLabel.text = ''
-	combat.resetAccumDmg()
+	CombatManager.resetAccumDmg()
 	lastActions.clear()
 
 func _on_buffer_timer_timeout() -> void:
 	comboTime.paused = false
 	
 func _pop_combat_value() -> void:
-	combat.setComboMultiplier(comboChain)
+	CombatManager.setComboMultiplier(comboChain)
 	comboChain = 0.0
 	
 func increaseChain() -> void:
 	comboChain += 1.0 * rankMultiplier
 	
 func _check_rank() -> void: 
-	var newRank: String = combat.getRankText()
+	var newRank: String = CombatManager.getRankText()
 	rankLabel.text = newRank
-	rankMultiplier = combat.getRankMultiplier(newRank)
+	rankMultiplier = CombatManager.getRankMultiplier(newRank)
