@@ -1,0 +1,75 @@
+[gd_scene format=3 uid="uid://bbab152wypwbs"]
+
+[ext_resource type="Script" uid="uid://bhnlfcusgamrj" path="res://entity.gd" id="1_ql5c0"]
+[ext_resource type="PackedScene" uid="uid://dv27ekmvqvaal" path="res://Health/health_manager.tscn" id="2_ctcih"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_6rkd2"]
+size = Vector2(37, 64)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_ctcih"]
+size = Vector2(25, 56)
+
+[sub_resource type="Animation" id="Animation_4edni"]
+resource_name = "Invincible"
+length = 0.25
+loop_mode = 1
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("VisualManager/Sprite:modulate")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0.125, 0.23333333),
+"transitions": PackedFloat32Array(9000, 9000),
+"update": 0,
+"values": [Color(1, 1, 1, 0.34117648), Color(1, 1, 1, 1)]
+}
+
+[sub_resource type="Animation" id="Animation_mgf5s"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("VisualManager/Sprite:modulate")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Color(1, 1, 1, 1)]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_ctcih"]
+_data = {
+&"Invincible": SubResource("Animation_4edni"),
+&"RESET": SubResource("Animation_mgf5s")
+}
+
+[node name="Entity" type="CharacterBody2D" unique_id=569175648]
+script = ExtResource("1_ql5c0")
+
+[node name="HealthManager" parent="." unique_id=1013381791 instance=ExtResource("2_ctcih")]
+
+[node name="VisualManager" type="Node2D" parent="." unique_id=1465317720]
+
+[node name="Sprite" type="Sprite2D" parent="VisualManager" unique_id=97275318]
+
+[node name="HitBox" type="Area2D" parent="VisualManager" unique_id=443541335]
+visible = false
+
+[node name="DamageCollision" type="CollisionShape2D" parent="VisualManager/HitBox" unique_id=4510622]
+position = Vector2(-0.5, -2)
+shape = SubResource("RectangleShape2D_6rkd2")
+
+[node name="Collision" type="CollisionShape2D" parent="." unique_id=775821313]
+position = Vector2(-0.5, 3)
+shape = SubResource("RectangleShape2D_ctcih")
+
+[node name="EffectsPlayer" type="AnimationPlayer" parent="." unique_id=1752406426]
+libraries/ = SubResource("AnimationLibrary_ctcih")
+
+[node name="KnockbackTimer" type="Timer" parent="." unique_id=1941790735]
+wait_time = 0.2
+one_shot = true
