@@ -9,6 +9,8 @@ signal enemy_hit(attack_type: String)
 const HIT_NAMES: Dictionary = {
 	"player_atk_dmg": "Attack",
 	"player_proj_dmg": "Projectile Hit",
+	"player_launch_dmg": "Launcher",
+	"player_spike_dmg": "Spike",
 	"hand_HC_dmg": "High Card",
 	"hand_pair_dmg": "Pair",
 	"hand_2pair_dmg": "Two Pair",
@@ -23,7 +25,7 @@ const HIT_NAMES: Dictionary = {
 
 func dealDamage(damageType: String, body: Node, pos: Vector2, origin: String) -> void:
 	if not body.healthNode.isInvincible or body.healthNode.checkIfHit(damageType):
-		var knockback: float = CombatManager.getKnockback(damageType)
+		var knockback: Vector2 = CombatManager.getKnockback(damageType)
 		var damage: float = values.get(damageType)
 		if origin == "Player":
 			if comboMultiplier != 0.0:
@@ -51,12 +53,16 @@ func resetComboMult() -> void:
 func resetAccumDmg() -> void:
 	accumDamage = 0.0
 	
-func getKnockback(damageType: String) -> float:
+func getKnockback(damageType: String) -> Vector2:
 	match damageType:
-		"player_atk_dmg", "player_launch_dmg", "player_spike_dmg", "player_proj_dmg", "hand_HC_dmg", "hand_pair_dmg", "enemy_small_contact_dmg":
+		"player_atk_dmg", "player_proj_dmg", "hand_HC_dmg", "hand_pair_dmg", "enemy_small_contact_dmg":
 			return values.small_kb
 		"enemy_small_attack_dmg", "hand_2pair_dmg", "hand_3kind_dmg", "hand_straight_dmg", "hand_flush_dmg":
 			return values.medium_kb
+		"player_launch_dmg":
+			return values.small_kb
+		"player_spike_dmg":
+			return values.small_kb
 		_:
 			return values.large_kb
 			

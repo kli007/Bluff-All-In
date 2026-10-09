@@ -35,11 +35,12 @@ const MAX_PLAYED_CARDS: int = 5
 const MAX_PEND_CARDS: int = 7
 const HEAL_BURN_MINIMUM: int = 2
 const MAX_JUMP_AVAILABLE: int = 3
-const ATTACK_ANIMATIONS: Array = ['Attack_1', 'Up_Attack', 'Down_Attack']
+const ATTACK_ANIMATIONS: Dictionary = {'Attack_1': State.BASIC_ATTACK, 
+'Up_Attack': State.LAUNCH_ATTACK, 'Down_Attack': State.SPIKE_ATTACK}
 
 var currentTrick: Dictionary = {'rank': '3', 'suit': ''}
 
-enum State {ATTACK, DASH, JUMP, SHOWDOWN, TRICK, NOTHING}
+enum State {BASIC_ATTACK, LAUNCH_ATTACK, SPIKE_ATTACK, DASH_ATTACK, DASH, JUMP, SHOWDOWN, TRICK, NOTHING}
 
 func _ready() -> void:
 	SaveManager.data_capture.connect(on_save_capture)
@@ -61,7 +62,7 @@ func _physics_process(delta: float) -> void:
 		else:
 			velocity.x = move_toward(velocity.x, 0, speed)
 
-	if isActioning != State.ATTACK and isActioning != State.SHOWDOWN:
+	if isActioning not in ATTACK_ANIMATIONS.values() and isActioning != State.SHOWDOWN:
 		move_and_slide()
 		animation_control()
 		flip_sprite()
@@ -138,13 +139,13 @@ func _on_dash_timer_timeout() -> void:
 func _on_trick_timer_timeout() -> void:
 	isActioning = State.NOTHING
 
-func takeDamage(damage: float, knockback: float, playerPos: Vector2, damageType: String) -> void:
+func takeDamage(damage: float, knockback: Vector2, playerPos: Vector2, damageType: String) -> void:
 	if healthNode.takeHit(-damage, damageType):
 		takeKnockback(knockback, playerPos)
 	
-func takeKnockback(knockForce: float, playerPos: Vector2) -> void:
+func takeKnockback(knockForce: Vector2, playerPos: Vector2) -> void:
 	var knockbackDir = (global_position - playerPos).normalized()
-	knockbackVelocity = knockbackDir * knockForce
+	knockbackVelocity = knockbackDir * knockForce.x
 	knockTimer.start()
 	isKnockback = true
 
@@ -155,8 +156,12 @@ func _on_knockback_timer_timeout() -> void:
 func _on_hurtbox_body_entered(body: Node2D) -> void:
 	var damage: String
 	match isActioning:
-		State.ATTACK:
+		State.BASIC_ATTACK:
 			damage = 'player_atk_dmg'
+		State.LAUNCH_ATTACK:
+			damage = 'player_launch_dmg'
+		State.SPIKE_ATTACK:
+			damage = 'player_spike_dmg'
 		State.SHOWDOWN:
 			damage = deckNode.lastPlayedHand
 	if body is CharacterBody2D and body.name != 'Player':
@@ -195,15 +200,18 @@ func controls(deltaTime: float) -> void:
 			if not is_on_floor():
 				if lookingDir == 'DOWN':
 					animNode.play("Down_Attack")
+					isActioning = State.SPIKE_ATTACK
 				else:
 					animNode.play("Attack_1")
+					isActioning = State.BASIC_ATTACK
 			else:
 				if lookingDir == 'UP':
 					animNode.play("Up_Attack")
+					isActioning = State.LAUNCH_ATTACK
 				else:
 					animNode.play("Attack_1")
+					isActioning = State.BASIC_ATTACK
 			setPlayedCard()
-			isActioning = State.ATTACK
 					
 	
 	if Input.is_action_just_pressed("Trick") and isActioning == State.NOTHING:

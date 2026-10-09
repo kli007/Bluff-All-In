@@ -48,14 +48,14 @@ func startHealth() -> void:
 	healthNode.setAllValues(max_health, max_hit_threshold, invincibility_time)
 	hLabel.text = str("Health: ", max_health)
 	
-func takeDamage(damage: float, knockback: float, playerPos: Vector2, damageType: String) -> void:
+func takeDamage(damage: float, knockback: Vector2, playerPos: Vector2, damageType: String) -> void:
 	if healthNode.takeHit(-damage, damageType):
 		CombatManager.enemy_hit.emit(CombatManager.HIT_NAMES[damageType])
 		takeKnockback(knockback, playerPos)
 	
-func takeKnockback(knockForce: float, playerPos: Vector2) -> void:
+func takeKnockback(knockForce: Vector2, playerPos: Vector2) -> void:
 	var knockbackDir = (global_position - playerPos).normalized()
-	knockbackVelocity = knockbackDir * knockForce
+	knockbackVelocity = knockbackDir * knockForce.x
 	knockTimer.start()
 	isKnockback = true
 
