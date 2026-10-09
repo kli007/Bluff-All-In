@@ -65,21 +65,22 @@ func _physics_process(delta: float) -> void:
 		move_and_slide()
 		animation_control()
 		flip_sprite()
-		if not is_on_floor():
+		if not is_on_floor() and isActioning != State.DASH:
 			velocity += get_gravity() * delta
 		else:
 			activeJumps = MAX_JUMP_AVAILABLE
 	
 		
 func animation_control() -> void:
-	if velocity.y < 0:
-		animNode.play('Jump')
-	elif velocity.y > 0:
-		animNode.play('Fall')
-	elif velocity.x != 0:
-		animNode.play('Move')
-	else:
-		animNode.play('Idle')
+	if isActioning == State.NOTHING:
+		if velocity.y < 0:
+			animNode.play('Jump')
+		elif velocity.y > 0:
+			animNode.play('Fall')
+		elif velocity.x != 0:
+			animNode.play('Move')
+		else:
+			animNode.play('Idle')
 		
 	
 func flip_sprite() -> void:
@@ -116,6 +117,9 @@ func burnCards(action: String) -> void:
 func trickCards() -> void:
 	TrickManager.mainManager(pendNodes.front(), currentTrick['rank'], currentTrick['suit'])
 	setPlayedCard()
+	
+func slash_combo() -> void:
+	pass # need for air rave 2 hit, and ground combo 3 hits
 
 func _on_animation_player_animation_finished(anim_name: StringName) -> void:
 	if anim_name in ATTACK_ANIMATIONS:
@@ -183,20 +187,23 @@ func controls(deltaTime: float) -> void:
 	if Input.is_action_just_pressed("Delete"):
 		deckNode.deleteDeck()
 		
-	if Input.is_action_just_pressed("Attack") and isActioning == State.NOTHING:
+	if Input.is_action_just_pressed("Attack") and (isActioning == State.NOTHING or isActioning == State.DASH):
 		if CardData.checkSpace(playedNodes) and CardData.checkSpace(pendNodes) < MAX_PEND_CARDS:
-			setPlayedCard()
-			isActioning = State.ATTACK
+			if isActioning == State.DASH:
+					animNode.play("Attack_1")
+					dashTime.stop()
 			if not is_on_floor():
 				if lookingDir == 'DOWN':
 					animNode.play("Down_Attack")
 				else:
-					print('air rave')
+					animNode.play("Attack_1")
 			else:
 				if lookingDir == 'UP':
 					animNode.play("Up_Attack")
 				else:
 					animNode.play("Attack_1")
+			setPlayedCard()
+			isActioning = State.ATTACK
 					
 	
 	if Input.is_action_just_pressed("Trick") and isActioning == State.NOTHING:
