@@ -1,82 +1,24 @@
-[gd_scene format=3 uid="uid://d12prubm8tkvv"]
+[gd_scene format=3 uid="uid://dqswf1f3rgufw"]
 
-[ext_resource type="Script" uid="uid://d2l3fyyy71f83" path="res://Enemy/enemy_template.gd" id="1_yweyh"]
-[ext_resource type="PackedScene" uid="uid://dv27ekmvqvaal" path="res://Health/health_manager.tscn" id="2_4edni"]
-[ext_resource type="Texture2D" uid="uid://c21ql7rvqyj60" path="res://Assets/Sprite/Enemy/scary-scarecrow-with-hoe-bba6.png" id="3_4edni"]
+[ext_resource type="PackedScene" uid="uid://bbab152wypwbs" path="res://Entity.tscn" id="1_4wbl1"]
+[ext_resource type="Script" uid="uid://d2l3fyyy71f83" path="res://Enemy/enemy_template.gd" id="2_e7ey8"]
+[ext_resource type="Texture2D" uid="uid://c21ql7rvqyj60" path="res://Assets/Sprite/Enemy/scary-scarecrow-with-hoe-bba6.png" id="3_x3b2x"]
 
-[sub_resource type="RectangleShape2D" id="RectangleShape2D_4edni"]
-size = Vector2(37, 64)
+[node name="EnemyTemplate" unique_id=569175648 instance=ExtResource("1_4wbl1")]
+script = ExtResource("2_e7ey8")
+contact_damage = "enemy_small_contact_dmg"
+cardDrop = 5
 
-[sub_resource type="RectangleShape2D" id="RectangleShape2D_5sqx0"]
-size = Vector2(25, 56)
+[node name="Sprite" parent="VisualManager" parent_id_path=PackedInt32Array(1465317720) index="0" unique_id=97275318]
+texture = ExtResource("3_x3b2x")
 
-[sub_resource type="Animation" id="Animation_4edni"]
-resource_name = "Invincible"
-length = 0.25
-loop_mode = 1
-tracks/0/type = "value"
-tracks/0/imported = false
-tracks/0/enabled = true
-tracks/0/path = NodePath("../VisualManager/EnemySprite:modulate")
-tracks/0/interp = 1
-tracks/0/loop_wrap = true
-tracks/0/keys = {
-"times": PackedFloat32Array(0.125, 0.25),
-"transitions": PackedFloat32Array(9000, 9000),
-"update": 0,
-"values": [Color(1, 1, 1, 0.34117648), Color(1, 1, 1, 1)]
-}
-
-[sub_resource type="Animation" id="Animation_mgf5s"]
-length = 0.001
-tracks/0/type = "value"
-tracks/0/imported = false
-tracks/0/enabled = true
-tracks/0/path = NodePath("../VisualManager/EnemySprite:modulate")
-tracks/0/interp = 1
-tracks/0/loop_wrap = true
-tracks/0/keys = {
-"times": PackedFloat32Array(0),
-"transitions": PackedFloat32Array(1),
-"update": 0,
-"values": [Color(1, 1, 1, 1)]
-}
-
-[sub_resource type="AnimationLibrary" id="AnimationLibrary_mgf5s"]
-_data = {
-&"Invincible": SubResource("Animation_4edni"),
-&"RESET": SubResource("Animation_mgf5s")
-}
-
-[node name="EnemyTemplate" type="CharacterBody2D" unique_id=688067766]
-script = ExtResource("1_yweyh")
-
-[node name="HealthManager" parent="." unique_id=1013381791 instance=ExtResource("2_4edni")]
-
-[node name="VisualManager" type="Node2D" parent="." unique_id=526043560]
-
-[node name="EnemySprite" type="Sprite2D" parent="VisualManager" unique_id=233537534]
-texture = ExtResource("3_4edni")
-
-[node name="HitBox" type="Area2D" parent="VisualManager" unique_id=1976440952]
-visible = false
-
-[node name="DamageCollision" type="CollisionShape2D" parent="VisualManager/HitBox" unique_id=1292085287]
-position = Vector2(-0.5, -2)
-shape = SubResource("RectangleShape2D_4edni")
-
-[node name="EnemyCollision" type="CollisionShape2D" parent="." unique_id=6955810]
-visible = false
-position = Vector2(-0.5, 3)
-shape = SubResource("RectangleShape2D_5sqx0")
-
-[node name="HealthControl" type="Control" parent="." unique_id=1438825831]
+[node name="HealthControl" type="Control" parent="." index="3" unique_id=1706049995]
 layout_mode = 3
 anchors_preset = 0
 offset_right = 40.0
 offset_bottom = 40.0
 
-[node name="HealthLabel" type="Label" parent="HealthControl" unique_id=255970598]
+[node name="HealthLabel" type="Label" parent="HealthControl" index="0" unique_id=457989988]
 layout_mode = 0
 offset_left = -30.0
 offset_top = -60.0
@@ -84,15 +26,6 @@ offset_right = 29.0
 offset_bottom = -37.0
 horizontal_alignment = 1
 
-[node name="AnimationPlayer" type="AnimationPlayer" parent="." unique_id=444365493]
-
-[node name="EffectsPlayer" type="AnimationPlayer" parent="." unique_id=37894337]
-root_node = NodePath("../AnimationPlayer")
-libraries/ = SubResource("AnimationLibrary_mgf5s")
-
-[node name="KnockbackTimer" type="Timer" parent="." unique_id=27881761]
-wait_time = 0.2
-one_shot = true
+[node name="AnimationPlayer" type="AnimationPlayer" parent="." index="4" unique_id=423126123]
 
 [connection signal="body_entered" from="VisualManager/HitBox" to="." method="_on_hit_box_body_entered"]
-[connection signal="timeout" from="KnockbackTimer" to="." method="_on_knockback_timer_timeout"]

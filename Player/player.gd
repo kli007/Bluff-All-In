@@ -1,32 +1,20 @@
-extends CharacterBody2D
-
-@export var speed: float = 200.0
-@export var DashSpeed: float = 800.0
-@export var jump_velocity: float = -350.0
-@export var knockbackVelocity: Vector2
+extends Entity
 
 @onready var animNode: AnimationPlayer = $AnimationPlayer
-@onready var effectNode: AnimationPlayer = $EffectsPlayer
 @onready var deckNode: Node = $DeckManager
-@onready var healthNode: Node = $HealthManager
 @onready var projNode: Node = $ProjectileManager
-@onready var visNode: Node2D = $VisualManager
 @onready var dashTime: Timer = $DashTimer
 @onready var trickTime: Timer = $TrickTimer
-@onready var knockTimer: Timer = $KnockbackTimer
 
 @onready var pendNodes: Array = get_node('%HUD/PendCardsControl/PendCards').get_children()
 @onready var playedNodes: Array = get_node('%HUD/UserUIControl/PlayedCards').get_children()
 
-@onready var spawnLocation: Vector2 = global_position
+@export var DashSpeed: float = 800.0
 
 signal needMultiplier
 
-var direction: Vector2
-var lastDirection: Vector2 = Vector2.RIGHT
 var lookingDir: String = ''
 var burnActive: bool = false
-var isKnockback: bool = false
 var activeJumps: int = 3
 
 var isActioning: State = State.NOTHING
@@ -43,14 +31,20 @@ var currentTrick: Dictionary = {'rank': '3', 'suit': ''}
 enum State {BASIC_ATTACK, LAUNCH_ATTACK, SPIKE_ATTACK, DASH_ATTACK, DASH, JUMP, SHOWDOWN, TRICK, NOTHING}
 
 func _ready() -> void:
+	super._ready()
 	SaveManager.data_capture.connect(on_save_capture)
 	SaveManager.data_dispense.connect(on_save_dispense)
-	healthNode.invincibility_started.connect(func() -> void: effectNode.play('Invincible'))
-	healthNode.invincibility_ended.connect(func() -> void: effectNode.play('RESET'))
 	setPendCard()
+	
+func set_stats() -> void:
+	speed = 200.0
+	jump_velocity = -350.0
+	max_health = 100
+	max_hit_threshold = 5
+	invincibility_time = .5
 
 func _physics_process(delta: float) -> void:
-	controls(delta)
+	movement(delta)
 		
 	if isKnockback:
 		velocity.x = knockbackVelocity.x
@@ -83,13 +77,7 @@ func animation_control() -> void:
 		else:
 			animNode.play('Idle')
 		
-	
-func flip_sprite() -> void:
-	if direction.x < 0:
-		visNode.scale.x = -1
-	if direction.x > 0:
-		visNode.scale.x = 1
-		
+
 func setPendCard() -> void:
 	while CardData.checkSpace(pendNodes) and not deckNode.checkDeck():
 		CardData.setCards(deckNode.moveCard(), pendNodes)
@@ -121,17 +109,17 @@ func trickCards() -> void:
 	
 func slash_combo() -> void:
 	pass # need for air rave 2 hit, and ground combo 3 hits
-
+	
 func _on_animation_player_animation_finished(anim_name: StringName) -> void:
 	if anim_name in ATTACK_ANIMATIONS:
 		isActioning = State.NOTHING
 	if anim_name == "Showdown":
 		CombatManager.resetComboMult()
 		isActioning = State.NOTHING
-
-func respawn(location: Vector2) -> void:
-	position = location
 		
+func _on_attack_timer_timeout() -> void:
+	pass # Replace with function body.
+
 func _on_dash_timer_timeout() -> void:
 	isActioning = State.NOTHING
 	velocity.x = 0
@@ -139,21 +127,7 @@ func _on_dash_timer_timeout() -> void:
 func _on_trick_timer_timeout() -> void:
 	isActioning = State.NOTHING
 
-func takeDamage(damage: float, knockback: Vector2, playerPos: Vector2, damageType: String) -> void:
-	if healthNode.takeHit(-damage, damageType):
-		takeKnockback(knockback, playerPos)
-	
-func takeKnockback(knockForce: Vector2, playerPos: Vector2) -> void:
-	var knockbackDir = (global_position - playerPos).normalized()
-	knockbackVelocity = knockbackDir * knockForce.x
-	knockTimer.start()
-	isKnockback = true
-
-func _on_knockback_timer_timeout() -> void:
-	velocity.x = 0
-	isKnockback = false
-
-func _on_hurtbox_body_entered(body: Node2D) -> void:
+func _on_hit_box_body_entered(body: Node2D) -> void:
 	var damage: String
 	match isActioning:
 		State.BASIC_ATTACK:
@@ -167,7 +141,7 @@ func _on_hurtbox_body_entered(body: Node2D) -> void:
 	if body is CharacterBody2D and body.name != 'Player':
 		CombatManager.dealDamage(damage, body, global_position, self.name)
 
-func controls(deltaTime: float) -> void:
+func movement(deltaTime: float) -> void:
 	if isActioning != State.DASH:
 		direction.x = Input.get_axis("Move_Left", "Move_Right")
 	

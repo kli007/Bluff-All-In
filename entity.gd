@@ -19,8 +19,12 @@ var direction: Vector2
 var lastDirection: Vector2
 
 func _ready() -> void:
+	set_stats()
 	healthNode.invincibility_started.connect(func() -> void: effectNode.play('Invincible'))
 	healthNode.invincibility_ended.connect(func() -> void: effectNode.play('RESET'))
+	healthNode.health_empty.connect(death)
+	healthNode.setAllValues(max_health, max_hit_threshold, invincibility_time)
+	unique_ready()
 	
 	
 func _physics_process(delta: float) -> void:
@@ -43,13 +47,12 @@ func flip_sprite() -> void:
 	if direction.x > 0:
 		visNode.scale.x = 1
 		
-func takeDamage(damage: float, knockback: Vector2, playerPos: Vector2, damageType: String) -> void:
+func takeDamage(damage: float, knockback: Vector2, damagePos: Vector2, damageType: String) -> void:
 	if healthNode.takeHit(-damage, damageType):
-		CombatManager.enemy_hit.emit(CombatManager.HIT_NAMES[damageType])
-		takeKnockback(knockback, playerPos)
+		takeKnockback(knockback, damagePos)
 		
-func takeKnockback(knockForce: Vector2, playerPos: Vector2) -> void:
-	var knockbackDir = (global_position - playerPos).normalized()
+func takeKnockback(knockForce: Vector2, damagePos: Vector2) -> void:
+	var knockbackDir = (global_position - damagePos).normalized()
 	knockbackVelocity = knockbackDir * knockForce.x
 	knockTimer.start()
 	isKnockback = true
@@ -62,5 +65,14 @@ func respawn(new_location: Vector2) -> void:
 	global_position = new_location
 	healthNode.resetAllValues()
 	
+func death() -> void:
+	pass
 	
+func unique_ready() -> void:
+	pass
 	
+func set_stats() -> void:
+	pass
+	
+func _on_hit_box_body_entered(body: Node2D) -> void:
+	pass # Replace with function body.

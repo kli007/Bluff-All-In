@@ -1,75 +1,28 @@
 class_name Enemy
-extends CharacterBody2D
+extends Entity
 #need to change hurt and hit boxes and add damage to enemy
 var cards: Resource = preload("res://Cards/dropCard.tscn")
 
-@onready var effectNode: AnimationPlayer = $EffectsPlayer
 @onready var hLabel: Label = $HealthControl/HealthLabel
-@onready var healthNode: Node = $HealthManager
-@onready var knockTimer: Timer = $KnockbackTimer
-@onready var visNode: Node2D = $VisualManager
-@onready var spawnLocation: Vector2 = global_position
 
 @export var contact_damage: String = 'enemy_small_contact_dmg'
-@export var speed: float = 150.0
-@export var jump_velocity: float = -400.0
-@export var max_health: float = 30000.0
-@export var max_hit_threshold: int = 5
-@export var invincibility_time: float = 1.5
 @export var cardDrop: int = 5
 
-var isKnockback: bool = false
-var knockbackVelocity: Vector2
-var direction: Vector2
+func set_stats() -> void:
+	speed = 150.0
+	jump_velocity = -400.0
+	max_health = 30000.0
+	max_hit_threshold = 5
+	invincibility_time = 1.5
 
-func _ready() -> void:
-	healthNode.invincibility_started.connect(func() -> void: effectNode.play('Invincible'))
-	healthNode.invincibility_ended.connect(func() -> void: effectNode.play('RESET'))
-	startHealth()
-	
-func _physics_process(delta: float) -> void:
-	if not is_on_floor():
-		velocity += get_gravity() * delta
-	if isKnockback:
-		velocity.x = knockbackVelocity.x
-	else:
-		movement()
-		
-	flip_sprite()
-	move_and_slide()
+func unique_ready() -> void:
+	healthNode.health_changed.connect(_on_enemy_health_changed)
+	hLabel.text = str("Health: ", max_health)
 	
 	
 func _on_enemy_health_changed() -> void:
 	hLabel.text = str("Health: ", healthNode.health)
-	
-func startHealth() -> void:
-	healthNode.health_changed.connect(_on_enemy_health_changed)
-	healthNode.health_empty.connect(death)
-	healthNode.setAllValues(max_health, max_hit_threshold, invincibility_time)
-	hLabel.text = str("Health: ", max_health)
-	
-func takeDamage(damage: float, knockback: Vector2, playerPos: Vector2, damageType: String) -> void:
-	if healthNode.takeHit(-damage, damageType):
-		CombatManager.enemy_hit.emit(CombatManager.HIT_NAMES[damageType])
-		takeKnockback(knockback, playerPos)
-	
-func takeKnockback(knockForce: Vector2, playerPos: Vector2) -> void:
-	var knockbackDir = (global_position - playerPos).normalized()
-	knockbackVelocity = knockbackDir * knockForce.x
-	knockTimer.start()
-	isKnockback = true
 
-func _on_knockback_timer_timeout() -> void:
-	velocity.x = 0
-	isKnockback = false
-	
-func movement() -> void:
-	return
-
-func respawn(new_location: Vector2) -> void:
-	global_position = new_location
-	healthNode.resetAllValues()
-	
 func death() -> void:
 	spawnCards()
 	queue_free()
@@ -86,13 +39,11 @@ func spawnCards() -> void:
 	spawnedCards.global_position = global_position
 	items.call_deferred('add_child', spawnedCards)
 
-
 func _on_hit_box_body_entered(body: Node2D) -> void:
 	if body.name == "Player":
 		CombatManager.dealDamage(contact_damage, body, global_position, self.name)
 
-func flip_sprite() -> void:
-	if direction.x < 0:
-		visNode.scale.x = -1
-	if direction.x > 0:
-		visNode.scale.x = 1
+func takeDamage(damage: float, knockback: Vector2, damagePos: Vector2, damageType: String) -> void:
+	super.takeDamage(damage, knockback, damagePos, damageType)
+	if healthNode.takeHit(-damage, damageType):
+		CombatManager.enemy_hit.emit(CombatManager.HIT_NAMES[damageType])

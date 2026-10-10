@@ -18,14 +18,15 @@ var lookingCounter: int = 0
 var targetPosition: float
 
 func _ready() -> void:
-	healthNode.invincibility_started.connect(func() -> void: effectNode.play('Invincible'))
-	healthNode.invincibility_ended.connect(func() -> void: effectNode.play('RESET'))
+	super._ready()
 	playerRay.add_exception(self)
+	
+func set_stats() -> void:
+	super.set_stats()
 	speed = 50
 	max_health = 50
-	startHealth()
 
-func movement() -> void:
+func movement(_delta: float) -> void:
 	match isAction:
 		State.CHARGE:
 			chargePlayer()
@@ -105,3 +106,4 @@ func _on_hit_box_body_entered(body: Node2D) -> void:
 
 func _on_walk_timer_timeout() -> void:
 	switchIdle(State.LOOK)
+	
