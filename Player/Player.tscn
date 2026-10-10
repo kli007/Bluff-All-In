@@ -2,7 +2,7 @@
 
 [ext_resource type="PackedScene" uid="uid://bbab152wypwbs" path="res://Entity.tscn" id="1_vlldt"]
 [ext_resource type="Texture2D" uid="uid://udm78ito0yap" path="res://Assets/Sprite/Player/spriteSheet.png" id="2_kpjcp"]
-[ext_resource type="Script" uid="uid://ce3e26l58f0xn" path="res://Player/Player.gd" id="2_s1rgi"]
+[ext_resource type="Script" uid="uid://ce3e26l58f0xn" path="res://Player/player.gd" id="2_s1rgi"]
 [ext_resource type="Script" uid="uid://ws0antd52kaf" path="res://Cards/deck_manager.gd" id="3_kne1u"]
 [ext_resource type="Script" uid="uid://dos6c6reryimp" path="res://Projectiles/projectile_manager.gd" id="4_8g4oa"]
 [ext_resource type="Shape2D" uid="uid://dx0kln6elb2qg" path="res://Assets/Polygon/up_attack_polygon.tres" id="6_6ysni"]

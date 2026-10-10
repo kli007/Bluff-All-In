@@ -51,7 +51,7 @@ func _physics_process(delta: float) -> void:
 	elif isActioning == State.DASH:
 		velocity.x = lastDirection.x * DashSpeed
 	else:
-		if direction and animNode.name != 'Jump':
+		if direction:
 			velocity.x = direction.x * speed
 		else:
 			velocity.x = move_toward(velocity.x, 0, speed)
@@ -128,10 +128,8 @@ func _on_trick_timer_timeout() -> void:
 	isActioning = State.NOTHING
 
 func _on_hit_box_body_entered(body: Node2D) -> void:
-	var damage: String
+	var damage: String = 'player_atk_dmg'
 	match isActioning:
-		State.BASIC_ATTACK:
-			damage = 'player_atk_dmg'
 		State.LAUNCH_ATTACK:
 			damage = 'player_launch_dmg'
 		State.SPIKE_ATTACK:

@@ -43,7 +43,5 @@ func _on_hit_box_body_entered(body: Node2D) -> void:
 	if body.name == "Player":
 		CombatManager.dealDamage(contact_damage, body, global_position, self.name)
 
-func takeDamage(damage: float, knockback: Vector2, damagePos: Vector2, damageType: String) -> void:
-	super.takeDamage(damage, knockback, damagePos, damageType)
-	if healthNode.takeHit(-damage, damageType):
-		CombatManager.enemy_hit.emit(CombatManager.HIT_NAMES[damageType])
+func unique_hit(damageType: String) -> void:
+	CombatManager.enemy_hit.emit(CombatManager.HIT_NAMES[damageType])

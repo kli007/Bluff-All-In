@@ -16,7 +16,7 @@ extends CharacterBody2D
 var isKnockback: bool = false
 var knockbackVelocity: Vector2
 var direction: Vector2
-var lastDirection: Vector2
+var lastDirection: Vector2 = Vector2.RIGHT
 
 func _ready() -> void:
 	set_stats()
@@ -50,6 +50,7 @@ func flip_sprite() -> void:
 func takeDamage(damage: float, knockback: Vector2, damagePos: Vector2, damageType: String) -> void:
 	if healthNode.takeHit(-damage, damageType):
 		takeKnockback(knockback, damagePos)
+		unique_hit(damageType)
 		
 func takeKnockback(knockForce: Vector2, damagePos: Vector2) -> void:
 	var knockbackDir = (global_position - damagePos).normalized()
@@ -72,6 +73,9 @@ func unique_ready() -> void:
 	pass
 	
 func set_stats() -> void:
+	pass
+	
+func unique_hit(damageType: String) -> void:
 	pass
 	
 func _on_hit_box_body_entered(body: Node2D) -> void:
