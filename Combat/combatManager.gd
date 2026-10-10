@@ -60,9 +60,9 @@ func getKnockback(damageType: String) -> Vector2:
 		"enemy_small_attack_dmg", "hand_2pair_dmg", "hand_3kind_dmg", "hand_straight_dmg", "hand_flush_dmg":
 			return values.medium_kb
 		"player_launch_dmg":
-			return values.small_kb
+			return values.launch_kb
 		"player_spike_dmg":
-			return values.small_kb
+			return values.spike_kb
 		_:
 			return values.large_kb
 			

@@ -4,6 +4,8 @@ extends CharacterBody2D
 @onready var effectNode: AnimationPlayer = $EffectsPlayer
 @onready var healthNode: Node = $HealthManager
 @onready var knockTimer: Timer = $KnockbackTimer
+@onready var hoverTimer: Timer = $HoverTimer
+@onready var vertTimer: Timer = $VerticalTimer
 @onready var visNode: Node2D = $VisualManager
 @onready var spawnLocation: Vector2 = global_position
 
@@ -14,9 +16,13 @@ extends CharacterBody2D
 @export var invincibility_time: float
 
 var isKnockback: bool = false
+var isVertical: bool = false
+var isHovering: bool = false
 var knockbackVelocity: Vector2
 var direction: Vector2
 var lastDirection: Vector2 = Vector2.RIGHT
+
+signal hover_change
 
 func _ready() -> void:
 	set_stats()
@@ -28,10 +34,16 @@ func _ready() -> void:
 	
 	
 func _physics_process(delta: float) -> void:
+	var hoverScalar: float = 1
+	if isHovering:
+		hoverScalar = 0.05
 	if not is_on_floor():
-		velocity += get_gravity() * delta
-	if isKnockback:
-		velocity.x = knockbackVelocity.x
+		velocity += get_gravity() * delta * hoverScalar
+	if isVertical or isKnockback or isHovering:
+		if isVertical:
+			velocity.y = knockbackVelocity.y
+		if isKnockback:
+			velocity = knockbackVelocity
 	else:
 		movement(delta)
 		
@@ -53,14 +65,35 @@ func takeDamage(damage: float, knockback: Vector2, damagePos: Vector2, damageTyp
 		unique_hit(damageType)
 		
 func takeKnockback(knockForce: Vector2, damagePos: Vector2) -> void:
-	var knockbackDir = (global_position - damagePos).normalized()
-	knockbackVelocity = knockbackDir * knockForce.x
-	knockTimer.start()
-	isKnockback = true
+	if knockForce.x != 0.0:
+		var knockbackDir = (global_position - damagePos).normalized()
+		knockbackVelocity = knockbackDir * knockForce.x
+		knockTimer.start()
+		isKnockback = true
+	else:
+		knockbackVelocity = knockForce
+		vertTimer.start()
+		isVertical = true
+	
 
 func _on_knockback_timer_timeout() -> void:
-	velocity.x = 0
+	velocity.x = 0.0
 	isKnockback = false
+	startHovering()
+
+func _on_vertical_timer_timeout() -> void:
+	velocity.y =  0.0
+	isVertical = false
+	startHovering()
+	
+func _on_hover_timer_timeout() -> void:
+	isHovering = false
+	
+func startHovering() -> void:
+	if not is_on_ceiling() and not is_on_floor():
+		hoverTimer.start()
+		isHovering = true
+		hover_change.emit()
 	
 func respawn(new_location: Vector2) -> void:
 	global_position = new_location

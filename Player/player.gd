@@ -38,7 +38,7 @@ func _ready() -> void:
 	
 func set_stats() -> void:
 	speed = 200.0
-	jump_velocity = -350.0
+	jump_velocity = -450.0
 	max_health = 100
 	max_hit_threshold = 5
 	invincibility_time = .5

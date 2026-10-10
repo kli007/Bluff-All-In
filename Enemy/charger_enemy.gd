@@ -20,6 +20,7 @@ var targetPosition: float
 func _ready() -> void:
 	super._ready()
 	playerRay.add_exception(self)
+	hover_change.connect(switchIdle)
 	
 func set_stats() -> void:
 	super.set_stats()
@@ -80,7 +81,7 @@ func chargePlayer() -> void:
 	if remaining_distance <= 0.0 or is_on_wall():
 		switchIdle(State.LOOK)
 	
-func switchIdle(placeHolder: State) -> void:
+func switchIdle(placeHolder: State = State.LOOK) -> void:
 	nextAction = State.IDLE
 	changeState()
 	stateTimer.start(1.0)
