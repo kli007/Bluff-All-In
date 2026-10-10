@@ -1,9 +1,10 @@
 class_name CombatValues
 extends Resource
 	
-@export var small_kb: Vector2 = Vector2(150.0, 0)
-@export var medium_kb: Vector2 = Vector2(300.0, 0)
-@export var large_kb: Vector2 = Vector2(500.0, 0)
+@export var no_kb: Vector2 = Vector2(0.0,0.0)
+@export var small_kb: Vector2 = Vector2(150.0, 0.0)
+@export var medium_kb: Vector2 = Vector2(300.0, 0.0)
+@export var large_kb: Vector2 = Vector2(500.0, 0.0)
 @export var launch_kb: Vector2 = Vector2(0.0, -500.0)
 @export var spike_kb: Vector2 = Vector2(0.0, 500.0)
 

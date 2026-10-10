@@ -2,8 +2,6 @@ extends Node
 
 signal health_changed
 signal health_empty
-signal invincibility_started
-signal invincibility_ended
 
 @export var health: float = 100.0
 @export var isInvincible: bool = false
@@ -19,7 +17,7 @@ var hitThreshold: int = 5
 const maxPriority: int = 6
 
 func checkIfHit(attackType: String) -> bool:
-	return CombatManager.getAttackPriority(attackType) > currentHitPriority
+	return CombatManager.ATTACKS[attackType]['hit_priority'] > currentHitPriority
 
 func takeHit(difference: float, attack: String) -> bool:
 	if isInvincible:
@@ -28,7 +26,7 @@ func takeHit(difference: float, attack: String) -> bool:
 	else:
 		hitTimer.start()
 	changeHealth(difference)
-	currentHitPriority += CombatManager.getAttackPriority(attack)
+	currentHitPriority += CombatManager.ATTACKS[attack]['hit_priority']
 	currentHitPriority = clampi(currentHitPriority, 0, maxPriority)
 	if currentHitPriority >= hitThreshold:
 		startInvincible()
@@ -56,7 +54,6 @@ func resetAllValues() -> void:
 	setHealth(maxHealth)
 	currentHitPriority = 0
 	isInvincible = false
-	invincibility_ended.emit()
 	iTimer.stop()
 	hitTimer.stop()
 	
@@ -64,7 +61,6 @@ func startInvincible() -> void:
 	isInvincible = true
 	iTimer.start(iFrames)
 	hitTimer.stop()
-	invincibility_started.emit()
 
 func _on_hit_timer_timeout() -> void:
 	currentHitPriority = 0
@@ -72,7 +68,6 @@ func _on_hit_timer_timeout() -> void:
 func _on_invinc_timer_timeout() -> void:
 	isInvincible = false
 	currentHitPriority = 0
-	invincibility_ended.emit()
 
 func reduceIframe() -> void:
 	pass

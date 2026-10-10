@@ -44,4 +44,4 @@ func _on_hit_box_body_entered(body: Node2D) -> void:
 		CombatManager.dealDamage(contact_damage, body, global_position, self.name)
 
 func unique_hit(damageType: String) -> void:
-	CombatManager.enemy_hit.emit(CombatManager.HIT_NAMES[damageType])
+	CombatManager.enemy_hit.emit(CombatManager.ATTACKS[damageType]['display'])

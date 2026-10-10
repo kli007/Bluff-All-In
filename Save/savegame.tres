@@ -4,31 +4,30 @@
 
 [resource]
 script = ExtResource("1_seo37")
-player_health = 40.0
-player_location = Vector2(151.1138, 36.92527)
-player_projectiles = 3
-current_deck = ["Clubs5", "Spades6", "Hearts9", "Hearts3", "DiamondsQ", "ClubsQ", "Clubs2", "Clubs9", "Hearts5", "Spades5", "Diamonds8", "Spades8", "SpadesJ", "SpadesA", "SpadesK", "Spades2", "Clubs3", "Hearts8", "HeartsQ", "HeartsK", "Spades7"]
+player_health = 52.0
+player_location = Vector2(35.884968, 36.994545)
+current_deck = ["Hearts3", "Spades6", "ClubsQ", "ClubsA", "Hearts6", "HeartsK", "Clubs3", "Spades5", "SpadesK", "HeartsA", "SpadesQ", "Diamonds4", "Hearts2", "SpadesA", "Diamonds2", "Diamonds8", "ClubsJ", "Hearts5", "Hearts8", "Hearts10", "Spades2", "Hearts9"]
 pend_cards = [{
-"rank": "8",
-"suit": "Clubs"
-}, {
-"rank": "4",
-"suit": "Clubs"
+"rank": "3",
+"suit": "Diamonds"
 }, {
 "rank": "7",
+"suit": "Spades"
+}, {
+"rank": "J",
 "suit": "Hearts"
 }, {
 "rank": "9",
-"suit": "Spades"
-}, {
-"rank": "A",
-"suit": "Clubs"
-}, {
-"rank": "10",
-"suit": "Hearts"
+"suit": "Diamonds"
 }, {
 "rank": "K",
 "suit": "Diamonds"
+}, {
+"rank": "3",
+"suit": "Spades"
+}, {
+"rank": "8",
+"suit": "Spades"
 }]
 played_cards = [{
 "rank": "",

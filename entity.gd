@@ -18,7 +18,9 @@ extends CharacterBody2D
 var isKnockback: bool = false
 var isVertical: bool = false
 var isHovering: bool = false
+var isSpiked: bool = false
 var knockbackVelocity: Vector2
+var verticalVelocity: Vector2
 var direction: Vector2
 var lastDirection: Vector2 = Vector2.RIGHT
 
@@ -26,8 +28,6 @@ signal hover_change
 
 func _ready() -> void:
 	set_stats()
-	healthNode.invincibility_started.connect(func() -> void: effectNode.play('Invincible'))
-	healthNode.invincibility_ended.connect(func() -> void: effectNode.play('RESET'))
 	healthNode.health_empty.connect(death)
 	healthNode.setAllValues(max_health, max_hit_threshold, invincibility_time)
 	unique_ready()
@@ -39,9 +39,11 @@ func _physics_process(delta: float) -> void:
 		hoverScalar = 0.05
 	if not is_on_floor():
 		velocity += get_gravity() * delta * hoverScalar
+	else:
+		isSpiked = false
 	if isVertical or isKnockback or isHovering:
 		if isVertical:
-			velocity.y = knockbackVelocity.y
+			velocity = verticalVelocity
 		if isKnockback:
 			velocity = knockbackVelocity
 	else:
@@ -49,6 +51,12 @@ func _physics_process(delta: float) -> void:
 		
 	flip_sprite()
 	move_and_slide()
+	effect_control()
+	
+func effect_control() -> void:
+	if not effectNode.is_playing():
+		if healthNode.isInvincible:
+			effectNode.play("Invincible")
 	
 func movement(delta: float) -> void:
 	pass
@@ -61,25 +69,31 @@ func flip_sprite() -> void:
 		
 func takeDamage(damage: float, knockback: Vector2, damagePos: Vector2, damageType: String) -> void:
 	if healthNode.takeHit(-damage, damageType):
+		effectNode.play("HURT")
 		takeKnockback(knockback, damagePos)
 		unique_hit(damageType)
 		
 func takeKnockback(knockForce: Vector2, damagePos: Vector2) -> void:
 	if knockForce.x != 0.0:
-		var knockbackDir = (global_position - damagePos).normalized()
-		knockbackVelocity = knockbackDir * knockForce.x
+		var offset: Vector2 = global_position - damagePos
+		if is_on_floor():
+			offset.y = 0.0
+		if offset == Vector2.ZERO:
+			offset.x = 1.0
+		knockbackVelocity = offset.normalized() * knockForce.x
 		knockTimer.start()
 		isKnockback = true
-	else:
-		knockbackVelocity = knockForce
+	if knockForce.y != 0.0:
+		verticalVelocity = knockForce
 		vertTimer.start()
 		isVertical = true
+		if verticalVelocity.y >= 0:
+			isSpiked = true
 	
 
 func _on_knockback_timer_timeout() -> void:
 	velocity.x = 0.0
 	isKnockback = false
-	startHovering()
 
 func _on_vertical_timer_timeout() -> void:
 	velocity.y =  0.0
@@ -90,7 +104,7 @@ func _on_hover_timer_timeout() -> void:
 	isHovering = false
 	
 func startHovering() -> void:
-	if not is_on_ceiling() and not is_on_floor():
+	if not is_on_ceiling() and not is_on_floor() and not isSpiked:
 		hoverTimer.start()
 		isHovering = true
 		hover_change.emit()
