@@ -3,6 +3,7 @@ extends Entity
 @onready var animNode: AnimationPlayer = $AnimationPlayer
 @onready var deckNode: Node = $DeckManager
 @onready var projNode: Node = $ProjectileManager
+@onready var comboTime: Timer = $ComboTimer
 @onready var dashTime: Timer = $DashTimer
 @onready var trickTime: Timer = $TrickTimer
 
@@ -16,6 +17,7 @@ signal needMultiplier
 var lookingDir: String = ''
 var burnActive: bool = false
 var activeJumps: int = 3
+var lastAttack: String
 
 var isActioning: State = State.NOTHING
 
@@ -23,7 +25,7 @@ const MAX_PLAYED_CARDS: int = 5
 const MAX_PEND_CARDS: int = 7
 const HEAL_BURN_MINIMUM: int = 2
 const MAX_JUMP_AVAILABLE: int = 3
-const ATTACK_ANIMATIONS: Dictionary = {'Attack_1': State.BASIC_ATTACK, 
+const ATTACK_ANIMATIONS: Dictionary = {'G_Attack_1': State.BASIC_ATTACK, 
 'Up_Attack': State.LAUNCH_ATTACK, 'Down_Attack': State.SPIKE_ATTACK}
 
 var currentTrick: Dictionary = {'rank': '3', 'suit': ''}
@@ -107,8 +109,15 @@ func trickCards() -> void:
 	TrickManager.mainManager(pendNodes.front(), currentTrick['rank'], currentTrick['suit'])
 	setPlayedCard()
 	
-func slash_combo() -> void:
-	pass # need for air rave 2 hit, and ground combo 3 hits
+func slash_combo(_stage: String) -> void:
+	if lastAttack == "G_Attack_2":
+		lastAttack = "G_Attack_3"
+	elif lastAttack == "G_Attack_1":
+		lastAttack = "G_Attack_2"
+	else:
+		lastAttack = "G_Attack_1"
+	comboTime.start() 
+	animNode.play("G_Attack_1")
 	
 func _on_animation_player_animation_finished(anim_name: StringName) -> void:
 	if anim_name in ATTACK_ANIMATIONS:
@@ -117,8 +126,8 @@ func _on_animation_player_animation_finished(anim_name: StringName) -> void:
 		CombatManager.resetComboMult()
 		isActioning = State.NOTHING
 		
-func _on_attack_timer_timeout() -> void:
-	pass # Replace with function body.
+func _on_combo_timer_timeout() -> void:
+	lastAttack = ""
 
 func _on_dash_timer_timeout() -> void:
 	isActioning = State.NOTHING
@@ -167,21 +176,21 @@ func movement(deltaTime: float) -> void:
 	if Input.is_action_just_pressed("Attack") and (isActioning == State.NOTHING or isActioning == State.DASH):
 		if CardData.checkSpace(playedNodes) and CardData.checkSpace(pendNodes) < MAX_PEND_CARDS:
 			if isActioning == State.DASH:
-					animNode.play("Attack_1")
+					animNode.play("G_Attack_1")
 					dashTime.stop()
 			if not is_on_floor():
 				if lookingDir == 'DOWN':
 					animNode.play("Down_Attack")
 					isActioning = State.SPIKE_ATTACK
 				else:
-					animNode.play("Attack_1")
+					slash_combo('')
 					isActioning = State.BASIC_ATTACK
 			else:
 				if lookingDir == 'UP':
 					animNode.play("Up_Attack")
 					isActioning = State.LAUNCH_ATTACK
 				else:
-					animNode.play("Attack_1")
+					slash_combo('')
 					isActioning = State.BASIC_ATTACK
 			setPlayedCard()
 					
