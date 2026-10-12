@@ -17,7 +17,7 @@ signal needMultiplier
 var lookingDir: String = ''
 var burnActive: bool = false
 var activeJumps: int = 3
-var lastAttack: String
+var currentAttack: String
 
 var isActioning: State = State.NOTHING
 
@@ -25,12 +25,10 @@ const MAX_PLAYED_CARDS: int = 5
 const MAX_PEND_CARDS: int = 7
 const HEAL_BURN_MINIMUM: int = 2
 const MAX_JUMP_AVAILABLE: int = 3
-const ATTACK_ANIMATIONS: Dictionary = {'G_Attack_1': State.BASIC_ATTACK, 
-'Up_Attack': State.LAUNCH_ATTACK, 'Down_Attack': State.SPIKE_ATTACK}
 
 var currentTrick: Dictionary = {'rank': '3', 'suit': ''}
 
-enum State {BASIC_ATTACK, LAUNCH_ATTACK, SPIKE_ATTACK, DASH_ATTACK, DASH, JUMP, SHOWDOWN, TRICK, NOTHING}
+enum State {ATTACK, DASH, JUMP, SHOWDOWN, TRICK, NOTHING}
 
 func _ready() -> void:
 	super._ready()
@@ -58,7 +56,7 @@ func _physics_process(delta: float) -> void:
 		else:
 			velocity.x = move_toward(velocity.x, 0, speed)
 
-	if isActioning not in ATTACK_ANIMATIONS.values() and isActioning != State.SHOWDOWN:
+	if isActioning != State.ATTACK and isActioning != State.SHOWDOWN:
 		move_and_slide()
 		animation_control()
 		flip_sprite()
@@ -110,24 +108,21 @@ func trickCards() -> void:
 	setPlayedCard()
 	
 func slash_combo(_stage: String) -> void:
-	if lastAttack == "G_Attack_2":
-		lastAttack = "G_Attack_3"
-	elif lastAttack == "G_Attack_1":
-		lastAttack = "G_Attack_2"
+	if currentAttack == "G_Attack_2":
+		currentAttack = "G_Attack_3"
+	elif currentAttack == "G_Attack_1":
+		currentAttack = "G_Attack_2"
 	else:
-		lastAttack = "G_Attack_1"
-	comboTime.start() 
-	animNode.play("G_Attack_1")
+		currentAttack = "G_Attack_1"
+	comboTime.start()
 	
 func _on_animation_player_animation_finished(anim_name: StringName) -> void:
-	if anim_name in ATTACK_ANIMATIONS:
-		isActioning = State.NOTHING
 	if anim_name == "Showdown":
 		CombatManager.resetComboMult()
-		isActioning = State.NOTHING
+	isActioning = State.NOTHING
 		
 func _on_combo_timer_timeout() -> void:
-	lastAttack = ""
+	currentAttack = ""
 
 func _on_dash_timer_timeout() -> void:
 	isActioning = State.NOTHING
@@ -139,10 +134,8 @@ func _on_trick_timer_timeout() -> void:
 func _on_hit_box_body_entered(body: Node2D) -> void:
 	var damage: String = 'player_atk_dmg'
 	match isActioning:
-		State.LAUNCH_ATTACK:
-			damage = 'player_launch_dmg'
-		State.SPIKE_ATTACK:
-			damage = 'player_spike_dmg'
+		State.ATTACK:
+			damage = currentAttack
 		State.SHOWDOWN:
 			damage = deckNode.lastPlayedHand
 	if body is CharacterBody2D and body.name != 'Player':
@@ -176,23 +169,21 @@ func movement(deltaTime: float) -> void:
 	if Input.is_action_just_pressed("Attack") and (isActioning == State.NOTHING or isActioning == State.DASH):
 		if CardData.checkSpace(playedNodes) and CardData.checkSpace(pendNodes) < MAX_PEND_CARDS:
 			if isActioning == State.DASH:
-					animNode.play("G_Attack_1")
+					currentAttack = "G_Attack_1"
 					dashTime.stop()
 			if not is_on_floor():
 				if lookingDir == 'DOWN':
-					animNode.play("Down_Attack")
-					isActioning = State.SPIKE_ATTACK
+					currentAttack = "Down_Attack"
 				else:
 					slash_combo('')
-					isActioning = State.BASIC_ATTACK
 			else:
 				if lookingDir == 'UP':
-					animNode.play("Up_Attack")
-					isActioning = State.LAUNCH_ATTACK
+					currentAttack = "Up_Attack"
 				else:
 					slash_combo('')
-					isActioning = State.BASIC_ATTACK
 			setPlayedCard()
+			animNode.play(currentAttack)
+			isActioning = State.ATTACK
 					
 	
 	if Input.is_action_just_pressed("Trick") and isActioning == State.NOTHING:
@@ -203,7 +194,7 @@ func movement(deltaTime: float) -> void:
 			projNode.create_projectile(self, lastDirection, global_position)
 			if not projNode.projectileCount:
 				trickCards()
-			trickTime.start()
+			animNode.play("Shoot_Projectile")
 			isActioning = State.TRICK
 	if Input.is_action_pressed("Trick") and not burnActive:
 		projNode.reloadProjectiles(deltaTime)
