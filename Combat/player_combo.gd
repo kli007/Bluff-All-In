@@ -25,6 +25,7 @@ func _process(_delta: float) -> void:
 	
 func _on_player_combo_changed(playedHand: String) -> void:
 	increaseChain()
+	playCardOnHit(playedHand)
 	lastActions.append(playedHand)
 	text = 'Combo: ' + str(int(comboChain))
 	for act in lastActions.slice(-DISPLAY_LIMIT):
@@ -53,3 +54,10 @@ func _check_rank() -> void:
 	var newRank: String = CombatManager.getRankText()
 	rankLabel.text = newRank
 	rankMultiplier = CombatManager.getRankMultiplier(newRank)
+	
+func playCardOnHit(damageDisplay: String) -> void:
+	var attackKeys = CombatManager.ATTACKS.keys().slice(0, 6)
+	for key in attackKeys:
+		if damageDisplay ==  CombatManager.ATTACKS[key]['display']:
+			player.setPlayedCard()
+			return

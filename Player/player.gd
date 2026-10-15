@@ -97,7 +97,7 @@ func showdownPlayedCards() -> void:
 func burnCards(action: String) -> void:
 	match action:
 		'dash':
-			BurnManager.dashBurn(playedNodes)
+			BurnManager.dashBurn(playedNodes, self)
 		'jump':
 			BurnManager.jumpBurn(playedNodes)
 		'heal':
@@ -119,6 +119,9 @@ func slash_combo(_stage: String) -> void:
 func _on_animation_player_animation_finished(anim_name: StringName) -> void:
 	if anim_name == "Showdown":
 		CombatManager.resetComboMult()
+	if anim_name == "Dash":
+		collision_layer = 1
+		collision_mask = 1
 	isActioning = State.NOTHING
 		
 func _on_combo_timer_timeout() -> void:
@@ -132,14 +135,17 @@ func _on_trick_timer_timeout() -> void:
 	isActioning = State.NOTHING
 
 func _on_hit_box_body_entered(body: Node2D) -> void:
+	if body.name == 'Player' or body is not CharacterBody2D:
+		return
 	var damage: String = 'player_atk_dmg'
 	match isActioning:
 		State.ATTACK:
 			damage = currentAttack
 		State.SHOWDOWN:
 			damage = deckNode.lastPlayedHand
-	if body is CharacterBody2D and body.name != 'Player':
-		CombatManager.dealDamage(damage, body, global_position, self.name)
+		State.DASH:
+			damage = "Burn_Dash"
+	CombatManager.dealDamage(damage, body, global_position, self.name)
 
 func movement(deltaTime: float) -> void:
 	if isActioning != State.DASH:
@@ -181,7 +187,7 @@ func movement(deltaTime: float) -> void:
 					currentAttack = "Up_Attack"
 				else:
 					slash_combo('')
-			setPlayedCard()
+			#setPlayedCard()
 			animNode.play(currentAttack)
 			isActioning = State.ATTACK
 					
@@ -210,6 +216,7 @@ func movement(deltaTime: float) -> void:
 		if burnActive and CardData.checkSpace(playedNodes) < MAX_PLAYED_CARDS:
 			burnCards('dash')
 			burnActive = false
+		animNode.play("Dash")
 		dashTime.start()
 		isActioning = State.DASH
 	

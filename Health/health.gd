@@ -26,10 +26,13 @@ func takeHit(difference: float, attack: String) -> bool:
 	else:
 		hitTimer.start()
 	changeHealth(difference)
-	currentHitPriority += CombatManager.ATTACKS[attack]['hit_priority']
-	currentHitPriority = clampi(currentHitPriority, 0, maxPriority)
-	if currentHitPriority >= hitThreshold:
-		startInvincible()
+	if attack == "Burn_Dash":
+		reducePriority()
+	else:
+		currentHitPriority += CombatManager.ATTACKS[attack]['hit_priority']
+		currentHitPriority = clampi(currentHitPriority, 0, maxPriority)
+		if currentHitPriority >= hitThreshold:
+			startInvincible()
 	return true
 		
 func changeHealth(difference: float) -> void:
@@ -70,7 +73,9 @@ func _on_invinc_timer_timeout() -> void:
 	currentHitPriority = 0
 
 func reduceIframe() -> void:
-	pass
+	iTimer.stop()
+	_on_invinc_timer_timeout()
 
 func reducePriority() -> void:
-	pass
+	currentHitPriority -= 10 #temporary place
+	currentHitPriority = clamp(currentHitPriority, 0, maxPriority)

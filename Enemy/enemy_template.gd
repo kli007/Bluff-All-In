@@ -13,12 +13,11 @@ func set_stats() -> void:
 	jump_velocity = -400.0
 	max_health = 30000.0
 	max_hit_threshold = 5
-	invincibility_time = 1.5
+	invincibility_time = 15
 
 func unique_ready() -> void:
 	healthNode.health_changed.connect(_on_enemy_health_changed)
 	hLabel.text = str("Health: ", max_health)
-	
 	
 func _on_enemy_health_changed() -> void:
 	hLabel.text = str("Health: ", healthNode.health)
