@@ -30,7 +30,10 @@ var ATTACKS: Dictionary = {
 }
 
 func dealDamage(damageType: String, body: Node, pos: Vector2, origin: String) -> void:
-	if not body.healthNode.isInvincible or body.healthNode.checkIfHit(damageType):
+	if not ATTACKS.has(damageType):
+		push_error("Unknown attack id: '%s'" % damageType)
+		return
+	if body.healthNode.checkIfHit(damageType):
 		var knockback: Vector2 = ATTACKS[damageType]['knockback']
 		var damage: float = ATTACKS[damageType]['damage']
 		if origin == "Player":

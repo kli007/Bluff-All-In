@@ -107,13 +107,14 @@ func trickCards() -> void:
 	TrickManager.mainManager(pendNodes.front(), currentTrick['rank'], currentTrick['suit'])
 	setPlayedCard()
 	
-func slash_combo(_stage: String) -> void:
+func slash_combo() -> void:
 	if currentAttack == "G_Attack_2":
 		currentAttack = "G_Attack_3"
 	elif currentAttack == "G_Attack_1":
 		currentAttack = "G_Attack_2"
 	else:
 		currentAttack = "G_Attack_1"
+		
 	comboTime.start()
 	
 func _on_animation_player_animation_finished(anim_name: StringName) -> void:
@@ -174,6 +175,7 @@ func movement(deltaTime: float) -> void:
 		
 	if Input.is_action_just_pressed("Attack") and (isActioning == State.NOTHING or isActioning == State.DASH):
 		if CardData.checkSpace(playedNodes) and CardData.checkSpace(pendNodes) < MAX_PEND_CARDS:
+			comboTime.stop()
 			if isActioning == State.DASH:
 					currentAttack = "G_Attack_1"
 					dashTime.stop()
@@ -181,12 +183,12 @@ func movement(deltaTime: float) -> void:
 				if lookingDir == 'DOWN':
 					currentAttack = "Down_Attack"
 				else:
-					slash_combo('')
+					slash_combo()
 			else:
 				if lookingDir == 'UP':
 					currentAttack = "Up_Attack"
 				else:
-					slash_combo('')
+					slash_combo()
 			#setPlayedCard()
 			animNode.play(currentAttack)
 			isActioning = State.ATTACK

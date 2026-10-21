@@ -11,23 +11,25 @@ signal health_empty
 @onready var hitTimer: Timer = $HitTimer
 
 var maxHealth: float = 100.0
-var iFrames: float = .5
+var iFrames: float = 0.5
 var hitThreshold: int = 5
 
 const maxPriority: int = 6
 
+func isLocked() -> bool:
+	return isInvincible and currentHitPriority >= hitThreshold
+
 func checkIfHit(attackType: String) -> bool:
-	return CombatManager.ATTACKS[attackType]['hit_priority'] > currentHitPriority
+	return not isLocked() or CombatManager.ATTACKS[attackType]['hit_priority'] > currentHitPriority
 
 func takeHit(difference: float, attack: String) -> bool:
-	if isInvincible:
-		if not checkIfHit(attack):
-			return false
-	else:
+	if not checkIfHit(attack):
+		return false
+	if not isLocked():
 		hitTimer.start()
 	changeHealth(difference)
 	if attack == "Burn_Dash":
-		reducePriority()
+		reducePriority(10)
 	else:
 		currentHitPriority += CombatManager.ATTACKS[attack]['hit_priority']
 		currentHitPriority = clampi(currentHitPriority, 0, maxPriority)
@@ -76,6 +78,8 @@ func reduceIframe() -> void:
 	iTimer.stop()
 	_on_invinc_timer_timeout()
 
-func reducePriority() -> void:
-	currentHitPriority -= 10 #temporary place
-	currentHitPriority = clamp(currentHitPriority, 0, maxPriority)
+func reducePriority(amount: int) -> void:
+	currentHitPriority = clamp(currentHitPriority - amount, 0, maxPriority)
+	if isInvincible and currentHitPriority < hitThreshold:
+		iTimer.stop()
+		isInvincible = false
