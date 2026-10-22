@@ -6,8 +6,8 @@ enum State {IDLE, WALK, CHARGE, LOOK}
 @export var charge_damage: String = "enemy_small_attack_dmg"
 @export var charge_distance: float = 150.0
 
-@onready var floorRay: Node = $VisualManager/FloorRay
-@onready var playerRay: Node = $VisualManager/PlayerRay
+@onready var floorRay: RayCast2D = $VisualManager/FloorRay
+@onready var playerRay: ShapeCast2D = $VisualManager/PlayerRay
 @onready var stateTimer: Timer = $StateTimer
 @onready var walkTimer: Timer = $WalkTimer
 @onready var lookTimer: Timer = $LookTimer
@@ -18,12 +18,16 @@ var lookingCounter: int = 0
 var targetPosition: float
 
 func _ready() -> void:
+	super._ready()
 	playerRay.add_exception(self)
+	hover_change.connect(switchIdle)
+	
+func set_stats() -> void:
+	super.set_stats()
 	speed = 50
 	max_health = 50
-	startHealth()
 
-func movement() -> void:
+func movement(_delta: float) -> void:
 	match isAction:
 		State.CHARGE:
 			chargePlayer()
@@ -35,11 +39,9 @@ func movement() -> void:
 		State.IDLE:
 			pass
 
-
 func walkingAround() -> void:
 	if walkTimer.is_stopped():
-		walkTimer.wait_time = randf_range(2.5, 5.5)
-		walkTimer.start()
+		walkTimer.start(randf_range(2.5, 5.5))
 		
 	if floorRay.is_colliding() and not is_on_wall():
 		velocity.x = direction.x * speed
@@ -79,11 +81,10 @@ func chargePlayer() -> void:
 	if remaining_distance <= 0.0 or is_on_wall():
 		switchIdle(State.LOOK)
 	
-func switchIdle(placeHolder: State) -> void:
+func switchIdle(placeHolder: State = State.LOOK) -> void:
 	nextAction = State.IDLE
 	changeState()
-	stateTimer.wait_time = 1.0
-	stateTimer.start()
+	stateTimer.start(1.0)
 	nextAction = placeHolder
 		
 func _on_state_timer_timeout() -> void:
@@ -106,3 +107,4 @@ func _on_hit_box_body_entered(body: Node2D) -> void:
 
 func _on_walk_timer_timeout() -> void:
 	switchIdle(State.LOOK)
+	

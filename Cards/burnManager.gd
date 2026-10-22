@@ -1,12 +1,14 @@
 extends Node
 
-func dashBurn(playedNodes: Array) -> void:
-	var burnCard: Node = playedNodes.front()
+func dashBurn(playedNodes: Array, playerNode: CharacterBody2D) -> void:
+	var burnCard: Node2D = playedNodes.front()
 	CardData.hideCards(burnCard)
 	CardData.moveUpCards(playedNodes)
+	playerNode.collision_layer = 2
+	playerNode.collision_mask = 2
 	
 func jumpBurn(playedNodes: Array) -> void:
-	var burnCard: Node
+	var burnCard: Node2D
 	var reverseNodes: Array = playedNodes.duplicate()
 	reverseNodes.reverse()
 	for card in reverseNodes:

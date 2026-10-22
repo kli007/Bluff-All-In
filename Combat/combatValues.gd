@@ -1,12 +1,17 @@
 class_name CombatValues
 extends Resource
 	
-@export var small_kb: float = 150.0
-@export var medium_kb: float = 300.0
-@export var large_kb: float = 500.0
+@export var no_kb: Vector2 = Vector2(0.0,0.0)
+@export var small_kb: Vector2 = Vector2(150.0, 0.0)
+@export var medium_kb: Vector2 = Vector2(300.0, 0.0)
+@export var large_kb: Vector2 = Vector2(500.0, 0.0)
+@export var launch_kb: Vector2 = Vector2(0.0, -500.0)
+@export var spike_kb: Vector2 = Vector2(0.0, 500.0)
 
 @export var player_atk_dmg: float = 15.0
 @export var player_proj_dmg: float = 10.0
+@export var player_launch_dmg: float = 15.0
+@export var player_spike_dmg: float = 15.0
 
 @export var enemy_small_contact_dmg: float = 6.0
 @export var enemy_small_attack_dmg: float = 12.0
@@ -34,26 +39,3 @@ extends Resource
 @export var b_rank_thres: float = 400.0
 @export var c_rank_thres: float = 250.0
 @export var d_rank_thres: float = 75.0
-
-func getKnockback(damageType: String) -> float:
-	match damageType:
-		"player_atk_dmg", "player_proj_dmg", "hand_HC_dmg", "hand_pair_dmg", "enemy_small_contact_dmg":
-			return small_kb
-		"enemy_small_attack_dmg", "hand_Tpair_dmg", "hand_3kind_dmg", "hand_straight_dmg", "hand_flush_dmg":
-			return medium_kb
-		_:
-			return large_kb
-			
-func getRankMult(currentValue: float) -> String: 
-	if currentValue >= s_rank_thres:
-		return "S"
-	elif currentValue >= a_rank_thres:
-		return "A"
-	elif currentValue >= b_rank_thres:
-		return "B"
-	elif currentValue >= c_rank_thres:
-		return "C"
-	elif currentValue >= d_rank_thres:
-		return "D"
-	else:
-		return "F"

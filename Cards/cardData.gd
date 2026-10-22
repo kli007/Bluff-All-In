@@ -51,9 +51,9 @@ func checkSpace(cardNodes: Array) -> int:
 	return hasSpace
 	
 func changeCardSprite(cardNode: Node) -> void:
-	var cardSuit: Node = cardNode.get_node("Suit")
-	var cardRankTL: Node = cardNode.get_node("RankTopLeft")
-	var cardRankBR: Node = cardNode.get_node("RankBotRight")
+	var cardSuit: Sprite2D = cardNode.get_node("Suit")
+	var cardRankTL: Sprite2D = cardNode.get_node("RankTopLeft")
+	var cardRankBR: Sprite2D = cardNode.get_node("RankBotRight")
 	cardSuit.show()
 	cardRankTL.show()
 	cardRankBR.show()
@@ -63,9 +63,9 @@ func changeCardSprite(cardNode: Node) -> void:
 	cardRankBR.frame = CardData.ranks.find(cardNode.rank)
 	
 func hideCards(cardNode: Node) -> void:
-	var cardSuit: Node = cardNode.get_node("Suit")
-	var cardRankTL: Node = cardNode.get_node("RankTopLeft")
-	var cardRankBR: Node = cardNode.get_node("RankBotRight")
+	var cardSuit: Sprite2D = cardNode.get_node("Suit")
+	var cardRankTL: Sprite2D = cardNode.get_node("RankTopLeft")
+	var cardRankBR: Sprite2D = cardNode.get_node("RankBotRight")
 	cardSuit.hide()
 	cardRankTL.hide()
 	cardRankBR.hide()

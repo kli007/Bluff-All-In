@@ -1,44 +1,46 @@
-[gd_resource type="Resource" script_class="SaveData" format=3 uid="uid://cjuc733ecpb8h"]
+[gd_resource type="Resource" script_class="SaveData" format=3]
 
-[ext_resource type="Script" uid="uid://b0ttmaejkrbgb" path="res://Save/save_data.gd" id="1_seo37"]
+[ext_resource type="Script" path="res://Save/save_data.gd" id="1_seo37"]
 
 [resource]
 script = ExtResource("1_seo37")
-player_location = Vector2(178.99994, 36.99089)
+player_health = 88.0
+player_location = Vector2(328.99924, 36.994686)
+current_deck = ["Clubs8", "Diamonds7", "Spades5", "HeartsK", "DiamondsK", "SpadesJ", "HeartsJ", "SpadesA", "Diamonds5", "Spades6", "HeartsA", "SpadesK", "DiamondsJ", "Diamonds6", "Clubs7", "Clubs10", "Hearts9", "ClubsJ", "ClubsA", "SpadesQ", "Hearts10", "Hearts2", "Hearts7", "Hearts3", "Clubs9", "Diamonds10", "Hearts5", "Hearts6", "Clubs6"]
 pend_cards = [{
-"rank": "10",
-"suit": "Clubs"
+"rank": "7",
+"suit": "Spades"
 }, {
-"rank": "Q",
-"suit": "Hearts"
+"rank": "3",
+"suit": "Spades"
 }, {
-"rank": "9",
-"suit": "Hearts"
+"rank": "8",
+"suit": "Spades"
 }, {
 "rank": "8",
 "suit": "Hearts"
 }, {
-"rank": "",
-"suit": ""
-}, {
-"rank": "",
-"suit": ""
-}, {
-"rank": "",
-"suit": ""
-}]
-played_cards = [{
 "rank": "8",
 "suit": "Diamonds"
 }, {
 "rank": "A",
-"suit": "Spades"
-}, {
-"rank": "Q",
 "suit": "Diamonds"
 }, {
+"rank": "2",
+"suit": "Clubs"
+}]
+played_cards = [{
 "rank": "3",
-"suit": "Hearts"
+"suit": "Diamonds"
+}, {
+"rank": "",
+"suit": ""
+}, {
+"rank": "",
+"suit": ""
+}, {
+"rank": "",
+"suit": ""
 }, {
 "rank": "",
 "suit": ""

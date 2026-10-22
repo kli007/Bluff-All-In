@@ -3,7 +3,6 @@ var projectile = preload("res://Projectiles/projectile.tscn")
 
 signal proj_changed
 signal reload_status
-signal comboChanged
 
 @export var projectileCount: int = 0
 
@@ -17,7 +16,6 @@ func create_projectile(playerNode: Node, playerDirection: Vector2, playerGP: Vec
 	var new_projectile = projectile.instantiate()
 	new_projectile.global_position = playerGP
 	new_projectile.lock_on_to_player(playerDirection, playerNode, Proj)
-	new_projectile.hitTarget.connect(_on_projectile_hit)
 	Proj.call_deferred("add_child", new_projectile)
 	projectileCount -= 1
 	proj_changed.emit()
@@ -40,5 +38,3 @@ func setProjectiles(newProjs: int) -> void:
 	projectileCount = newProjs
 	proj_changed.emit()
 	
-func _on_projectile_hit() -> void:
-	comboChanged.emit('Projectile Hit')
