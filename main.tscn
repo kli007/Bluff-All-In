@@ -5,7 +5,7 @@
 [ext_resource type="PackedScene" uid="uid://daaqo57ngxba6" path="res://Player/Player.tscn" id="2_0xm2m"]
 [ext_resource type="PackedScene" uid="uid://bc4g2w3j8inqx" path="res://Cards/PlayedCards.tscn" id="3_1bvp3"]
 [ext_resource type="PackedScene" uid="uid://ce7wj45lpekfs" path="res://Cards/PendCards.tscn" id="3_h2yge"]
-[ext_resource type="PackedScene" uid="uid://dqswf1f3rgufw" path="res://Enemy/enemyTemplate.tscn" id="4_kek77"]
+[ext_resource type="PackedScene" uid="uid://dlhy3k1qvlvma" path="res://Enemy/flyingEnemy.tscn" id="4_dg77c"]
 [ext_resource type="Script" uid="uid://cssp134kyvgv4" path="res://Health/player_health.gd" id="6_4c57u"]
 [ext_resource type="Script" uid="uid://vqjxie4pbklg" path="res://Projectiles/player_projectiles.gd" id="6_272bh"]
 [ext_resource type="Texture2D" uid="uid://dbf07vmwaqx41" path="res://Assets/Sprite/UI/healthbottom.png" id="6_ycdy4"]
@@ -26,8 +26,8 @@ position = Vector2(154, -12)
 position = Vector2(99, 16)
 remote_path = NodePath("../../Camera2D")
 
-[node name="EnemyTemplate" parent="." unique_id=196944662 instance=ExtResource("4_kek77")]
-position = Vector2(297, -12)
+[node name="FlyingEnemy" parent="." unique_id=826570356 instance=ExtResource("4_dg77c")]
+position = Vector2(352, -48)
 
 [node name="Camera2D" type="Camera2D" parent="." unique_id=919362061]
 position = Vector2(253, 4)

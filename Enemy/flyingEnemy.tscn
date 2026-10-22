@@ -1,0 +1,17 @@
+[gd_scene format=3 uid="uid://dlhy3k1qvlvma"]
+
+[ext_resource type="PackedScene" uid="uid://dqswf1f3rgufw" path="res://Enemy/enemyTemplate.tscn" id="1_lynjm"]
+[ext_resource type="Script" uid="uid://d3551tsi1ohae" path="res://Enemy/flying_enemy.gd" id="2_4fnm7"]
+
+[node name="FlyingEnemy" unique_id=569175648 instance=ExtResource("1_lynjm")]
+script = ExtResource("2_4fnm7")
+flying_amplitude = 10.0
+flying_period = 2.0
+flying_range = []
+
+[node name="StateTimer" type="Timer" parent="." index="9" unique_id=2130467437]
+
+[node name="FlyingTimer" type="Timer" parent="." index="10" unique_id=2103293811]
+
+[connection signal="timeout" from="StateTimer" to="." method="_on_state_timer_timeout"]
+[connection signal="timeout" from="FlyingTimer" to="." method="_on_flying_timer_timeout"]

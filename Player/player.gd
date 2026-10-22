@@ -123,14 +123,11 @@ func _on_animation_player_animation_finished(anim_name: StringName) -> void:
 	if anim_name == "Dash":
 		collision_layer = 1
 		collision_mask = 1
+		velocity.x = 0
 	isActioning = State.NOTHING
 		
 func _on_combo_timer_timeout() -> void:
 	currentAttack = ""
-
-func _on_dash_timer_timeout() -> void:
-	isActioning = State.NOTHING
-	velocity.x = 0
 	
 func _on_trick_timer_timeout() -> void:
 	isActioning = State.NOTHING
