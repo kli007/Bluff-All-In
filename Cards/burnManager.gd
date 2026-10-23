@@ -7,7 +7,7 @@ func dashBurn(playedNodes: Array, playerNode: CharacterBody2D) -> void:
 	playerNode.collision_layer = 2
 	playerNode.collision_mask = 2
 	
-func jumpBurn(playedNodes: Array) -> void:
+func grapBurn(playedNodes: Array) -> void:
 	var burnCard: Node2D
 	var reverseNodes: Array = playedNodes.duplicate()
 	reverseNodes.reverse()

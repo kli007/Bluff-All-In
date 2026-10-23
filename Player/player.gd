@@ -99,7 +99,7 @@ func burnCards(action: String) -> void:
 		'dash':
 			BurnManager.dashBurn(playedNodes, self)
 		'jump':
-			BurnManager.jumpBurn(playedNodes)
+			BurnManager.grapBurn(playedNodes)
 		'heal':
 			BurnManager.healBurn(playedNodes)
 	

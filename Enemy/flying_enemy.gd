@@ -15,6 +15,7 @@ enum State {FLY, IDLE, LOOK, CHASE, SHOOT, HURT}
 @export var flying_period: float = 2.0
 @export var flying_range: Array
 @export var shooting_range: float = 130.0
+@export var chasing_range: float = 350.0
 
 var projectile: PackedScene = preload("res://Projectiles/Enemy/FlyEnProj.tscn")
 
@@ -29,39 +30,28 @@ func set_stats() -> void:
 	speed = 50
 	max_health = 50
 	
-func _physics_process(delta: float) -> void:
-	time_passed += delta
-	super._physics_process(delta)
-	animation_control()
-
 func movement(_delta: float) -> void:
-	if Input.is_action_just_pressed("Look_Down"):
-		switchIdle(State.SHOOT)
+	time_passed += _delta
 	match isAction:
 		State.LOOK:
+			animNode.play("FLY")
 			lookForPlayer()
 		State.FLY:
+			animNode.play("FLY")
 			flyingAround()
 		State.CHASE:
+			animNode.play("FLY")
 			chasePlayer()
 		State.SHOOT:
 			if (animNode.current_animation != "SHOOT" and 
 			animNode.current_animation != "RELOAD"):
 				animNode.play("SHOOT")
 		State.IDLE:
+			animNode.play("FLY")
+			
+		State.HURT:
 			pass
-			
-			
-func animation_control() -> void:
-	if isAction == State.HURT:
-		animNode.play("SHOOT")
-	elif isAction == State.SHOOT:
-		pass
-		#animNode.play("SHOOT")
-	else:
-		animNode.play("FLY")
-	
-	
+		
 func gravity(_scalar: float, _delta: float) -> void:
 	pass
 	
@@ -95,6 +85,10 @@ func chasePlayer() -> void:
 	direction = global_position.direction_to(targetPosition)
 	if global_position.distance_to(targetPosition) <= shooting_range:
 		switchIdle(State.SHOOT)
+		return
+	elif global_position.distance_to(targetPosition) >= chasing_range:
+		targetBody = null
+		switchIdle(State.LOOK)
 		return
 	velocity = direction * speed
 	
@@ -131,8 +125,18 @@ func _on_animation_player_animation_finished(anim_name: StringName) -> void:
 		animNode.play("RELOAD")
 	if anim_name == "RELOAD":
 		switchIdle(State.LOOK)
+	if anim_name == "HURT":
+		changeState()
 
 func _on_player_area_body_entered(body: Node2D) -> void:
 	if body.name == "Player":
 		targetBody = body
 		switchIdle(State.CHASE)
+		
+func unique_hit(damageType: String) -> void:
+	super.unique_hit(damageType)
+	var tempAction: State = nextAction
+	nextAction = State.HURT
+	changeState()
+	nextAction = tempAction
+	animNode.play("HURT")

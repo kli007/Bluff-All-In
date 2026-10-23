@@ -67,7 +67,7 @@ func flip_sprite() -> void:
 		
 func takeDamage(damage: float, knockback: Vector2, damagePos: Vector2, damageType: String) -> void:
 	if healthNode.takeHit(-damage, damageType):
-		effectNode.play("HURT")
+		#effectNode.play("HURT")
 		takeKnockback(knockback, damagePos)
 		unique_hit(damageType)
 		
