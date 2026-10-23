@@ -29,4 +29,4 @@ func _on_body_entered(body: Node2D) -> void:
 		return
 	elif body is CharacterBody2D:
 		CombatManager.dealDamage('player_proj_dmg', body, global_position, "Player")
-		queue_free()
+	queue_free()

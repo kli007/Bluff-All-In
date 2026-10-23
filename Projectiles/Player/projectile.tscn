@@ -1,6 +1,6 @@
 [gd_scene format=3 uid="uid://xt7doyw6x2ox"]
 
-[ext_resource type="Script" uid="uid://bi67wj2e2wj7v" path="res://Projectiles/projectile.gd" id="1_ggq0q"]
+[ext_resource type="Script" uid="uid://bi67wj2e2wj7v" path="res://Projectiles/Player/projectile.gd" id="1_ggq0q"]
 [ext_resource type="Texture2D" uid="uid://bbedbd08thbv8" path="res://Assets/Sprite/Player/projectile.png" id="2_08w86"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_5sqx0"]
@@ -17,5 +17,6 @@ shape = SubResource("RectangleShape2D_5sqx0")
 [node name="VisibleOnScreenNotifier2D" type="VisibleOnScreenNotifier2D" parent="." unique_id=1185933287]
 rect = Rect2(-6, -6, 12, 12)
 
+[connection signal="area_entered" from="." to="." method="_on_area_entered"]
 [connection signal="body_entered" from="." to="." method="_on_body_entered"]
 [connection signal="screen_exited" from="VisibleOnScreenNotifier2D" to="." method="_on_visible_on_screen_notifier_2d_screen_exited"]

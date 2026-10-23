@@ -7,7 +7,7 @@
 [ext_resource type="PackedScene" uid="uid://ce7wj45lpekfs" path="res://Cards/PendCards.tscn" id="3_h2yge"]
 [ext_resource type="PackedScene" uid="uid://dlhy3k1qvlvma" path="res://Enemy/flyingEnemy.tscn" id="4_dg77c"]
 [ext_resource type="Script" uid="uid://cssp134kyvgv4" path="res://Health/player_health.gd" id="6_4c57u"]
-[ext_resource type="Script" uid="uid://vqjxie4pbklg" path="res://Projectiles/player_projectiles.gd" id="6_272bh"]
+[ext_resource type="Script" uid="uid://vqjxie4pbklg" path="res://Projectiles/Player/player_projectiles.gd" id="6_272bh"]
 [ext_resource type="Texture2D" uid="uid://dbf07vmwaqx41" path="res://Assets/Sprite/UI/healthbottom.png" id="6_ycdy4"]
 [ext_resource type="Texture2D" uid="uid://dutqccrcecuog" path="res://Assets/Sprite/UI/healthtop.png" id="7_w48qg"]
 [ext_resource type="Texture2D" uid="uid://j084rtd85k7w" path="res://Assets/Sprite/UI/healthprog.png" id="8_vivmo"]

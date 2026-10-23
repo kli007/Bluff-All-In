@@ -14,7 +14,9 @@ enum State {FLY, IDLE, LOOK, CHASE, SHOOT, HURT}
 @export var flying_amplitude: float = 10.0
 @export var flying_period: float = 2.0
 @export var flying_range: Array
-@export var shooting_range: float = 150.0
+@export var shooting_range: float = 130.0
+
+var projectile: PackedScene = preload("res://Projectiles/Enemy/FlyEnProj.tscn")
 
 func _ready() -> void:
 	super._ready()
@@ -25,7 +27,7 @@ func _ready() -> void:
 func set_stats() -> void:
 	super.set_stats()
 	speed = 50
-	max_health = 5000
+	max_health = 50
 	
 func _physics_process(delta: float) -> void:
 	time_passed += delta
@@ -37,17 +39,15 @@ func movement(_delta: float) -> void:
 		switchIdle(State.SHOOT)
 	match isAction:
 		State.LOOK:
-			if not direction.x:
-				direction.x = 1
-			else:
-				direction *= -1
-			switchIdle(State.FLY)
+			lookForPlayer()
 		State.FLY:
 			flyingAround()
 		State.CHASE:
 			chasePlayer()
 		State.SHOOT:
-			pass
+			if (animNode.current_animation != "SHOOT" and 
+			animNode.current_animation != "RELOAD"):
+				animNode.play("SHOOT")
 		State.IDLE:
 			pass
 			
@@ -56,7 +56,8 @@ func animation_control() -> void:
 	if isAction == State.HURT:
 		animNode.play("SHOOT")
 	elif isAction == State.SHOOT:
-		animNode.play("SHOOT")
+		pass
+		#animNode.play("SHOOT")
 	else:
 		animNode.play("FLY")
 	
@@ -79,14 +80,31 @@ func flyingAround() -> void:
 	else:
 		switchIdle(State.LOOK)
 		
+func lookForPlayer() -> void:
+	if targetBody != null:
+		switchIdle(State.CHASE)
+		return
+	if not direction.x:
+		direction.x = 1
+	else:
+		direction *= -1
+	switchIdle(State.FLY)
+		
 func chasePlayer() -> void:
 	var targetPosition: Vector2 = targetBody.global_position
 	direction = global_position.direction_to(targetPosition)
-	#print(global_position.distance_to(targetPosition))
 	if global_position.distance_to(targetPosition) <= shooting_range:
 		switchIdle(State.SHOOT)
 		return
 	velocity = direction * speed
+	
+func shootProj() -> void:
+	var Proj = Global.mainNode.get_node("ProjectileGroup")
+	var new_projectile = projectile.instantiate()
+	direction = global_position.direction_to(targetBody.global_position)
+	new_projectile.global_position = global_position
+	new_projectile.lock_on_to_player(direction, self)
+	Proj.call_deferred("add_child", new_projectile)
 
 func switchIdle(placeHolder: State = State.LOOK) -> void:
 	nextAction = State.IDLE
@@ -107,11 +125,12 @@ func _on_flying_timer_timeout() -> void:
 func _on_state_timer_timeout() -> void:
 	changeState()
 
-
 func _on_animation_player_animation_finished(anim_name: StringName) -> void:
 	if anim_name == "SHOOT":
+		shootProj()
+		animNode.play("RELOAD")
+	if anim_name == "RELOAD":
 		switchIdle(State.LOOK)
-
 
 func _on_player_area_body_entered(body: Node2D) -> void:
 	if body.name == "Player":
