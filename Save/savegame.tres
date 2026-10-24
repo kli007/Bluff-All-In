@@ -1,46 +1,6 @@
-[gd_resource type="Resource" script_class="SaveData" format=3]
+[gd_resource type="Resource" script_class="SaveData" format=3 uid="uid://7ng7ywwyvtmx"]
 
-[ext_resource type="Script" path="res://Save/save_data.gd" id="1_seo37"]
+[ext_resource type="Script" uid="uid://b0ttmaejkrbgb" path="res://Save/save_data.gd" id="1_seo37"]
 
 [resource]
 script = ExtResource("1_seo37")
-player_location = Vector2(297.3591, 36.96064)
-current_deck = ["Spades3", "Clubs10", "DiamondsK", "Diamonds7", "Spades9", "SpadesQ", "Spades5", "Clubs6", "ClubsQ", "Clubs8", "Hearts10", "Diamonds8", "Diamonds5", "SpadesJ", "Diamonds4", "Diamonds6", "Clubs5", "ClubsJ", "Diamonds9", "Diamonds10", "Diamonds3", "Hearts9", "HeartsK", "ClubsK", "Clubs2", "Clubs9", "Hearts5", "SpadesA", "Hearts6", "ClubsA", "Hearts8", "Hearts3", "Hearts7", "DiamondsA", "HeartsA", "Diamonds2", "Spades2", "DiamondsQ", "Hearts4", "Spades4", "Hearts2", "Clubs7", "Spades10", "Spades6"]
-pend_cards = [{
-"rank": "Q",
-"suit": "Hearts"
-}, {
-"rank": "4",
-"suit": "Clubs"
-}, {
-"rank": "J",
-"suit": "Hearts"
-}, {
-"rank": "J",
-"suit": "Diamonds"
-}, {
-"rank": "8",
-"suit": "Spades"
-}, {
-"rank": "K",
-"suit": "Spades"
-}, {
-"rank": "3",
-"suit": "Clubs"
-}]
-played_cards = [{
-"rank": "7",
-"suit": "Spades"
-}, {
-"rank": "",
-"suit": ""
-}, {
-"rank": "",
-"suit": ""
-}, {
-"rank": "",
-"suit": ""
-}, {
-"rank": "",
-"suit": ""
-}]

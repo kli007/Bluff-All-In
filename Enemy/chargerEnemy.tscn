@@ -103,6 +103,7 @@ charge_damage = "enemy_small_attack_dmg"
 charge_distance = 150.0
 
 [node name="Sprite" parent="VisualManager" parent_id_path=PackedInt32Array(1465317720) index="0" unique_id=97275318]
+position = Vector2(17, -11)
 texture = ExtResource("3_rsn3l")
 hframes = 8
 vframes = 4
@@ -118,7 +119,7 @@ shape = SubResource("RectangleShape2D_5sqx0")
 target_position = Vector2(100, 0)
 
 [node name="Collision" parent="." index="2" unique_id=775821313]
-position = Vector2(-12, 12)
+position = Vector2(0, 3)
 scale = Vector2(1.5, 1)
 
 [node name="AnimationPlayer" parent="." index="4" unique_id=423126123]
@@ -134,6 +135,7 @@ one_shot = true
 wait_time = 0.5
 one_shot = true
 
+[connection signal="animation_finished" from="AnimationPlayer" to="." method="_on_animation_player_animation_finished"]
 [connection signal="timeout" from="StateTimer" to="." method="_on_state_timer_timeout"]
 [connection signal="timeout" from="WalkTimer" to="." method="_on_walk_timer_timeout"]
 [connection signal="timeout" from="LookTimer" to="." method="_on_look_timer_timeout"]

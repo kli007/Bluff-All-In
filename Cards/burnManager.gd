@@ -1,15 +1,24 @@
 extends Node
 
-func dashBurn(playedNodes: Array, playerNode: CharacterBody2D) -> void:
-	var burnCard: Node2D = playedNodes.front()
+func mainManager(action: String, player: CharacterBody2D) -> void:
+	match action:
+		'dash':
+			dashBurn(player)
+		'grap':
+			grapBurn()
+		'heal':
+			healBurn()
+
+func dashBurn(playerNode: CharacterBody2D) -> void:
+	var burnCard: Node2D = Global.playedNodes.front()
 	CardData.hideCards(burnCard)
-	CardData.moveUpCards(playedNodes)
+	CardData.moveUpCards(Global.playedNodes)
 	playerNode.collision_layer = 2
 	playerNode.collision_mask = 2
 	
-func grapBurn(playedNodes: Array) -> void:
+func grapBurn() -> void:
 	var burnCard: Node2D
-	var reverseNodes: Array = playedNodes.duplicate()
+	var reverseNodes: Array = Global.playedNodes.duplicate()
 	reverseNodes.reverse()
 	for card in reverseNodes:
 		if not card.checkData():
@@ -17,14 +26,15 @@ func grapBurn(playedNodes: Array) -> void:
 			break
 	CardData.hideCards(burnCard)
 	
-func healBurn(playedNodes: Array) -> void:
+func healBurn() -> void:
 	var burnCards: Array
-	if CardData.checkSpace(playedNodes) > 1:
-		burnCards = playedNodes.slice(0,3)
+	if CardData.checkSpace(Global.playedNodes) > 1:
+		burnCards = Global.playedNodes.slice(0,3)
 	else:
-		burnCards = playedNodes.slice(1,4)
+		burnCards = Global.playedNodes.slice(1,4)
 	for card in burnCards:
 		CardData.hideCards(card)
-	CardData.moveUpCards(playedNodes)
+	CardData.moveUpCards(Global.playedNodes)
+	
 	
 	

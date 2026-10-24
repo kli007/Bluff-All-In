@@ -5,24 +5,28 @@ const RANKMIN: int = 0
 const SUITEND: int = 3
 const SUITBEG: int = 0
 
-func mainManager(cardNode: Node, rankTrick: String, suitTrick: String) -> void:
+var currentTrick: Dictionary = {'rank': '3', 'suit': ''}
+
+func mainManager() -> void:
+	var cardNode: Node2D = Global.pendNodes.front()
 	var cardRank: String = cardNode.rank
 	var cardSuit: String = cardNode.suit
 	
 	var newRank: String = cardRank
 	var newSuit: String = cardSuit
-	if rankTrick:
-		newRank = changeRank(cardRank, rankTrick)
-	if suitTrick:
-		newSuit = changeSuit(cardSuit, suitTrick)
+	
+	if currentTrick["rank"]:
+		newRank = changeRank(cardRank)
+	if currentTrick["suit"]:
+		newSuit = changeSuit(cardSuit)
 		
 	cardNode.setData(newSuit, newRank)
 	CardData.changeCardSprite(cardNode)
 	
-func changeRank(current: String, trick: String) -> String:
+func changeRank(current: String) -> String:
 	var key: int = CardData.ranks.find(current)
 	var returnRank: String = current
-	match(trick):
+	match(currentTrick["rank"]):
 		'Increase':
 			if key < RANKMAX:
 				returnRank = CardData.ranks[key + 1]
@@ -30,14 +34,14 @@ func changeRank(current: String, trick: String) -> String:
 			if key > RANKMIN: 
 				returnRank = CardData.ranks[key - 1]
 		_:#just for matching
-			if trick != '':
-				returnRank = trick
+			if currentTrick["rank"] != '':
+				returnRank = currentTrick["rank"]
 	return(returnRank)
 	
-func changeSuit(current: String, trick: String) -> String:
+func changeSuit(current: String) -> String:
 	var key: int = CardData.suits.find(current)
 	var returnSuit: String = current
-	match(trick):
+	match(currentTrick["suit"]):
 		'Right':
 			if CardData.suits[key] == CardData.suits.back():
 				returnSuit = CardData.suits[SUITBEG]
@@ -49,6 +53,6 @@ func changeSuit(current: String, trick: String) -> String:
 			else:
 				returnSuit = CardData.suits[key - 1]
 		_: #just for matching
-			if trick != '':
-				returnSuit = trick
+			if currentTrick["suit"] != '':
+				returnSuit = currentTrick["suit"]
 	return(returnSuit)
