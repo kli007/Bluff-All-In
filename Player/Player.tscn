@@ -282,6 +282,22 @@ tracks/3/keys = {
 "values": [Vector2(1, 1), Vector2(1.6, 2.5), Vector2(1, 1)]
 }
 
+[sub_resource type="Animation" id="Animation_p7tob"]
+resource_name = "HURT"
+length = 0.5
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("VisualManager/Sprite:frame")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0.0009999999, 0.125, 0.25, 0.375),
+"transitions": PackedFloat32Array(1, 1, 1, 1),
+"update": 1,
+"values": [72, 73, 74, 75]
+}
+
 [sub_resource type="Animation" id="Animation_kpjcp"]
 resource_name = "Idle"
 length = 0.875
@@ -495,18 +511,19 @@ tracks/3/keys = {
 
 [sub_resource type="AnimationLibrary" id="AnimationLibrary_e80uo"]
 _data = {
-&"Dash": SubResource("Animation_5wa8t"),
+&"DASH": SubResource("Animation_5wa8t"),
 &"Down_Attack": SubResource("Animation_j23h2"),
-&"Fall": SubResource("Animation_tdg3f"),
+&"FALL": SubResource("Animation_tdg3f"),
 &"G_Attack_1": SubResource("Animation_dtqjt"),
 &"G_Attack_2": SubResource("Animation_vlldt"),
 &"G_Attack_3": SubResource("Animation_0j2ni"),
-&"Idle": SubResource("Animation_kpjcp"),
-&"Jump": SubResource("Animation_cxr5p"),
-&"Move": SubResource("Animation_e80uo"),
+&"HURT": SubResource("Animation_p7tob"),
+&"IDLE": SubResource("Animation_kpjcp"),
+&"JUMP": SubResource("Animation_cxr5p"),
+&"MOVE": SubResource("Animation_e80uo"),
 &"RESET": SubResource("Animation_kne1u"),
-&"Shoot_Projectile": SubResource("Animation_v0k0e"),
-&"Showdown": SubResource("Animation_8g4oa"),
+&"SHOOT": SubResource("Animation_v0k0e"),
+&"SHOWDOWN": SubResource("Animation_8g4oa"),
 &"Up_Attack": SubResource("Animation_s1rgi")
 }
 

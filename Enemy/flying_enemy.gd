@@ -9,7 +9,6 @@ enum State {FLY, IDLE, LOOK, CHASE, SHOOT, HURT}
 
 @onready var flyTimer: Timer = $FlyingTimer
 @onready var stateTimer: Timer = $StateTimer
-@onready var animNode: AnimationPlayer = $AnimationPlayer
 
 @export var flying_amplitude: float = 10.0
 @export var flying_period: float = 2.0
@@ -21,6 +20,7 @@ var projectile: PackedScene = preload("res://Projectiles/Enemy/FlyEnProj.tscn")
 
 func _ready() -> void:
 	super._ready()
+	animNode = $AnimationPlayer
 	hover_mult = 0.0
 	flying_range = [global_position.y - flying_amplitude, 
 	global_position.y, global_position.y + flying_amplitude]
@@ -139,4 +139,3 @@ func unique_hit(damageType: String) -> void:
 	nextAction = State.HURT
 	changeState()
 	nextAction = tempAction
-	animNode.play("HURT")

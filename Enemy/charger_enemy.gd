@@ -19,6 +19,7 @@ var targetPosition: float
 
 func _ready() -> void:
 	super._ready()
+	animNode = $AnimationPlayer
 	playerRay.add_exception(self)
 	hover_change.connect(switchIdle)
 	

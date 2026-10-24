@@ -2,6 +2,7 @@ class_name Entity
 extends CharacterBody2D
 
 @onready var effectNode: AnimationPlayer = $EffectsPlayer
+@onready var animNode: AnimationPlayer
 @onready var healthNode: Node = $HealthManager
 @onready var knockTimer: Timer = $KnockbackTimer
 @onready var hoverTimer: Timer = $HoverTimer
@@ -67,7 +68,7 @@ func flip_sprite() -> void:
 		
 func takeDamage(damage: float, knockback: Vector2, damagePos: Vector2, damageType: String) -> void:
 	if healthNode.takeHit(-damage, damageType):
-		#effectNode.play("HURT")
+		animNode.play("HURT")
 		takeKnockback(knockback, damagePos)
 		unique_hit(damageType)
 		
