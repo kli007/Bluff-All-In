@@ -26,8 +26,8 @@ enum State {ATTACK, DASH, JUMP, SHOWDOWN, TRICK, IDLE, HURT}
 func _ready() -> void:
 	super._ready()
 	animNode = $AnimationPlayer
-	SaveManager.data_capture.connect(on_save_capture)
-	SaveManager.data_dispense.connect(on_save_dispense)
+	Global.data_capture.connect(on_save_capture)
+	Global.data_dispense.connect(on_save_dispense)
 	setPendCard()
 	
 func set_stats() -> void:
@@ -216,10 +216,10 @@ func movement(deltaTime: float) -> void:
 		healthNode.changeHealth(-1.0)
 		
 	if Input.is_action_just_pressed("Save Game"):
-		SaveManager.saveGame()
+		Global.saveGame()
 	
 	if Input.is_action_just_pressed("Load Game" ):
-		SaveManager.loadGame()
+		Global.loadGame()
 	
 func on_save_capture(data: SaveData) -> void:
 	data.player_health = healthNode.health
