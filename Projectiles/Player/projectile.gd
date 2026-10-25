@@ -1,6 +1,5 @@
 extends Area2D
 
-const DAMAGE: float = 10.0
 const SPEED: float = 350.0
 
 var direction: Vector2
@@ -29,4 +28,4 @@ func _on_body_entered(body: Node2D) -> void:
 		return
 	elif body is CharacterBody2D:
 		CombatManager.dealDamage('player_proj_dmg', body, global_position, "Player")
-		queue_free()
+	queue_free()

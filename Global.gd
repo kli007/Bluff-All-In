@@ -1,5 +1,9 @@
 extends Node
 
+var mainNode: Node
+var pendNodes: Array = []
+var playedNodes: Array = []
+
 const SAVE_PATH := "res://Save/savegame.tres"
 
 signal data_capture(data: SaveData)

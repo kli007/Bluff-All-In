@@ -1,6 +1,6 @@
 extends Enemy
 
-enum State {IDLE, WALK, CHARGE, LOOK}
+enum State {IDLE, WALK, CHARGE, LOOK, HURT}
 
 @export var charge_speed: float = 200.0
 @export var charge_damage: String = "enemy_small_attack_dmg"
@@ -19,6 +19,7 @@ var targetPosition: float
 
 func _ready() -> void:
 	super._ready()
+	animNode = $AnimationPlayer
 	playerRay.add_exception(self)
 	hover_change.connect(switchIdle)
 	
@@ -30,13 +31,17 @@ func set_stats() -> void:
 func movement(_delta: float) -> void:
 	match isAction:
 		State.CHARGE:
+			animNode.play("ATTACK")
 			chargePlayer()
 		State.LOOK:
+			animNode.play("IDLE")
 			lookForPlayer()
 			detectPlayer()
 		State.WALK:
+			animNode.play("WALK")
 			walkingAround()
 		State.IDLE:
+			animNode.play("IDLE")
 			pass
 
 func walkingAround() -> void:
@@ -86,6 +91,13 @@ func switchIdle(placeHolder: State = State.LOOK) -> void:
 	changeState()
 	stateTimer.start(1.0)
 	nextAction = placeHolder
+	
+func unique_hit(damageType: String) -> void:
+	super.unique_hit(damageType)
+	var tempAction: State = nextAction
+	nextAction = State.HURT
+	changeState()
+	nextAction = tempAction
 		
 func _on_state_timer_timeout() -> void:
 	changeState()
@@ -104,7 +116,9 @@ func _on_hit_box_body_entered(body: Node2D) -> void:
 	if body.name == "Player":
 		CombatManager.dealDamage(damageType, body, global_position, self.name)
 
-
 func _on_walk_timer_timeout() -> void:
 	switchIdle(State.LOOK)
-	
+
+func _on_animation_player_animation_finished(anim_name: StringName) -> void:
+	if anim_name == "HURT":
+		changeState()

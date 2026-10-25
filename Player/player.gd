@@ -1,15 +1,11 @@
 extends Entity
 
-@onready var animNode: AnimationPlayer = $AnimationPlayer
 @onready var deckNode: Node = $DeckManager
 @onready var projNode: Node = $ProjectileManager
 @onready var comboTime: Timer = $ComboTimer
 @onready var dashTime: Timer = $DashTimer
 @onready var trickTime: Timer = $TrickTimer
-
-@onready var pendNodes: Array = get_node('%HUD/PendCardsControl/PendCards').get_children()
-@onready var playedNodes: Array = get_node('%HUD/UserUIControl/PlayedCards').get_children()
-
+@onready var grapRay: ShapeCast2D = $VisualManager/GrappleRay
 @export var DashSpeed: float = 800.0
 
 signal needMultiplier
@@ -19,22 +15,22 @@ var burnActive: bool = false
 var activeJumps: int = 3
 var currentAttack: String
 
-var isActioning: State = State.NOTHING
+var isActioning: State = State.IDLE
 
 const MAX_PLAYED_CARDS: int = 5
 const MAX_PEND_CARDS: int = 7
 const HEAL_BURN_MINIMUM: int = 2
 const MAX_JUMP_AVAILABLE: int = 3
 
-var currentTrick: Dictionary = {'rank': '3', 'suit': ''}
-
-enum State {ATTACK, DASH, JUMP, SHOWDOWN, TRICK, NOTHING}
+enum State {ATTACK, DASH, JUMP, SHOWDOWN, TRICK, IDLE, HURT}
 
 func _ready() -> void:
 	super._ready()
-	SaveManager.data_capture.connect(on_save_capture)
-	SaveManager.data_dispense.connect(on_save_dispense)
+	animNode = $AnimationPlayer
+	Global.data_capture.connect(on_save_capture)
+	Global.data_dispense.connect(on_save_dispense)
 	setPendCard()
+	grapRay.add_exception(self)
 	
 func set_stats() -> void:
 	speed = 200.0
@@ -67,45 +63,32 @@ func _physics_process(delta: float) -> void:
 	
 		
 func animation_control() -> void:
-	if isActioning == State.NOTHING:
+	if isActioning == State.IDLE:
 		if velocity.y < 0:
-			animNode.play('Jump')
+			animNode.play('JUMP')
 		elif velocity.y > 0:
-			animNode.play('Fall')
+			animNode.play('FALL')
 		elif velocity.x != 0:
-			animNode.play('Move')
+			animNode.play('MOVE')
 		else:
-			animNode.play('Idle')
+			animNode.play('IDLE')
 		
 
 func setPendCard() -> void:
-	while CardData.checkSpace(pendNodes) and not deckNode.checkDeck():
-		CardData.setCards(deckNode.moveCard(), pendNodes)
+	while CardData.checkSpace(Global.pendNodes) and not deckNode.checkDeck():
+		CardData.setCards(deckNode.moveCard(), Global.pendNodes)
 		
 func setPlayedCard() -> void:
-	CardData.setCards(deckNode.playCard(pendNodes), playedNodes)
+	CardData.setCards(deckNode.playCard(Global.pendNodes), Global.playedNodes)
 	moveUpPendCards()
 
 func moveUpPendCards() -> void:
-	CardData.moveUpCards(pendNodes)
+	CardData.moveUpCards(Global.pendNodes)
 	setPendCard()
 	
 func showdownPlayedCards() -> void:
 	needMultiplier.emit()
-	CardData.removeCards(playedNodes)
-	
-func burnCards(action: String) -> void:
-	match action:
-		'dash':
-			BurnManager.dashBurn(playedNodes, self)
-		'jump':
-			BurnManager.jumpBurn(playedNodes)
-		'heal':
-			BurnManager.healBurn(playedNodes)
-	
-func trickCards() -> void:
-	TrickManager.mainManager(pendNodes.front(), currentTrick['rank'], currentTrick['suit'])
-	setPlayedCard()
+	CardData.removeCards(Global.playedNodes)
 	
 func slash_combo() -> void:
 	if currentAttack == "G_Attack_2":
@@ -118,22 +101,19 @@ func slash_combo() -> void:
 	comboTime.start()
 	
 func _on_animation_player_animation_finished(anim_name: StringName) -> void:
-	if anim_name == "Showdown":
+	if anim_name == "SHOWDOWN":
 		CombatManager.resetComboMult()
-	if anim_name == "Dash":
+	if anim_name == "DASH":
 		collision_layer = 1
 		collision_mask = 1
-	isActioning = State.NOTHING
+		velocity.x = 0
+	isActioning = State.IDLE
 		
 func _on_combo_timer_timeout() -> void:
 	currentAttack = ""
-
-func _on_dash_timer_timeout() -> void:
-	isActioning = State.NOTHING
-	velocity.x = 0
 	
 func _on_trick_timer_timeout() -> void:
-	isActioning = State.NOTHING
+	isActioning = State.IDLE
 
 func _on_hit_box_body_entered(body: Node2D) -> void:
 	if body.name == 'Player' or body is not CharacterBody2D:
@@ -165,7 +145,6 @@ func movement(deltaTime: float) -> void:
 	elif Input.is_action_just_released("Look_Down"):
 		lookingDir = ''
 		
-
 	if Input.is_action_just_pressed("Move_Jump") and activeJumps > 0:
 		velocity.y = jump_velocity
 		activeJumps -= 1
@@ -173,8 +152,8 @@ func movement(deltaTime: float) -> void:
 	if Input.is_action_just_pressed("Delete"):
 		deckNode.deleteDeck()
 		
-	if Input.is_action_just_pressed("Attack") and (isActioning == State.NOTHING or isActioning == State.DASH):
-		if CardData.checkSpace(playedNodes) and CardData.checkSpace(pendNodes) < MAX_PEND_CARDS:
+	if Input.is_action_just_pressed("Attack") and (isActioning == State.IDLE or isActioning == State.DASH):
+		if CardData.checkSpace(Global.playedNodes) and CardData.checkSpace(Global.pendNodes) < MAX_PEND_CARDS:
 			comboTime.stop()
 			if isActioning == State.DASH:
 					currentAttack = "G_Attack_1"
@@ -194,15 +173,16 @@ func movement(deltaTime: float) -> void:
 			isActioning = State.ATTACK
 					
 	
-	if Input.is_action_just_pressed("Trick") and isActioning == State.NOTHING:
-		if burnActive and (CardData.checkSpace(playedNodes) < MAX_PLAYED_CARDS):
-			burnCards('jump')
+	if Input.is_action_just_pressed("Trick") and isActioning == State.IDLE:
+		if burnActive and (CardData.checkSpace(Global.playedNodes) < MAX_PLAYED_CARDS):
+			BurnManager.mainManager("grap", self)
 			burnActive = false
-		elif projNode.projectileCount and CardData.checkSpace(pendNodes) < MAX_PEND_CARDS:
+		elif projNode.projectileCount and CardData.checkSpace(Global.pendNodes) < MAX_PEND_CARDS:
 			projNode.create_projectile(self, lastDirection, global_position)
 			if not projNode.projectileCount:
-				trickCards()
-			animNode.play("Shoot_Projectile")
+				TrickManager.mainManager()
+				setPlayedCard()
+			animNode.play("SHOOT")
 			isActioning = State.TRICK
 	if Input.is_action_pressed("Trick") and not burnActive:
 		projNode.reloadProjectiles(deltaTime)
@@ -214,23 +194,23 @@ func movement(deltaTime: float) -> void:
 	elif Input.is_action_just_released('Burn'):
 		burnActive = false
 	
-	if Input.is_action_just_pressed("Dash") and isActioning == State.NOTHING:
-		if burnActive and CardData.checkSpace(playedNodes) < MAX_PLAYED_CARDS:
-			burnCards('dash')
+	if Input.is_action_just_pressed("Dash") and isActioning == State.IDLE:
+		if burnActive and CardData.checkSpace(Global.playedNodes) < MAX_PLAYED_CARDS:
+			BurnManager.mainManager('dash', self)
 			burnActive = false
-		animNode.play("Dash")
+		animNode.play("DASH")
 		dashTime.start()
 		isActioning = State.DASH
 	
-	if Input.is_action_just_pressed("Showdown") and isActioning == State.NOTHING:
+	if Input.is_action_just_pressed("Showdown") and isActioning == State.IDLE:
 		if burnActive:
-			if CardData.checkSpace(playedNodes) <= HEAL_BURN_MINIMUM:
+			if CardData.checkSpace(Global.playedNodes) <= HEAL_BURN_MINIMUM:
 				healthNode.changeHealth(30.0)
-				burnCards('heal')
+				BurnManager.mainManager('heal', self)
 				burnActive = false
-		elif CardData.checkSpace(playedNodes) < MAX_PLAYED_CARDS:
-			animNode.play("Showdown")
-			deckNode.checkHand(playedNodes)
+		elif CardData.checkSpace(Global.playedNodes) < MAX_PLAYED_CARDS:
+			animNode.play("SHOWDOWN")
+			deckNode.checkHand()
 			showdownPlayedCards()
 			isActioning = State.SHOWDOWN
 			
@@ -238,30 +218,33 @@ func movement(deltaTime: float) -> void:
 		healthNode.changeHealth(-1.0)
 		
 	if Input.is_action_just_pressed("Save Game"):
-		SaveManager.saveGame()
+		Global.saveGame()
 	
 	if Input.is_action_just_pressed("Load Game" ):
-		SaveManager.loadGame()
-	
+		Global.loadGame()
 	
 func on_save_capture(data: SaveData) -> void:
 	data.player_health = healthNode.health
 	data.player_location = global_position
 	data.player_projectiles = projNode.projectileCount
 	data.current_deck = deckNode.activeArray
-	data.pend_cards = CardData.exportCardList(pendNodes)
-	data.played_cards = CardData.exportCardList(playedNodes)
+	data.pend_cards = CardData.exportCardList(Global.pendNodes)
+	data.played_cards = CardData.exportCardList(Global.playedNodes)
 	
 func on_save_dispense(data: SaveData) -> void:
 	healthNode.setHealth(data.player_health)
 	global_position = data.player_location
 	projNode.setProjectiles(data.player_projectiles)
 	deckNode.activeArray = data.current_deck
-	load_cards(data.pend_cards, pendNodes)
-	load_cards(data.played_cards, playedNodes)
+	load_cards(data.pend_cards, Global.pendNodes)
+	load_cards(data.played_cards, Global.playedNodes)
 		
 func load_cards(cardArray: Array, cardNodes: Array) -> void:
 	CardData.removeCards(cardNodes)
 	for card in cardArray:
 		if card['rank'] != '' and card['suit'] != '':
 			CardData.setCards(card, cardNodes)
+			
+func unique_hit(damageType: String) -> void:
+	super.unique_hit(damageType)
+	isActioning = State.HURT

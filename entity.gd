@@ -2,6 +2,7 @@ class_name Entity
 extends CharacterBody2D
 
 @onready var effectNode: AnimationPlayer = $EffectsPlayer
+@onready var animNode: AnimationPlayer
 @onready var healthNode: Node = $HealthManager
 @onready var knockTimer: Timer = $KnockbackTimer
 @onready var hoverTimer: Timer = $HoverTimer
@@ -14,6 +15,7 @@ extends CharacterBody2D
 @export var max_health: float
 @export var max_hit_threshold: int
 @export var invincibility_time: float
+@export var hover_mult: float = 0.05
 
 var isKnockback: bool = false
 var isVertical: bool = false
@@ -36,9 +38,9 @@ func _ready() -> void:
 func _physics_process(delta: float) -> void:
 	var hoverScalar: float = 1
 	if isHovering:
-		hoverScalar = 0.05
+		hoverScalar = hover_mult
 	if not is_on_floor():
-		velocity += get_gravity() * delta * hoverScalar
+		gravity(hoverScalar, delta)
 	else:
 		isSpiked = false
 	if isVertical or isKnockback or isHovering:
@@ -58,9 +60,6 @@ func effect_control() -> void:
 		if healthNode.isInvincible:
 			effectNode.play("Invincible")
 	
-func movement(delta: float) -> void:
-	pass
-	
 func flip_sprite() -> void:
 	if direction.x < 0:
 		visNode.scale.x = -1
@@ -69,7 +68,7 @@ func flip_sprite() -> void:
 		
 func takeDamage(damage: float, knockback: Vector2, damagePos: Vector2, damageType: String) -> void:
 	if healthNode.takeHit(-damage, damageType):
-		effectNode.play("HURT")
+		animNode.play("HURT")
 		takeKnockback(knockback, damagePos)
 		unique_hit(damageType)
 		
@@ -113,6 +112,9 @@ func respawn(new_location: Vector2) -> void:
 	global_position = new_location
 	healthNode.resetAllValues()
 	
+func gravity(_scalar: float, _delta: float) -> void:
+	velocity += get_gravity() * _delta * _scalar
+	
 func death() -> void:
 	pass
 	
@@ -127,3 +129,6 @@ func unique_hit(damageType: String) -> void:
 	
 func _on_hit_box_body_entered(body: Node2D) -> void:
 	pass # Replace with function body.
+	
+func movement(delta: float) -> void:
+	pass

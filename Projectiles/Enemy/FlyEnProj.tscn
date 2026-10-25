@@ -1,0 +1,16 @@
+[gd_scene format=3 uid="uid://butphyxaud7a2"]
+
+[ext_resource type="PackedScene" uid="uid://xt7doyw6x2ox" path="res://Projectiles/Player/projectile.tscn" id="1_jav2o"]
+[ext_resource type="Script" uid="uid://bji28oaunqdbo" path="res://Projectiles/Enemy/fly_en_proj.gd" id="2_latr3"]
+[ext_resource type="Texture2D" uid="uid://c2i0j82kbcpjw" path="res://Assets/Sprite/Enemy/projectile.png" id="3_alase"]
+
+[node name="FlyEnProjectile" unique_id=1628043726 instance=ExtResource("1_jav2o")]
+script = ExtResource("2_latr3")
+
+[node name="Sprite2D" parent="." index="0" unique_id=1030241480]
+rotation = 3.1415927
+texture = ExtResource("3_alase")
+
+[node name="CollisionShape2D" parent="." index="1" unique_id=409154479]
+position = Vector2(0, -2)
+scale = Vector2(2, 1)

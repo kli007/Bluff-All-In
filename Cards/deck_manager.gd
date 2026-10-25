@@ -1,9 +1,9 @@
 extends Node
 
 var lastPlayedHand: String = ''
-
 var cardDict: Dictionary = {} #This holds all the scenes for each individual card, never changes
 var activeArray: Array = [] # This hold the name of current cards in deck, changed
+@onready var hand: Array = Global.playedNodes
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
@@ -37,20 +37,19 @@ func deleteDeck() -> void:
 	print('deleted deck')
 	activeArray = []
 	
-func checkHand(playedNodes: Array) -> void:
-	var matches = checkHelper(playedNodes)
-	
-	if checkRoyal(playedNodes) and checkFlush(playedNodes):
+func checkHand() -> void:
+	var matches = checkHelper()
+	if checkRoyal() and checkFlush():
 		lastPlayedHand = 'RF'
-	elif checkStraight(playedNodes) and checkFlush(playedNodes):
+	elif checkStraight() and checkFlush():
 		lastPlayedHand = 'SF'
 	elif checkKinds(matches, 4):
 		lastPlayedHand = '4kind'
 	elif checkKinds(matches, 3) and checkPairs(matches, 1):
 		lastPlayedHand = 'FH'
-	elif checkFlush(playedNodes):
+	elif checkFlush():
 		lastPlayedHand = 'flush'
-	elif checkStraight(playedNodes):
+	elif checkStraight():
 		lastPlayedHand = 'straight'
 	elif checkKinds(matches, 3):
 		lastPlayedHand = '3kind'
@@ -64,7 +63,7 @@ func checkHand(playedNodes: Array) -> void:
 	lastPlayedHand = ("hand_" + lastPlayedHand + "_dmg")
 	
 		
-func checkHelper(hand: Array) -> Dictionary: #we can reuse this code a bunch
+func checkHelper() -> Dictionary: #we can reuse this code a bunch
 	var nodeMax: int = hand.size()
 	var matchingCards: Dictionary
 	
@@ -95,7 +94,7 @@ func checkKinds(matches: Dictionary, needed: int) -> bool:
 			break
 	return isKinds
 
-func checkStraight(hand: Array) -> bool:
+func checkStraight() -> bool:
 	var isStraight: bool = true
 	var rankArray: Array = []
 	for card in hand:
@@ -115,7 +114,7 @@ func checkStraight(hand: Array) -> bool:
 				break
 	return isStraight
 
-func checkFlush(hand: Array) -> bool:
+func checkFlush() -> bool:
 	var isFlush: bool = true
 	for key in range(hand.size() - 1):
 		if hand[key].suit != hand[key + 1].suit or hand[key].suit == '':
@@ -123,7 +122,7 @@ func checkFlush(hand: Array) -> bool:
 			break
 	return isFlush
 	
-func checkRoyal(hand: Array) -> bool:
+func checkRoyal() -> bool:
 	var rankArray: Array = []
 	for card in hand:
 		var newRank: String = card.rank
