@@ -5,6 +5,7 @@ extends Entity
 @onready var comboTime: Timer = $ComboTimer
 @onready var dashTime: Timer = $DashTimer
 @onready var trickTime: Timer = $TrickTimer
+@onready var grapRay: ShapeCast2D = $VisualManager/GrappleRay
 @export var DashSpeed: float = 800.0
 
 signal needMultiplier
@@ -29,6 +30,7 @@ func _ready() -> void:
 	Global.data_capture.connect(on_save_capture)
 	Global.data_dispense.connect(on_save_dispense)
 	setPendCard()
+	grapRay.add_exception(self)
 	
 func set_stats() -> void:
 	speed = 200.0

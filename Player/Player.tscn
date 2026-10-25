@@ -8,6 +8,8 @@
 [ext_resource type="Shape2D" uid="uid://dx0kln6elb2qg" path="res://Assets/Polygon/up_attack_polygon.tres" id="6_6ysni"]
 [ext_resource type="Shape2D" uid="uid://67dpk84cat4v" path="res://Assets/Polygon/down_attack_polygon.tres" id="6_vlldt"]
 
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_ptm0p"]
+
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_5sqx0"]
 size = Vector2(25, 22.666668)
 
@@ -542,7 +544,13 @@ texture = ExtResource("2_kpjcp")
 hframes = 12
 vframes = 10
 
-[node name="HitBox" parent="VisualManager" parent_id_path=PackedInt32Array(1465317720) index="1" unique_id=443541335]
+[node name="GrappleRay" type="ShapeCast2D" parent="VisualManager" parent_id_path=PackedInt32Array(1465317720) index="1" unique_id=1725463755]
+scale = Vector2(1, 2)
+shape = SubResource("RectangleShape2D_ptm0p")
+target_position = Vector2(134, 0)
+max_results = 37
+
+[node name="HitBox" parent="VisualManager" parent_id_path=PackedInt32Array(1465317720) index="2" unique_id=443541335]
 visible = true
 
 [node name="DamageCollision" parent="VisualManager/HitBox" index="0" unique_id=4510622]
