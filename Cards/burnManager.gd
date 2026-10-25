@@ -31,10 +31,7 @@ func grapBurn(player: CharacterBody2D, grapple: ShapeCast2D) -> void:
 	else:
 		var target: CharacterBody2D = grapple.get_collider(0)
 		target.getGrapple(player, grappleDistance, grapSpeed)
-		
-	CardData.hideCards(burnCard)
-	
-		
+	CardData.hideCards(burnCard)	
 	
 func healBurn() -> void:
 	var burnCards: Array
@@ -46,5 +43,6 @@ func healBurn() -> void:
 		CardData.hideCards(card)
 	CardData.moveUpCards(Global.playedNodes)
 	
-	
+func rotateGrapple(grapple: ShapeCast2D, direction: Vector2):
+	grapple.rotation = direction.angle()
 	

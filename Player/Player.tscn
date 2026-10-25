@@ -8,10 +8,10 @@
 [ext_resource type="Shape2D" uid="uid://dx0kln6elb2qg" path="res://Assets/Polygon/up_attack_polygon.tres" id="6_6ysni"]
 [ext_resource type="Shape2D" uid="uid://67dpk84cat4v" path="res://Assets/Polygon/down_attack_polygon.tres" id="6_vlldt"]
 
-[sub_resource type="RectangleShape2D" id="RectangleShape2D_ptm0p"]
-
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_5sqx0"]
 size = Vector2(25, 22.666668)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_ptm0p"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_5dqqt"]
 size = Vector2(20, 31)
@@ -124,6 +124,10 @@ tracks/0/keys = {
 "update": 1,
 "values": [86, 87, 88]
 }
+
+[sub_resource type="Animation" id="Animation_dm7nj"]
+resource_name = "GRAPPLE"
+length = 0.19999999999999998
 
 [sub_resource type="Animation" id="Animation_dtqjt"]
 resource_name = "G_Attack_1"
@@ -516,6 +520,7 @@ _data = {
 &"DASH": SubResource("Animation_5wa8t"),
 &"Down_Attack": SubResource("Animation_j23h2"),
 &"FALL": SubResource("Animation_tdg3f"),
+&"GRAPPLE": SubResource("Animation_dm7nj"),
 &"G_Attack_1": SubResource("Animation_dtqjt"),
 &"G_Attack_2": SubResource("Animation_vlldt"),
 &"G_Attack_3": SubResource("Animation_0j2ni"),
@@ -544,14 +549,7 @@ texture = ExtResource("2_kpjcp")
 hframes = 12
 vframes = 10
 
-[node name="GrappleRay" type="ShapeCast2D" parent="VisualManager" parent_id_path=PackedInt32Array(1465317720) index="1" unique_id=1725463755]
-scale = Vector2(1, 2)
-shape = SubResource("RectangleShape2D_ptm0p")
-target_position = Vector2(134, 0)
-max_results = 37
-collision_mask = 4
-
-[node name="HitBox" parent="VisualManager" parent_id_path=PackedInt32Array(1465317720) index="2" unique_id=443541335]
+[node name="HitBox" parent="VisualManager" parent_id_path=PackedInt32Array(1465317720) index="1" unique_id=443541335]
 visible = true
 
 [node name="DamageCollision" parent="VisualManager/HitBox" index="0" unique_id=4510622]
@@ -560,22 +558,29 @@ shape = SubResource("RectangleShape2D_5sqx0")
 disabled = true
 debug_color = Color(0.86955327, 0.28923154, 0.5197506, 0.41960785)
 
-[node name="Collision" parent="." index="4" unique_id=775821313]
+[node name="GrappleRay" type="ShapeCast2D" parent="." index="4" unique_id=1725463755]
+scale = Vector2(1, 2)
+shape = SubResource("RectangleShape2D_ptm0p")
+target_position = Vector2(150, 0)
+max_results = 37
+collision_mask = 4
+
+[node name="Collision" parent="." index="5" unique_id=775821313]
 position = Vector2(0, 2.5)
 shape = SubResource("RectangleShape2D_5dqqt")
 
-[node name="AnimationPlayer" type="AnimationPlayer" parent="." index="5" unique_id=1133206577]
+[node name="AnimationPlayer" type="AnimationPlayer" parent="." index="6" unique_id=1133206577]
 libraries/ = SubResource("AnimationLibrary_e80uo")
 
-[node name="ComboTimer" type="Timer" parent="." index="7" unique_id=1410315735]
+[node name="ComboTimer" type="Timer" parent="." index="8" unique_id=1410315735]
 wait_time = 0.9
 one_shot = true
 
-[node name="DashTimer" type="Timer" parent="." index="8" unique_id=1040722538]
+[node name="DashTimer" type="Timer" parent="." index="9" unique_id=1040722538]
 wait_time = 0.2
 one_shot = true
 
-[node name="TrickTimer" type="Timer" parent="." index="9" unique_id=492310548]
+[node name="TrickTimer" type="Timer" parent="." index="10" unique_id=492310548]
 wait_time = 0.2
 one_shot = true
 

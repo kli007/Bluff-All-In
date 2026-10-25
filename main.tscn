@@ -3,8 +3,8 @@
 [ext_resource type="PackedScene" uid="uid://bjaqw7tc8s4am" path="res://Area/TestArea.tscn" id="1_ig7tw"]
 [ext_resource type="Script" uid="uid://2eckjdluntd6" path="res://main.gd" id="1_lquwl"]
 [ext_resource type="PackedScene" uid="uid://daaqo57ngxba6" path="res://Player/Player.tscn" id="2_0xm2m"]
+[ext_resource type="PackedScene" uid="uid://dlhy3k1qvlvma" path="res://Enemy/flyingEnemy.tscn" id="2_dg77c"]
 [ext_resource type="PackedScene" uid="uid://bc4g2w3j8inqx" path="res://Cards/PlayedCards.tscn" id="3_1bvp3"]
-[ext_resource type="PackedScene" uid="uid://dqswf1f3rgufw" path="res://Enemy/enemyTemplate.tscn" id="3_dg77c"]
 [ext_resource type="PackedScene" uid="uid://ce7wj45lpekfs" path="res://Cards/PendCards.tscn" id="3_h2yge"]
 [ext_resource type="Script" uid="uid://cssp134kyvgv4" path="res://Health/player_health.gd" id="6_4c57u"]
 [ext_resource type="Script" uid="uid://vqjxie4pbklg" path="res://Projectiles/Player/player_projectiles.gd" id="6_272bh"]
@@ -16,11 +16,11 @@
 [node name="Main" type="Node" unique_id=1517588686]
 script = ExtResource("1_lquwl")
 
+[node name="FlyingEnemy" parent="." unique_id=569175648 instance=ExtResource("2_dg77c")]
+position = Vector2(441, -22)
+
 [node name="TestArea" parent="." unique_id=512090307 instance=ExtResource("1_ig7tw")]
 position = Vector2(191, 7)
-
-[node name="EnemyTemplate" parent="." unique_id=569175648 instance=ExtResource("3_dg77c")]
-position = Vector2(363, -2)
 
 [node name="Player" parent="." unique_id=1593983104 instance=ExtResource("2_0xm2m")]
 position = Vector2(154, -12)

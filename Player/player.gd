@@ -5,12 +5,11 @@ extends Entity
 @onready var comboTime: Timer = $ComboTimer
 @onready var dashTime: Timer = $DashTimer
 @onready var trickTime: Timer = $TrickTimer
-@onready var grapRay: ShapeCast2D = $VisualManager/GrappleRay
+@onready var grapRay: ShapeCast2D = $GrappleRay
 @export var DashSpeed: float = 800.0
 
 signal needMultiplier
 
-var lookingDir: String = ''
 var burnActive: bool = false
 var activeJumps: int = 3
 var currentAttack: String
@@ -22,7 +21,7 @@ const MAX_PEND_CARDS: int = 7
 const HEAL_BURN_MINIMUM: int = 2
 const MAX_JUMP_AVAILABLE: int = 3
 
-enum State {ATTACK, DASH, JUMP, SHOWDOWN, TRICK, IDLE, HURT}
+enum State {ATTACK, DASH, GRAPPLE, JUMP, SHOWDOWN, TRICK, IDLE, HURT}
 
 func _ready() -> void:
 	super._ready()
@@ -52,7 +51,8 @@ func _physics_process(delta: float) -> void:
 		else:
 			velocity.x = move_toward(velocity.x, 0, speed)
 
-	if isActioning != State.ATTACK and isActioning != State.SHOWDOWN:
+	if (isActioning != State.ATTACK and isActioning != State.SHOWDOWN
+	 and isActioning != State.GRAPPLE):
 		move_and_slide()
 		animation_control()
 		flip_sprite()
@@ -131,19 +131,14 @@ func _on_hit_box_body_entered(body: Node2D) -> void:
 func movement(deltaTime: float) -> void:
 	if isActioning != State.DASH:
 		direction.x = Input.get_axis("Move_Left", "Move_Right")
-	
+		direction.y = Input.get_axis("Look_Up", "Look_Down")
+		
 	if direction:
 		lastDirection = direction
 		
-	if Input.is_action_pressed("Look_Up") and (lookingDir == '' or lookingDir == 'UP'):
-		lookingDir = 'UP'
-	elif Input.is_action_just_released("Look_Up"):
-		lookingDir = ''
+	if Input.is_action_just_released("Look_Up") or Input.is_action_just_released("Look_Down"):
+		lastDirection.y = 0.0
 		
-	if Input.is_action_pressed("Look_Down") and (lookingDir == '' or lookingDir == 'DOWN'):
-		lookingDir = 'DOWN'
-	elif Input.is_action_just_released("Look_Down"):
-		lookingDir = ''
 		
 	if Input.is_action_just_pressed("Move_Jump") and activeJumps > 0:
 		velocity.y = jump_velocity
@@ -159,12 +154,12 @@ func movement(deltaTime: float) -> void:
 					currentAttack = "G_Attack_1"
 					dashTime.stop()
 			if not is_on_floor():
-				if lookingDir == 'DOWN':
+				if lastDirection.y > 0.0:
 					currentAttack = "Down_Attack"
 				else:
 					slash_combo()
 			else:
-				if lookingDir == 'UP':
+				if lastDirection.y < 0.0:
 					currentAttack = "Up_Attack"
 				else:
 					slash_combo()
@@ -177,6 +172,8 @@ func movement(deltaTime: float) -> void:
 		if burnActive and (CardData.checkSpace(Global.playedNodes) < MAX_PLAYED_CARDS):
 			BurnManager.mainManager("grap", self)
 			burnActive = false
+			animNode.play("GRAPPLE")
+			isActioning = State.GRAPPLE
 		elif projNode.projectileCount and CardData.checkSpace(Global.pendNodes) < MAX_PEND_CARDS:
 			projNode.create_projectile(self, lastDirection, global_position)
 			if not projNode.projectileCount:
@@ -222,6 +219,8 @@ func movement(deltaTime: float) -> void:
 	
 	if Input.is_action_just_pressed("Load Game" ):
 		Global.loadGame()
+		
+	BurnManager.rotateGrapple(grapRay, lastDirection)
 	
 func on_save_capture(data: SaveData) -> void:
 	data.player_health = healthNode.health
