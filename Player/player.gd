@@ -42,8 +42,8 @@ func set_stats() -> void:
 func _physics_process(delta: float) -> void:
 	movement(delta)
 		
-	if isKnockback:
-		velocity.x = knockbackVelocity.x
+	if isStatus == STATUS.KNOCKBACK:
+		velocity.x = statusVelocity.x
 	elif isActioning == State.DASH:
 		velocity.x = lastDirection.x * DashSpeed
 	else:

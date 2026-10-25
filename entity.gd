@@ -4,9 +4,7 @@ extends CharacterBody2D
 @onready var effectNode: AnimationPlayer = $EffectsPlayer
 @onready var animNode: AnimationPlayer
 @onready var healthNode: Node = $HealthManager
-@onready var knockTimer: Timer = $KnockbackTimer
-@onready var hoverTimer: Timer = $HoverTimer
-@onready var vertTimer: Timer = $VerticalTimer
+@onready var statusTimer: Timer = $StatusTimer
 @onready var visNode: Node2D = $VisualManager
 @onready var spawnLocation: Vector2 = global_position
 
@@ -16,14 +14,14 @@ extends CharacterBody2D
 @export var max_hit_threshold: int
 @export var invincibility_time: float
 @export var hover_mult: float = 0.05
+@export var spike_mult: float = 2
 
-var isKnockback: bool = false
-var isVertical: bool = false
-var isHovering: bool = false
-var isSpiked: bool = false
-var isGrapple: bool = false
-var knockbackVelocity: Vector2
-var verticalVelocity: Vector2
+var isStatus: STATUS = STATUS.NOTHING
+
+enum STATUS {KNOCKBACK, VERTICAL, HOVER, SPIKE, GRAPPLE, NOTHING}
+
+var statusVelocity: Vector2
+var gScalar: float = 1.0
 var grappleSpeed: float
 var grappleLocation: Vector2
 var direction: Vector2
@@ -39,26 +37,28 @@ func _ready() -> void:
 	
 	
 func _physics_process(delta: float) -> void:
-	var hoverScalar: float = 1
-	if isHovering:
-		hoverScalar = hover_mult
 	if not is_on_floor():
-		gravity(hoverScalar, delta)
-	else:
-		isSpiked = false
-	if isVertical or isKnockback or isHovering or isGrapple:
-		if isVertical:
-			velocity = verticalVelocity
-		if isKnockback:
-			velocity = knockbackVelocity
-		if isGrapple:
+		gravity(gScalar, delta)
+	elif isStatus == STATUS.SPIKE:
+		on_status_timer_timeout()
+		
+	match isStatus:
+		STATUS.KNOCKBACK:
+			velocity = statusVelocity
+		STATUS.VERTICAL:
+			velocity = statusVelocity
+		STATUS.SPIKE:
+			gScalar = spike_mult
+		STATUS.HOVER:
+			gScalar = hover_mult
+		STATUS.GRAPPLE:
 			var distance: Vector2 = grappleLocation - global_position
 			if distance.length() <= grappleSpeed * delta:
 				finishGrapple()
 			else:
 				velocity = distance.normalized() * grappleSpeed
-	else:
-		movement(delta)
+		STATUS.NOTHING:
+			movement(delta)
 		
 	flip_sprite()
 	move_and_slide()
@@ -89,44 +89,42 @@ func takeKnockback(knockForce: Vector2, damagePos: Vector2) -> void:
 			offset.y = 0.0
 		if offset == Vector2.ZERO:
 			offset.x = 1.0
-		knockbackVelocity = offset.normalized() * knockForce.x
-		knockTimer.start()
-		isKnockback = true
+		statusVelocity = offset.normalized() * knockForce.x
+		statusTimer.start(0.2)
+		isStatus = STATUS.KNOCKBACK
 	if knockForce.y != 0.0:
-		verticalVelocity = knockForce
-		vertTimer.start()
-		isVertical = true
-		if verticalVelocity.y >= 0:
-			isSpiked = true
+		statusVelocity = knockForce
+		statusTimer.start(0.2)
+		if statusVelocity.y >= 0:
+			isStatus = STATUS.SPIKE
+		else:
+			isStatus = STATUS.VERTICAL
 			
-func getGrapple(player: CharacterBody2D, distance: float, speed: float):
+func getGrapple(player: CharacterBody2D, distance: float, gSpeed: float):
 	grappleLocation = player.global_position + player.lastDirection * distance 
-	grappleSpeed = speed
-	isGrapple = true
+	grappleSpeed = gSpeed
+	isStatus = STATUS.GRAPPLE
 	
 func finishGrapple() -> void:
-	isGrapple = false
+	isStatus = STATUS.NOTHING
 	velocity = Vector2.ZERO
 	#stun code here
-	
 
-func _on_knockback_timer_timeout() -> void:
-	velocity.x = 0.0
-	isKnockback = false
+func on_status_timer_timeout() -> void:
+	velocity = Vector2.ZERO
+	gScalar = 1
+	if isStatus != STATUS.SPIKE and isStatus != STATUS.HOVER:
+		startHovering()
+	else:
+		isStatus = STATUS.NOTHING
 
-func _on_vertical_timer_timeout() -> void:
-	velocity.y =  0.0
-	isVertical = false
-	startHovering()
-	
-func _on_hover_timer_timeout() -> void:
-	isHovering = false
-	
 func startHovering() -> void:
-	if not is_on_ceiling() and not is_on_floor() and not isSpiked:
-		hoverTimer.start()
-		isHovering = true
+	if not is_on_ceiling() and not is_on_floor():
+		statusTimer.start(1.0)
+		isStatus = STATUS.HOVER
 		hover_change.emit()
+	else:
+		isStatus = STATUS.NOTHING
 	
 func respawn(new_location: Vector2) -> void:
 	global_position = new_location

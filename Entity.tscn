@@ -106,19 +106,9 @@ shape = SubResource("RectangleShape2D_ctcih")
 [node name="EffectsPlayer" type="AnimationPlayer" parent="." unique_id=1752406426]
 libraries/ = SubResource("AnimationLibrary_ctcih")
 
-[node name="KnockbackTimer" type="Timer" parent="." unique_id=1941790735]
-wait_time = 0.2
-one_shot = true
-
-[node name="VerticalTimer" type="Timer" parent="." unique_id=1165193276]
-wait_time = 0.2
-one_shot = true
-
-[node name="HoverTimer" type="Timer" parent="." unique_id=1440238214]
+[node name="StatusTimer" type="Timer" parent="." unique_id=775011476]
 one_shot = true
 
 [connection signal="body_entered" from="VisualManager/HitBox" to="." method="_on_hit_box_body_entered"]
 [connection signal="animation_finished" from="EffectsPlayer" to="." method="_on_effects_player_animation_finished"]
-[connection signal="timeout" from="KnockbackTimer" to="." method="_on_knockback_timer_timeout"]
-[connection signal="timeout" from="VerticalTimer" to="." method="_on_vertical_timer_timeout"]
-[connection signal="timeout" from="HoverTimer" to="." method="_on_hover_timer_timeout"]
+[connection signal="timeout" from="StatusTimer" to="." method="on_status_timer_timeout"]
