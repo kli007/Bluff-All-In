@@ -31,6 +31,7 @@ func grapBurn(player: CharacterBody2D, grapple: ShapeCast2D) -> void:
 	else:
 		var target: CharacterBody2D = grapple.get_collider(0)
 		target.getGrapple(player, grappleDistance, grapSpeed)
+		CombatManager.dealDamage("Burn_Grapple", target, player.global_position, player.name)
 	CardData.hideCards(burnCard)	
 	
 func healBurn() -> void:

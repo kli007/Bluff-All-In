@@ -29,7 +29,7 @@ func _ready() -> void:
 	Global.data_capture.connect(on_save_capture)
 	Global.data_dispense.connect(on_save_dispense)
 	setPendCard()
-	grapRay.add_exception(self)
+	#grapRay.add_exception(self)
 	
 func set_stats() -> void:
 	speed = 200.0
@@ -107,6 +107,9 @@ func _on_animation_player_animation_finished(anim_name: StringName) -> void:
 		collision_layer = 1
 		collision_mask = 1
 		velocity.x = 0
+	if (anim_name == "GRAPPLE" or currentAttack == "A_Attack_1" 
+	or currentAttack == "A_Attack_2"):
+		startHovering()
 	isActioning = State.IDLE
 		
 func _on_combo_timer_timeout() -> void:

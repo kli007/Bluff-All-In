@@ -28,7 +28,7 @@ func takeHit(difference: float, attack: String) -> bool:
 	if not isLocked():
 		hitTimer.start()
 	changeHealth(difference)
-	if attack == "Burn_Dash":
+	if attack == "Burn_Dash" or attack == "Burn_Grapple":
 		reducePriority(10)
 	else:
 		currentHitPriority += CombatManager.ATTACKS[attack]['hit_priority']

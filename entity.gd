@@ -108,7 +108,7 @@ func getGrapple(player: CharacterBody2D, distance: float, gSpeed: float):
 func finishGrapple() -> void:
 	isStatus = STATUS.NOTHING
 	velocity = Vector2.ZERO
-	#stun code here
+	takeKnockback(Vector2(CombatManager.values.no_kb), global_position)
 
 func on_status_timer_timeout() -> void:
 	velocity = Vector2.ZERO
