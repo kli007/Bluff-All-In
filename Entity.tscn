@@ -83,6 +83,7 @@ _data = {
 }
 
 [node name="Entity" type="CharacterBody2D" unique_id=569175648]
+collision_layer = 5
 script = ExtResource("1_ql5c0")
 
 [node name="HealthManager" parent="." unique_id=1013381791 instance=ExtResource("2_ctcih")]

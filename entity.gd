@@ -21,8 +21,11 @@ var isKnockback: bool = false
 var isVertical: bool = false
 var isHovering: bool = false
 var isSpiked: bool = false
+var isGrapple: bool = false
 var knockbackVelocity: Vector2
 var verticalVelocity: Vector2
+var grappleSpeed: float
+var grappleLocation: Vector2
 var direction: Vector2
 var lastDirection: Vector2 = Vector2.RIGHT
 
@@ -43,11 +46,17 @@ func _physics_process(delta: float) -> void:
 		gravity(hoverScalar, delta)
 	else:
 		isSpiked = false
-	if isVertical or isKnockback or isHovering:
+	if isVertical or isKnockback or isHovering or isGrapple:
 		if isVertical:
 			velocity = verticalVelocity
 		if isKnockback:
 			velocity = knockbackVelocity
+		if isGrapple:
+			var distance: Vector2 = grappleLocation - global_position
+			if distance.length() <= grappleSpeed * delta:
+				finishGrapple()
+			else:
+				velocity = distance.normalized() * grappleSpeed
 	else:
 		movement(delta)
 		
@@ -68,7 +77,8 @@ func flip_sprite() -> void:
 		
 func takeDamage(damage: float, knockback: Vector2, damagePos: Vector2, damageType: String) -> void:
 	if healthNode.takeHit(-damage, damageType):
-		animNode.play("HURT")
+		if animNode:
+			animNode.play("HURT")
 		takeKnockback(knockback, damagePos)
 		unique_hit(damageType)
 		
@@ -88,6 +98,16 @@ func takeKnockback(knockForce: Vector2, damagePos: Vector2) -> void:
 		isVertical = true
 		if verticalVelocity.y >= 0:
 			isSpiked = true
+			
+func getGrapple(player: CharacterBody2D, distance: float, speed: float):
+	grappleLocation = player.global_position + player.lastDirection * distance 
+	grappleSpeed = speed
+	isGrapple = true
+	
+func finishGrapple() -> void:
+	isGrapple = false
+	velocity = Vector2.ZERO
+	#stun code here
 	
 
 func _on_knockback_timer_timeout() -> void:

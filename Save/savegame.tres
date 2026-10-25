@@ -1,46 +1,47 @@
-[gd_resource type="Resource" script_class="SaveData" format=3 uid="uid://bw6mngknfiqdw"]
+[gd_resource type="Resource" script_class="SaveData" format=3]
 
-[ext_resource type="Script" uid="uid://b0ttmaejkrbgb" path="res://Save/save_data.gd" id="1_seo37"]
+[ext_resource type="Script" path="res://Save/save_data.gd" id="1_seo37"]
 
 [resource]
 script = ExtResource("1_seo37")
-player_location = Vector2(244.89832, 36.998238)
-current_deck = ["HeartsJ", "Clubs4", "Diamonds9", "Hearts3", "Hearts8", "Spades5", "Diamonds8", "ClubsA", "SpadesJ", "Hearts10", "Hearts4", "Clubs3", "Hearts7", "DiamondsJ", "Diamonds2", "ClubsK", "Diamonds10", "Spades10", "Diamonds6", "Clubs10", "SpadesA", "HeartsA", "Diamonds7", "Spades3", "DiamondsA", "Diamonds5", "Hearts2", "Clubs5", "Hearts5", "Spades9", "Clubs6", "Clubs2", "ClubsJ", "Spades6", "Hearts9", "Spades7", "Diamonds3", "Clubs8", "SpadesQ", "Clubs7", "SpadesK"]
+player_health = 94.0
+player_location = Vector2(544.2368, 36.925243)
+current_deck = ["Hearts4", "Spades4", "ClubsK", "Hearts5", "Spades6", "Clubs10", "ClubsA", "Clubs7", "SpadesK", "Clubs3", "DiamondsK", "HeartsQ", "Clubs9", "Hearts10", "Clubs8", "HeartsK", "Diamonds8", "Diamonds5", "Clubs2", "ClubsQ", "Hearts3", "Clubs4", "Clubs5", "Hearts9", "Hearts7", "Diamonds10", "Spades10", "Spades3", "Spades8", "Diamonds7", "SpadesA", "DiamondsA", "Diamonds4", "Spades2", "Diamonds6", "Spades7", "Spades5", "DiamondsJ", "Hearts2", "DiamondsQ"]
 pend_cards = [{
-"rank": "Q",
+"rank": "6",
+"suit": "Clubs"
+}, {
+"rank": "2",
+"suit": "Diamonds"
+}, {
+"rank": "J",
 "suit": "Hearts"
+}, {
+"rank": "3",
+"suit": "Diamonds"
+}, {
+"rank": "9",
+"suit": "Spades"
 }, {
 "rank": "6",
 "suit": "Hearts"
 }, {
-"rank": "K",
-"suit": "Diamonds"
-}, {
-"rank": "4",
-"suit": "Spades"
-}, {
-"rank": "2",
-"suit": "Spades"
-}, {
-"rank": "Q",
-"suit": "Clubs"
-}, {
-"rank": "4",
-"suit": "Diamonds"
+"rank": "8",
+"suit": "Hearts"
 }]
 played_cards = [{
-"rank": "8",
+"rank": "Q",
 "suit": "Spades"
 }, {
-"rank": "K",
-"suit": "Hearts"
-}, {
-"rank": "Q",
+"rank": "9",
 "suit": "Diamonds"
 }, {
-"rank": "9",
+"rank": "A",
+"suit": "Hearts"
+}, {
+"rank": "J",
 "suit": "Clubs"
 }, {
-"rank": "",
-"suit": ""
+"rank": "J",
+"suit": "Spades"
 }]
