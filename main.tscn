@@ -3,7 +3,7 @@
 [ext_resource type="PackedScene" uid="uid://bjaqw7tc8s4am" path="res://Area/TestArea.tscn" id="1_ig7tw"]
 [ext_resource type="Script" uid="uid://2eckjdluntd6" path="res://main.gd" id="1_lquwl"]
 [ext_resource type="PackedScene" uid="uid://daaqo57ngxba6" path="res://Player/Player.tscn" id="2_0xm2m"]
-[ext_resource type="PackedScene" uid="uid://dqswf1f3rgufw" path="res://Enemy/enemyTemplate.tscn" id="2_dg77c"]
+[ext_resource type="PackedScene" uid="uid://ddcrwp75cqmlj" path="res://Enemy/chargerEnemy.tscn" id="2_ycdy4"]
 [ext_resource type="PackedScene" uid="uid://bc4g2w3j8inqx" path="res://Cards/PlayedCards.tscn" id="3_1bvp3"]
 [ext_resource type="PackedScene" uid="uid://ce7wj45lpekfs" path="res://Cards/PendCards.tscn" id="3_h2yge"]
 [ext_resource type="Script" uid="uid://cssp134kyvgv4" path="res://Health/player_health.gd" id="6_4c57u"]
@@ -16,8 +16,8 @@
 [node name="Main" type="Node" unique_id=1517588686]
 script = ExtResource("1_lquwl")
 
-[node name="EnemyTemplate" parent="." unique_id=569175648 instance=ExtResource("2_dg77c")]
-position = Vector2(446, 13)
+[node name="ChargerEnemy" parent="." unique_id=688067766 instance=ExtResource("2_ycdy4")]
+position = Vector2(438, 9)
 
 [node name="TestArea" parent="." unique_id=512090307 instance=ExtResource("1_ig7tw")]
 position = Vector2(191, 7)
@@ -25,12 +25,13 @@ position = Vector2(191, 7)
 [node name="Player" parent="." unique_id=1593983104 instance=ExtResource("2_0xm2m")]
 position = Vector2(154, -12)
 
-[node name="RemoteTransform2D" type="RemoteTransform2D" parent="Player" unique_id=226148389]
-position = Vector2(99, 16)
-remote_path = NodePath("../../Camera2D")
+[node name="Camera2D" type="Camera2D" parent="Player" unique_id=919362061]
+position = Vector2(1, 4)
+zoom = Vector2(1.5, 1.5)
 
-[node name="Camera2D" type="Camera2D" parent="." unique_id=919362061]
-position = Vector2(253, 4)
+[node name="RemoteTransform2D" type="RemoteTransform2D" parent="Player" unique_id=226148389]
+position = Vector2(1, 4)
+remote_path = NodePath("../Camera2D")
 
 [node name="HUD" type="CanvasLayer" parent="." unique_id=1448757649]
 unique_name_in_owner = true

@@ -21,7 +21,7 @@ const MAX_PEND_CARDS: int = 7
 const HEAL_BURN_MINIMUM: int = 2
 const MAX_JUMP_AVAILABLE: int = 3
 
-enum State {ATTACK, DASH, GRAPPLE, JUMP, SHOWDOWN, TRICK, IDLE, HURT}
+enum State {ATTACK, DASH, GRAPPLE, JUMP, FALL, SHOWDOWN, TRICK, IDLE, HURT}
 
 func _ready() -> void:
 	super._ready()
@@ -44,34 +44,46 @@ func _physics_process(delta: float) -> void:
 	if isStatus == STATUS.KNOCKBACK:
 		velocity.x = statusVelocity.x
 	elif isActioning == State.DASH:
-		velocity.x = lastDirection.x * DashSpeed
+		velocity.x = (lastDirection.x/abs(lastDirection.x)) * DashSpeed
 	else:
 		if direction:
 			velocity.x = direction.x * speed
 		else:
 			velocity.x = move_toward(velocity.x, 0, speed)
 
-	if (isActioning != State.ATTACK and isActioning != State.SHOWDOWN
+	if (isActioning != State.SHOWDOWN
 	 and isActioning != State.GRAPPLE):
 		move_and_slide()
 		animation_control()
 		flip_sprite()
-		if not is_on_floor() and isActioning != State.DASH:
+		if (not is_on_floor() and isActioning != State.DASH
+		 and isActioning != State.ATTACK):
 			velocity += get_gravity() * delta
 		else:
 			activeJumps = MAX_JUMP_AVAILABLE
 	
 		
 func animation_control() -> void:
-	if isActioning == State.IDLE:
-		if velocity.y < 0:
-			animNode.play('JUMP')
-		elif velocity.y > 0:
-			animNode.play('FALL')
-		elif velocity.x != 0:
-			animNode.play('MOVE')
-		else:
-			animNode.play('IDLE')
+	match isActioning:
+		State.IDLE:
+			if velocity.y < 0:
+				animNode.play('JUMP')
+			elif velocity.y > 0:
+				animNode.play('FALL')
+			elif velocity.x != 0:
+				animNode.play('MOVE')
+			else:
+				animNode.play('IDLE')
+		State.JUMP:
+			if velocity.y < 0:
+				animNode.play("JUMPING")
+			else:
+				isActioning = State.IDLE
+		State.FALL:
+			if velocity.y > 0:
+				animNode.play("FALLING")
+			else:
+				isActioning = State.IDLE
 		
 
 func setPendCard() -> void:
@@ -110,6 +122,12 @@ func _on_animation_player_animation_finished(anim_name: StringName) -> void:
 	if (anim_name == "GRAPPLE" or currentAttack == "A_Attack_1" 
 	or currentAttack == "A_Attack_2"):
 		startHovering()
+	if anim_name == "JUMP":
+		isActioning = State.JUMP
+		return
+	if anim_name == "FALL":
+		isActioning = State.FALL
+		return
 	isActioning = State.IDLE
 		
 func _on_combo_timer_timeout() -> void:

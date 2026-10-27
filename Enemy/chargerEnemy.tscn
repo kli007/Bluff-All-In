@@ -108,6 +108,10 @@ texture = ExtResource("3_rsn3l")
 hframes = 8
 vframes = 4
 
+[node name="DamageCollision" parent="VisualManager/HitBox" parent_id_path=PackedInt32Array(443541335) index="0" unique_id=4510622]
+position = Vector2(0, 0)
+scale = Vector2(1.4, 1)
+
 [node name="FloorRay" type="RayCast2D" parent="VisualManager" parent_id_path=PackedInt32Array(1465317720) index="2" unique_id=2114168476]
 visible = false
 target_position = Vector2(50, 35)

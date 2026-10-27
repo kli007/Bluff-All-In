@@ -111,7 +111,7 @@ tracks/3/keys = {
 
 [sub_resource type="Animation" id="Animation_tdg3f"]
 resource_name = "Fall"
-length = 0.375
+length = 0.25
 tracks/0/type = "value"
 tracks/0/imported = false
 tracks/0/enabled = true
@@ -119,10 +119,27 @@ tracks/0/path = NodePath("VisualManager/Sprite:frame")
 tracks/0/interp = 1
 tracks/0/loop_wrap = true
 tracks/0/keys = {
-"times": PackedFloat32Array(0, 0.125, 0.25),
-"transitions": PackedFloat32Array(1, 1, 1),
+"times": PackedFloat32Array(0, 0.125),
+"transitions": PackedFloat32Array(1, 1),
 "update": 1,
-"values": [86, 87, 88]
+"values": [87, 88]
+}
+
+[sub_resource type="Animation" id="Animation_7v5gs"]
+resource_name = "FALLING"
+length = 0.125
+loop_mode = 1
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("VisualManager/Sprite:frame")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [88]
 }
 
 [sub_resource type="Animation" id="Animation_dm7nj"]
@@ -167,7 +184,7 @@ tracks/2/keys = {
 "times": PackedFloat32Array(0, 0.15, 0.5),
 "transitions": PackedFloat32Array(200, 200, 1),
 "update": 0,
-"values": [Vector2(0, 0), Vector2(20, 4), Vector2(0, 0)]
+"values": [Vector2(0, 0), Vector2(27.5, 4), Vector2(0, 0)]
 }
 tracks/3/type = "value"
 tracks/3/imported = false
@@ -179,7 +196,7 @@ tracks/3/keys = {
 "times": PackedFloat32Array(0, 0.15, 0.5),
 "transitions": PackedFloat32Array(200, 200, 1),
 "update": 0,
-"values": [Vector2(1, 1), Vector2(1, 1.5), Vector2(1, 1)]
+"values": [Vector2(1, 1), Vector2(1.5, 1.75), Vector2(1, 1)]
 }
 
 [sub_resource type="Animation" id="Animation_vlldt"]
@@ -217,10 +234,10 @@ tracks/2/path = NodePath("VisualManager/HitBox/DamageCollision:position")
 tracks/2/interp = 1
 tracks/2/loop_wrap = true
 tracks/2/keys = {
-"times": PackedFloat32Array(0, 0.25, 0.5),
+"times": PackedFloat32Array(0, 0.26, 0.5),
 "transitions": PackedFloat32Array(200, 200, 1),
 "update": 0,
-"values": [Vector2(0, 0), Vector2(20, 4), Vector2(0, 0)]
+"values": [Vector2(0, 0), Vector2(27.5, 4), Vector2(0, 0)]
 }
 tracks/3/type = "value"
 tracks/3/imported = false
@@ -232,7 +249,7 @@ tracks/3/keys = {
 "times": PackedFloat32Array(0, 0.25, 0.5),
 "transitions": PackedFloat32Array(200, 200, 1),
 "update": 0,
-"values": [Vector2(1, 1), Vector2(1, 1.5), Vector2(1, 1)]
+"values": [Vector2(1, 1), Vector2(1.5, 1.75), Vector2(1, 1)]
 }
 
 [sub_resource type="Animation" id="Animation_0j2ni"]
@@ -285,7 +302,7 @@ tracks/3/keys = {
 "times": PackedFloat32Array(0, 0.25, 0.625),
 "transitions": PackedFloat32Array(200, 200, 1),
 "update": 0,
-"values": [Vector2(1, 1), Vector2(1.6, 2.5), Vector2(1, 1)]
+"values": [Vector2(1, 1), Vector2(1.75, 2.5), Vector2(1, 1)]
 }
 
 [sub_resource type="Animation" id="Animation_p7tob"]
@@ -334,6 +351,23 @@ tracks/0/keys = {
 "transitions": PackedFloat32Array(1, 1, 1),
 "update": 1,
 "values": [84, 85, 86]
+}
+
+[sub_resource type="Animation" id="Animation_3mea3"]
+resource_name = "JUMPING"
+length = 0.125
+loop_mode = 1
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("VisualManager/Sprite:frame")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [86]
 }
 
 [sub_resource type="Animation" id="Animation_e80uo"]
@@ -520,6 +554,7 @@ _data = {
 &"DASH": SubResource("Animation_5wa8t"),
 &"Down_Attack": SubResource("Animation_j23h2"),
 &"FALL": SubResource("Animation_tdg3f"),
+&"FALLING": SubResource("Animation_7v5gs"),
 &"GRAPPLE": SubResource("Animation_dm7nj"),
 &"G_Attack_1": SubResource("Animation_dtqjt"),
 &"G_Attack_2": SubResource("Animation_vlldt"),
@@ -527,6 +562,7 @@ _data = {
 &"HURT": SubResource("Animation_p7tob"),
 &"IDLE": SubResource("Animation_kpjcp"),
 &"JUMP": SubResource("Animation_cxr5p"),
+&"JUMPING": SubResource("Animation_3mea3"),
 &"MOVE": SubResource("Animation_e80uo"),
 &"RESET": SubResource("Animation_kne1u"),
 &"SHOOT": SubResource("Animation_v0k0e"),
@@ -559,6 +595,7 @@ disabled = true
 debug_color = Color(0.86955327, 0.28923154, 0.5197506, 0.41960785)
 
 [node name="GrappleRay" type="ShapeCast2D" parent="." index="4" unique_id=1725463755]
+visible = false
 modulate = Color(1, 1, 1, 0.21176471)
 show_behind_parent = true
 scale = Vector2(1, 3)

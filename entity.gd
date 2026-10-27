@@ -10,11 +10,13 @@ extends CharacterBody2D
 
 @export var speed: float
 @export var jump_velocity: float
+@export var mass: float
 @export var max_health: float
 @export var max_hit_threshold: int
 @export var invincibility_time: float
 @export var hover_mult: float = 0.05
 @export var spike_mult: float = 2
+
 
 var isStatus: STATUS = STATUS.NOTHING
 

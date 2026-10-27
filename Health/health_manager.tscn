@@ -12,5 +12,10 @@ one_shot = true
 wait_time = 5.0
 one_shot = true
 
+[node name="DamageMultTimer" type="Timer" parent="." unique_id=421406541]
+wait_time = 5.0
+one_shot = true
+
 [connection signal="timeout" from="InvincTimer" to="." method="_on_invinc_timer_timeout"]
 [connection signal="timeout" from="HitTimer" to="." method="_on_hit_timer_timeout"]
+[connection signal="timeout" from="DamageMultTimer" to="." method="_on_damage_mult_timer_timeout"]
