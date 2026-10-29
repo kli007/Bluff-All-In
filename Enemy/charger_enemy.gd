@@ -26,6 +26,7 @@ func _ready() -> void:
 func set_stats() -> void:
 	super.set_stats()
 	speed = 50
+	acceleration = 30
 	max_health = 50
 
 func movement(_delta: float) -> void:
@@ -49,7 +50,7 @@ func walkingAround() -> void:
 		walkTimer.start(randf_range(2.5, 5.5))
 		
 	if floorRay.is_colliding() and not is_on_wall():
-		velocity.x = direction.x * speed
+		velocity.x = move_toward(velocity.x, direction.x * speed, acceleration)
 	else:
 		switchIdle(State.LOOK)
 

@@ -6,9 +6,11 @@ extends CharacterBody2D
 @onready var healthNode: Node = $HealthManager
 @onready var statusTimer: Timer = $StatusTimer
 @onready var visNode: Node2D = $VisualManager
+@onready var groundRay: RayCast2D = $GroundRay
 @onready var spawnLocation: Vector2 = global_position
 
 @export var speed: float
+@export var acceleration: float
 @export var jump_velocity: float
 @export var mass: float
 @export var max_health: float

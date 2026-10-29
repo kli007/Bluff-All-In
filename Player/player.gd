@@ -33,13 +33,20 @@ func _ready() -> void:
 	
 func set_stats() -> void:
 	speed = 200.0
+	acceleration = 20
 	jump_velocity = -450.0
 	max_health = 100
 	max_hit_threshold = 5
 	invincibility_time = .5
 
 func _physics_process(delta: float) -> void:
+	var friction: float
 	movement(delta)
+	
+	if is_on_floor():
+		friction = groundRay.get_collider().friction
+	else:
+		friction = Global.air_friction
 		
 	if isStatus == STATUS.KNOCKBACK:
 		velocity.x = statusVelocity.x
@@ -47,9 +54,9 @@ func _physics_process(delta: float) -> void:
 		velocity.x = (lastDirection.x/abs(lastDirection.x)) * DashSpeed
 	else:
 		if direction:
-			velocity.x = direction.x * speed
+			velocity.x = move_toward(velocity.x, direction.x * speed, acceleration)
 		else:
-			velocity.x = move_toward(velocity.x, 0, speed)
+			velocity.x = move_toward(velocity.x, 0, friction)
 
 	if (isActioning != State.SHOWDOWN
 	 and isActioning != State.GRAPPLE):

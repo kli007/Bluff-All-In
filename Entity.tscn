@@ -109,6 +109,8 @@ libraries/ = SubResource("AnimationLibrary_ctcih")
 [node name="StatusTimer" type="Timer" parent="." unique_id=775011476]
 one_shot = true
 
+[node name="GroundRay" type="RayCast2D" parent="." unique_id=305696123]
+
 [connection signal="body_entered" from="VisualManager/HitBox" to="." method="_on_hit_box_body_entered"]
 [connection signal="animation_finished" from="EffectsPlayer" to="." method="_on_effects_player_animation_finished"]
 [connection signal="timeout" from="StatusTimer" to="." method="on_status_timer_timeout"]
