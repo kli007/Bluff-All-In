@@ -23,10 +23,12 @@ func _ready() -> void:
 func _process(_delta: float) -> void:
 	bar.value = comboTime.time_left
 	
-func _on_player_combo_changed(playedHand: String) -> void:
+func _on_player_combo_changed(attack: String) -> void:
+	var display: String = CombatManager.ATTACKS[attack]["display"]
 	increaseChain()
-	playCardOnHit(playedHand)
-	lastActions.append(playedHand)
+	playCardOnHit(display)
+	CombatManager.recoilBody(player, attack)
+	lastActions.append(display)
 	text = 'Combo: ' + str(int(comboChain))
 	for act in lastActions.slice(-DISPLAY_LIMIT):
 		text += '\n-' + act

@@ -2,32 +2,33 @@ extends Node
 var values: CombatValues = preload("res://Combat/combat_values.tres")
 var comboMultiplier: float = 0.0
 var accumDamage: float
+var lastHitEnemy: CharacterBody2D
 
 signal accumDmgChange()
 signal enemy_hit(attack_type: String)
 
 var ATTACKS: Dictionary = {
-	"G_Attack_1": _atk("Attack", values.player_atk_dmg, values.min_kb, 1),
-	"G_Attack_2": _atk("Attack", values.player_atk_dmg, values.min_kb, 1),
-	"G_Attack_3": _atk("Attack", values.player_atk_dmg, values.small_kb, 2),
-	"Up_Attack":  _atk("Launcher", values.player_launch_dmg, values.launch_kb, 2),
-	"Down_Attack":  _atk("Spike", values.player_spike_dmg, values.spike_kb, 4),
-	"Dash_Attack": _atk("Attack", values.player_atk_dmg, values.no_kb, 1),
-	"player_proj_dmg": _atk("Projectile Hit", values.player_proj_dmg, values.no_kb, 1),
-	"Burn_Dash": _atk("Burn Dash", 0, values.no_kb, 100),
-	"Burn_Grapple": _atk("Burn Grapple", 0, values.no_kb, 100),
-	"enemy_small_contact_dmg": _atk("NA", values.enemy_small_contact_dmg, values.small_kb, 3),
-	"enemy_small_attack_dmg":  _atk("NA", values.enemy_small_attack_dmg, values.medium_kb, 5),
-	"hand_HC_dmg": _atk("High Card", values.hand_HC_dmg, values.small_kb, 3),
-	"hand_pair_dmg": _atk("Pair", values.hand_pair_dmg, values.small_kb, 3),
-	"hand_2pair_dmg": _atk("Two Pair", values.hand_2pair_dmg, values.medium_kb, 5),
-	"hand_3kind_dmg":  _atk("3 of a Kind", values.hand_3kind_dmg, values.medium_kb, 5),
-	"hand_straight_dmg": _atk("Straight", values.hand_straight_dmg, values.medium_kb, 7),
-	"hand_flush_dmg": _atk("Flush", values.hand_flush_dmg, values.medium_kb, 7),
-	"hand_FH_dmg": _atk("Full House", values.hand_FH_dmg, values.large_kb, 7),
-	"hand_4kind_dmg": _atk("4 of a Kind", values.hand_4kind_dmg, values.large_kb, 7),
-	"hand_SF_dmg":  _atk("Straight Flush", values.hand_SF_dmg, values.large_kb, 7),
-	"hand_RF_dmg":  _atk("Royal Flush", values.hand_RF_dmg, values.large_kb, 7),
+	"G_Attack_1": _atk("Attack", values.player_atk_dmg, values.min_kb, 1, 0),
+	"G_Attack_2": _atk("Attack", values.player_atk_dmg, values.min_kb, 1, 0),
+	"G_Attack_3": _atk("Attack", values.player_atk_dmg, values.small_kb, 2, 0),
+	"Up_Attack":  _atk("Launcher", values.player_launch_dmg, values.launch_kb, 2, 0),
+	"Down_Attack":  _atk("Spike", values.player_spike_dmg, values.spike_kb, 4, 0),
+	"Dash_Attack": _atk("Attack", values.player_atk_dmg, values.no_kb, 1, 0),
+	"Player_Projectile": _atk("Projectile Hit", values.player_proj_dmg, values.no_kb, 1, 0),
+	"Burn_Dash": _atk("Burn Dash", 0, values.no_kb, 100, 0),
+	"Burn_Grapple": _atk("Burn Grapple", 0, values.no_kb, 100, 0),
+	"enemy_small_contact_dmg": _atk("NA", values.enemy_small_contact_dmg, values.small_kb, 3, 0),
+	"enemy_small_attack_dmg":  _atk("NA", values.enemy_small_attack_dmg, values.medium_kb, 5, 0),
+	"hand_HC_dmg": _atk("High Card", values.hand_HC_dmg, values.small_kb, 3, 0),
+	"hand_pair_dmg": _atk("Pair", values.hand_pair_dmg, values.small_kb, 3, 0),
+	"hand_2pair_dmg": _atk("Two Pair", values.hand_2pair_dmg, values.medium_kb, 5, 0),
+	"hand_3kind_dmg":  _atk("3 of a Kind", values.hand_3kind_dmg, values.medium_kb, 5, 0),
+	"hand_straight_dmg": _atk("Straight", values.hand_straight_dmg, values.medium_kb, 7, 0),
+	"hand_flush_dmg": _atk("Flush", values.hand_flush_dmg, values.medium_kb, 7, 0),
+	"hand_FH_dmg": _atk("Full House", values.hand_FH_dmg, values.large_kb, 7, 0),
+	"hand_4kind_dmg": _atk("4 of a Kind", values.hand_4kind_dmg, values.large_kb, 7, 0),
+	"hand_SF_dmg":  _atk("Straight Flush", values.hand_SF_dmg, values.large_kb, 7, 0),
+	"hand_RF_dmg":  _atk("Royal Flush", values.hand_RF_dmg, values.large_kb, 7, 0),
 }
 
 func dealDamage(damageType: String, body: Node, pos: Vector2, origin: String) -> void:
@@ -45,6 +46,11 @@ func dealDamage(damageType: String, body: Node, pos: Vector2, origin: String) ->
 			accumDmgChange.emit()
 		body.takeDamage(damage, knockback, pos, damageType)
 		
+func recoilBody(body: CharacterBody2D, attack: String) -> void:
+	var magnitude: float = ATTACKS[attack]["recoil"]
+	var direction: Vector2 = lastHitEnemy.global_position.direction_to(body.global_position)
+	body.velocity.x = direction.x * magnitude
+		
 func _checkInValues(checkName: String) -> void:
 	print(checkName)
 	if values.get(checkName) != null:
@@ -61,8 +67,8 @@ func resetComboMult() -> void:
 func resetAccumDmg() -> void:
 	accumDamage = 0.0
 	
-static func _atk(display: String, damage: float, knockback: Vector2, hit_priority: int) -> Dictionary:
-	return {"display": display, "damage": damage, "knockback": knockback, "hit_priority": hit_priority} 
+static func _atk(display: String, damage: float, knockback: Vector2, hit_priority: int, recoil: float) -> Dictionary:
+	return {"display": display, "damage": damage, "knockback": knockback, "hit_priority": hit_priority, "recoil": recoil} 
 	
 func getRankText() -> String: 
 	if accumDamage >= values.s_rank_thres:

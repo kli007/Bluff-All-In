@@ -13,7 +13,7 @@ func set_stats() -> void:
 	jump_velocity = -400.0
 	max_health = 30000.0
 	max_hit_threshold = 5
-	invincibility_time = 150
+	invincibility_time = 1.50
 
 func unique_ready() -> void:
 	healthNode.health_changed.connect(_on_enemy_health_changed)
@@ -43,4 +43,6 @@ func _on_hit_box_body_entered(body: Node2D) -> void:
 		CombatManager.dealDamage(contact_damage, body, global_position, self.name)
 
 func unique_hit(damageType: String) -> void:
-	CombatManager.enemy_hit.emit(CombatManager.ATTACKS[damageType]['display'])
+	CombatManager.lastHitEnemy = self
+	CombatManager.enemy_hit.emit(damageType)
+	

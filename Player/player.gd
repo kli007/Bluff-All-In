@@ -29,7 +29,6 @@ func _ready() -> void:
 	Global.data_capture.connect(on_save_capture)
 	Global.data_dispense.connect(on_save_dispense)
 	setPendCard()
-	#grapRay.add_exception(self)
 	
 func set_stats() -> void:
 	speed = 200.0
