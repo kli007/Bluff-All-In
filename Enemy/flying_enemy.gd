@@ -133,8 +133,8 @@ func _on_player_area_body_entered(body: Node2D) -> void:
 		targetBody = body
 		switchIdle(State.CHASE)
 		
-func unique_hit(damageType: String) -> void:
-	super.unique_hit(damageType)
+func unique_hit(damageType: String, damagePos: Vector2) -> void:
+	super.unique_hit(damageType, damagePos)
 	var tempAction: State = nextAction
 	nextAction = State.HURT
 	changeState()

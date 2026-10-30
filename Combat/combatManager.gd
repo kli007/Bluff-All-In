@@ -6,10 +6,11 @@ var lastHitEnemy: CharacterBody2D
 
 signal accumDmgChange()
 signal enemy_hit(attack_type: String)
+signal playerRecoil(direction: Vector2, magnitude: float)
 
 var ATTACKS: Dictionary = {
-	"G_Attack_1": _atk("Attack", values.player_atk_dmg, values.min_kb, 1, 0),
-	"G_Attack_2": _atk("Attack", values.player_atk_dmg, values.min_kb, 1, 0),
+	"G_Attack_1": _atk("Attack", values.player_atk_dmg, values.min_kb, 1, values.small_recoil),
+	"G_Attack_2": _atk("Attack", values.player_atk_dmg, values.min_kb, 1, values.medium_recoil),
 	"G_Attack_3": _atk("Attack", values.player_atk_dmg, values.small_kb, 2, 0),
 	"Up_Attack":  _atk("Launcher", values.player_launch_dmg, values.launch_kb, 2, 0),
 	"Down_Attack":  _atk("Spike", values.player_spike_dmg, values.spike_kb, 4, 0),
@@ -46,10 +47,12 @@ func dealDamage(damageType: String, body: Node, pos: Vector2, origin: String) ->
 			accumDmgChange.emit()
 		body.takeDamage(damage, knockback, pos, damageType)
 		
-func recoilBody(body: CharacterBody2D, attack: String) -> void:
+func recoilBody(attack: String, direction: Vector2, projMag: float) -> void:
 	var magnitude: float = ATTACKS[attack]["recoil"]
-	var direction: Vector2 = lastHitEnemy.global_position.direction_to(body.global_position)
-	body.velocity.x = direction.x * magnitude
+	if projMag:
+		magnitude = projMag
+	if magnitude:
+		playerRecoil.emit(direction, magnitude)
 		
 func _checkInValues(checkName: String) -> void:
 	print(checkName)

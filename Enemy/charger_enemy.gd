@@ -93,8 +93,8 @@ func switchIdle(placeHolder: State = State.LOOK) -> void:
 	stateTimer.start(1.0)
 	nextAction = placeHolder
 	
-func unique_hit(damageType: String) -> void:
-	super.unique_hit(damageType)
+func unique_hit(damageType: String, damagePos: Vector2) -> void:
+	super.unique_hit(damageType, damagePos)
 	var tempAction: State = nextAction
 	nextAction = State.HURT
 	changeState()

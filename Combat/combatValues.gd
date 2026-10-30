@@ -9,6 +9,10 @@ extends Resource
 @export var launch_kb: Vector2 = Vector2(0.0, -500.0)
 @export var spike_kb: Vector2 = Vector2(0.0, 500.0)
 
+@export var small_recoil: float = 150.0
+@export var medium_recoil: float = 300.0
+@export var large_recoil: float = 450.0
+
 @export var player_atk_dmg: float = 15.0
 @export var player_proj_dmg: float = 10.0
 @export var player_launch_dmg: float = 15.0

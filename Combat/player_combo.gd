@@ -27,7 +27,6 @@ func _on_player_combo_changed(attack: String) -> void:
 	var display: String = CombatManager.ATTACKS[attack]["display"]
 	increaseChain()
 	playCardOnHit(display)
-	CombatManager.recoilBody(player, attack)
 	lastActions.append(display)
 	text = 'Combo: ' + str(int(comboChain))
 	for act in lastActions.slice(-DISPLAY_LIMIT):

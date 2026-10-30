@@ -21,7 +21,7 @@ extends CharacterBody2D
 
 var isStatus: STATUS = STATUS.NOTHING
 
-enum STATUS {KNOCKBACK, VERTICAL, HOVER, SPIKE, GRAPPLE, NOTHING}
+enum STATUS {KNOCKBACK, VERTICAL, HOVER, SPIKE, GRAPPLE, RECOIL, NOTHING}
 
 var statusVelocity: Vector2
 var gScalar: float = 1.0
@@ -60,6 +60,8 @@ func _physics_process(delta: float) -> void:
 				finishGrapple()
 			else:
 				velocity = distance.normalized() * grappleSpeed
+		STATUS.RECOIL:
+			velocity = statusVelocity
 		STATUS.NOTHING:
 			movement(delta)
 		
@@ -83,7 +85,7 @@ func takeDamage(damage: float, knockback: Vector2, damagePos: Vector2, damageTyp
 		if animNode:
 			animNode.play("HURT")
 		takeKnockback(knockback, damagePos)
-		unique_hit(damageType)
+		unique_hit(damageType, damagePos)
 		
 func takeKnockback(knockForce: Vector2, damagePos: Vector2) -> void:
 	if knockForce.x != 0.0:
@@ -95,7 +97,7 @@ func takeKnockback(knockForce: Vector2, damagePos: Vector2) -> void:
 		statusVelocity = offset.normalized() * knockForce.x
 		statusTimer.start(0.2)
 		isStatus = STATUS.KNOCKBACK
-	if knockForce.y != 0.0:
+	elif knockForce.y != 0.0:
 		statusVelocity = knockForce
 		statusTimer.start(0.2)
 		if statusVelocity.y >= 0:
@@ -112,11 +114,19 @@ func finishGrapple() -> void:
 	isStatus = STATUS.NOTHING
 	velocity = Vector2.ZERO
 	takeKnockback(Vector2(CombatManager.values.no_kb), global_position)
+	
+func startRecoil(damagePos: Vector2, magnitude: float) -> void:
+	statusVelocity = damagePos.normalized() * magnitude
+	if is_on_floor():
+		statusVelocity = Vector2(statusVelocity.x, 0)
+	statusTimer.start(0.1)
+	isStatus = STATUS.RECOIL
 
 func on_status_timer_timeout() -> void:
 	velocity = Vector2.ZERO
 	gScalar = 1
-	if isStatus != STATUS.SPIKE and isStatus != STATUS.HOVER:
+	if (isStatus != STATUS.SPIKE and isStatus != STATUS.HOVER
+	 and isStatus != STATUS.RECOIL):
 		startHovering()
 	else:
 		isStatus = STATUS.NOTHING
@@ -145,7 +155,7 @@ func unique_ready() -> void:
 func set_stats() -> void:
 	pass
 	
-func unique_hit(damageType: String) -> void:
+func unique_hit(damageType: String, damagePos: Vector2) -> void:
 	pass
 	
 func _on_hit_box_body_entered(body: Node2D) -> void:

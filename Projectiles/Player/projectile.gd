@@ -1,6 +1,7 @@
 extends Area2D
 
 const SPEED: float = 350.0
+var RECOIL: float = CombatManager.values.small_recoil
 
 var direction: Vector2
 var player: CharacterBody2D
@@ -19,6 +20,7 @@ func lock_on_to_player(player_dir: Vector2, playerNode:Node2D, projectileNode:No
 	direction = player_dir
 	player = playerNode
 	projNode = projectileNode
+	CombatManager.recoilBody("Player_Projectile", -direction, RECOIL)
 	
 func _on_visible_on_screen_notifier_2d_screen_exited() -> void:
 	queue_free()

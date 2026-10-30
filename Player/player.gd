@@ -28,6 +28,7 @@ func _ready() -> void:
 	animNode = $AnimationPlayer
 	Global.data_capture.connect(on_save_capture)
 	Global.data_dispense.connect(on_save_dispense)
+	CombatManager.playerRecoil.connect(startRecoil)
 	setPendCard()
 	
 func set_stats() -> void:
@@ -42,13 +43,15 @@ func _physics_process(delta: float) -> void:
 	var friction: float
 	movement(delta)
 	
-	if is_on_floor():
+	if is_on_floor(): #bug here!!!!!!!
 		friction = groundRay.get_collider().friction
 	else:
 		friction = Global.air_friction
 		
 	if isStatus == STATUS.KNOCKBACK:
 		velocity.x = statusVelocity.x
+	elif isStatus == STATUS.RECOIL:
+		velocity = statusVelocity
 	elif isActioning == State.DASH:
 		velocity.x = (lastDirection.x/abs(lastDirection.x)) * DashSpeed
 	else:
@@ -271,6 +274,6 @@ func load_cards(cardArray: Array, cardNodes: Array) -> void:
 		if card['rank'] != '' and card['suit'] != '':
 			CardData.setCards(card, cardNodes)
 			
-func unique_hit(damageType: String) -> void:
-	super.unique_hit(damageType)
+func unique_hit(damageType: String, damagePos: Vector2) -> void:
+	super.unique_hit(damageType, damagePos)
 	isActioning = State.HURT
