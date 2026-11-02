@@ -29,6 +29,8 @@ func set_stats() -> void:
 	super.set_stats()
 	speed = 50
 	max_health = 50
+	normal_g = 0.0
+	gScalar = normal_g
 	
 func movement(_delta: float) -> void:
 	time_passed += _delta
@@ -51,9 +53,6 @@ func movement(_delta: float) -> void:
 			
 		State.HURT:
 			pass
-		
-func gravity(_scalar: float, _delta: float) -> void:
-	pass
 	
 func flyingAround() -> void:
 	var adjustment: float = 0.0

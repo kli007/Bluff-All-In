@@ -17,6 +17,7 @@ extends CharacterBody2D
 @export var invincibility_time: float
 @export var hover_mult: float = 0.05
 @export var spike_mult: float = 2
+@export var normal_g: float = 1.0
 
 
 var isStatus: STATUS = STATUS.NOTHING
@@ -24,7 +25,7 @@ var isStatus: STATUS = STATUS.NOTHING
 enum STATUS {KNOCKBACK, VERTICAL, HOVER, SPIKE, GRAPPLE, RECOIL, NOTHING}
 
 var statusVelocity: Vector2
-var gScalar: float = 1.0
+var gScalar: float = normal_g
 var grappleSpeed: float
 var grappleLocation: Vector2
 var direction: Vector2
@@ -40,12 +41,21 @@ func _ready() -> void:
 	
 	
 func _physics_process(delta: float) -> void:
-	if not is_on_floor():
-		gravity(gScalar, delta)
-	elif isStatus == STATUS.SPIKE:
-		on_status_timer_timeout()
+	physics(delta)
 	checkStatus(delta)
 	moveHelper()
+	
+func physics(delta: float) -> void:
+	var friction: float
+	if (is_on_floor()): # still need to fix
+		friction = groundRay.get_collider().friction
+	elif not is_on_floor():
+		velocity += get_gravity() * delta * gScalar
+		friction = Global.air_friction
+	elif isStatus == STATUS.SPIKE:
+		on_status_timer_timeout()
+	if not direction:
+		velocity.x = move_toward(velocity.x, 0, friction)
 	
 func checkStatus(delta: float) -> void:
 	match isStatus:
@@ -128,7 +138,7 @@ func startRecoil(damagePos: Vector2, magnitude: float) -> void:
 
 func on_status_timer_timeout() -> void:
 	velocity = Vector2.ZERO
-	gScalar = 1
+	gScalar = normal_g
 	if (isStatus != STATUS.SPIKE and isStatus != STATUS.HOVER
 	 and isStatus != STATUS.RECOIL):
 		startHovering()
@@ -146,9 +156,6 @@ func startHovering() -> void:
 func respawn(new_location: Vector2) -> void:
 	global_position = new_location
 	healthNode.resetAllValues()
-	
-func gravity(_scalar: float, _delta: float) -> void:
-	velocity += get_gravity() * _delta * _scalar
 	
 func death() -> void:
 	pass

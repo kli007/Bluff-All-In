@@ -40,32 +40,21 @@ func set_stats() -> void:
 	invincibility_time = .5
 
 func _physics_process(delta: float) -> void:
-	var friction: float
 	var hCond: bool = true
 	var gCond: bool = true
-	if is_on_floor(): #bug here!!!!!!!
-		friction = groundRay.get_collider().friction
-	else:
-		friction = Global.air_friction
-		
-	if direction:
-		velocity.x = move_toward(velocity.x, direction.x * speed, acceleration)
-	else:
-		velocity.x = move_toward(velocity.x, 0, friction)
+	physics(delta)
 	checkStatus(delta)
 	checkAction(hCond, gCond)
 	if (hCond):
 		moveHelper()
-		if (not is_on_floor() and gCond):
-			velocity += get_gravity() * delta
-		else:
+		if is_on_floor() or gCond:
 			activeJumps = MAX_JUMP_AVAILABLE
 			
-func checkAction(hCond: bool, gCond: bool) -> void:
+func checkAction(_hCond: bool, _gCond: bool) -> void:
 	match isActioning:
 		State.DASH:
 			velocity.x = (lastDirection.x/abs(lastDirection.x)) * DashSpeed
-			gCond = false
+			_gCond = false
 		State.JUMP:
 			if velocity.y < 0:
 				animNode.play("JUMPING")
@@ -77,11 +66,11 @@ func checkAction(hCond: bool, gCond: bool) -> void:
 			else:
 				isActioning = State.IDLE
 		State.SHOWDOWN:
-			hCond = false
+			_hCond = false
 		State.GRAPPLE:
-			hCond = false
+			_hCond = false
 		State.ATTACK:
-			gCond = false
+			_gCond = false
 		State.IDLE:
 			if velocity.y < 0:
 				animNode.play('JUMP')
@@ -162,6 +151,7 @@ func movement(deltaTime: float) -> void:
 		
 	if direction:
 		lastDirection = direction
+		velocity.x = move_toward(velocity.x, direction.x * speed, acceleration)
 		
 	if Input.is_action_just_released("Look_Up") or Input.is_action_just_released("Look_Down"):
 		lastDirection.y = 0.0
