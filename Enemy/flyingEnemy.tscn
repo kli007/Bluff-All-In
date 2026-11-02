@@ -122,6 +122,9 @@ shape = SubResource("CircleShape2D_5sqx0")
 [node name="AnimationPlayer" parent="." index="5" unique_id=423126123]
 libraries/ = SubResource("AnimationLibrary_osyvj")
 
+[node name="GroundRay" parent="." index="8" unique_id=305696123]
+visible = true
+
 [node name="StateTimer" type="Timer" parent="." index="9" unique_id=2130467437]
 
 [node name="FlyingTimer" type="Timer" parent="." index="10" unique_id=2103293811]

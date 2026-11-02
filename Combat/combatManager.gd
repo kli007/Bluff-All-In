@@ -10,8 +10,10 @@ signal playerRecoil(direction: Vector2, magnitude: float)
 
 var ATTACKS: Dictionary = {
 	"G_Attack_1": _atk("Attack", values.player_atk_dmg, values.min_kb, 1, values.small_recoil),
-	"G_Attack_2": _atk("Attack", values.player_atk_dmg, values.min_kb, 1, values.medium_recoil),
-	"G_Attack_3": _atk("Attack", values.player_atk_dmg, values.small_kb, 2, 0),
+	"G_Attack_2": _atk("Attack", values.player_atk_dmg, values.small_kb, 1, values.medium_recoil),
+	"G_Attack_3": _atk("Attack", values.player_atk_dmg, values.medium_kb, 2, 0),
+	"A_Attack_1": _atk("Attack", values.player_atk_dmg, values.min_kb, 1, 0),
+	"A_Attack_2": _atk("Attack", values.player_atk_dmg, values.small_kb, 1, 0),
 	"Up_Attack":  _atk("Launcher", values.player_launch_dmg, values.launch_kb, 2, 0),
 	"Down_Attack":  _atk("Spike", values.player_spike_dmg, values.spike_kb, 4, 0),
 	"Dash_Attack": _atk("Attack", values.player_atk_dmg, values.no_kb, 1, 0),
