@@ -16,6 +16,7 @@ extends CharacterBody2D
 @export var max_hit_threshold: int
 @export var invincibility_time: float
 @export var hover_mult: float = 0.05
+@export var max_hover_fall: float = 15.0
 @export var spike_mult: float = 2
 @export var normal_g: float = 1.0
 
@@ -47,13 +48,13 @@ func _physics_process(delta: float) -> void:
 	
 func physics(delta: float) -> void:
 	var friction: float
-	if (is_on_floor()): # still need to fix
-		friction = groundRay.get_collider().friction
-	elif not is_on_floor():
+	if not is_on_floor():
 		velocity += get_gravity() * delta * gScalar
 		friction = Global.air_friction
-	elif isStatus == STATUS.SPIKE:
-		on_status_timer_timeout()
+	elif "friction" in groundRay.get_collider():
+		friction = groundRay.get_collider().friction
+		if isStatus == STATUS.SPIKE:
+			on_status_timer_timeout()
 	if not direction:
 		velocity.x = move_toward(velocity.x, 0, friction)
 	
@@ -67,6 +68,8 @@ func checkStatus(delta: float) -> void:
 			gScalar = spike_mult
 		STATUS.HOVER:
 			gScalar = hover_mult
+			velocity.y = minf(velocity.y, max_hover_fall)
+			hoverMovement(delta)
 		STATUS.GRAPPLE:
 			var distance: Vector2 = grappleLocation - global_position
 			if distance.length() <= grappleSpeed * delta:
@@ -147,7 +150,9 @@ func on_status_timer_timeout() -> void:
 
 func startHovering() -> void:
 	if not is_on_ceiling() and not is_on_floor():
-		statusTimer.start(1.0)
+		velocity.y = 0.0
+		gScalar = hover_mult
+		statusTimer.start(0.5)
 		isStatus = STATUS.HOVER
 		hover_change.emit()
 	else:
@@ -173,4 +178,7 @@ func _on_hit_box_body_entered(body: Node2D) -> void:
 	pass # Replace with function body.
 	
 func movement(delta: float) -> void:
+	pass
+	
+func hoverMovement(delta: float) -> void:
 	pass

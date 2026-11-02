@@ -122,9 +122,9 @@ shape = SubResource("CircleShape2D_5sqx0")
 [node name="AnimationPlayer" parent="." index="5" unique_id=423126123]
 libraries/ = SubResource("AnimationLibrary_osyvj")
 
-[node name="StateTimer" type="Timer" parent="." index="10" unique_id=2130467437]
+[node name="StateTimer" type="Timer" parent="." index="9" unique_id=2130467437]
 
-[node name="FlyingTimer" type="Timer" parent="." index="11" unique_id=2103293811]
+[node name="FlyingTimer" type="Timer" parent="." index="10" unique_id=2103293811]
 
 [connection signal="body_entered" from="PlayerArea" to="." method="_on_player_area_body_entered"]
 [connection signal="animation_finished" from="AnimationPlayer" to="." method="_on_animation_player_animation_finished"]

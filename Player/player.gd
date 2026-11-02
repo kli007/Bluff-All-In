@@ -30,6 +30,7 @@ func _ready() -> void:
 	Global.data_dispense.connect(on_save_dispense)
 	CombatManager.playerRecoil.connect(startRecoil)
 	setPendCard()
+	#hover_change.connect(on_status_timer_timeout)
 	
 func set_stats() -> void:
 	speed = 200.0
@@ -98,12 +99,18 @@ func showdownPlayedCards() -> void:
 	CardData.removeCards(Global.playedNodes)
 	
 func slash_combo() -> void:
-	if currentAttack == "G_Attack_2":
-		currentAttack = "G_Attack_3"
-	elif currentAttack == "G_Attack_1":
-		currentAttack = "G_Attack_2"
+	if not is_on_floor():
+		if currentAttack == "A_Attack_1":
+			currentAttack = "A_Attack_2"
+		else:
+			currentAttack = "A_Attack_1"
 	else:
-		currentAttack = "G_Attack_1"
+		if currentAttack == "G_Attack_2":
+			currentAttack = "G_Attack_3"
+		elif currentAttack == "G_Attack_1":
+			currentAttack = "G_Attack_2"
+		else:
+			currentAttack = "G_Attack_1"
 		
 	comboTime.start()
 	
@@ -116,6 +123,7 @@ func _on_animation_player_animation_finished(anim_name: StringName) -> void:
 		velocity.x = 0
 	if (anim_name == "GRAPPLE" or currentAttack == "A_Attack_1" 
 	or currentAttack == "A_Attack_2"):
+		print('enter')
 		startHovering()
 	if anim_name == "JUMP":
 		isActioning = State.JUMP
@@ -164,7 +172,8 @@ func movement(deltaTime: float) -> void:
 	if Input.is_action_just_pressed("Delete"):
 		deckNode.deleteDeck()
 		
-	if Input.is_action_just_pressed("Attack") and (isActioning == State.IDLE or isActioning == State.DASH):
+	if Input.is_action_just_pressed("Attack") and (isActioning == State.IDLE 
+	or isActioning == State.DASH or isActioning == State.JUMP or isActioning == State.FALL):
 		if CardData.checkSpace(Global.playedNodes) and CardData.checkSpace(Global.pendNodes) < MAX_PEND_CARDS:
 			comboTime.stop()
 			if isActioning == State.DASH:
@@ -180,7 +189,7 @@ func movement(deltaTime: float) -> void:
 					currentAttack = "Up_Attack"
 				else:
 					slash_combo()
-			#setPlayedCard()
+			print(currentAttack)
 			animNode.play(currentAttack)
 			isActioning = State.ATTACK
 					
@@ -238,6 +247,9 @@ func movement(deltaTime: float) -> void:
 		Global.loadGame()
 		
 	BurnManager.rotateGrapple(grapRay, lastDirection)
+	
+func hoverMovement(delta: float) -> void:
+	movement(delta)
 	
 func on_save_capture(data: SaveData) -> void:
 	data.player_health = healthNode.health
