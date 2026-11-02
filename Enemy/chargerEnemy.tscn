@@ -122,9 +122,9 @@ target_position = Vector2(50, 35)
 
 [node name="PlayerRay" type="ShapeCast2D" parent="VisualManager" parent_id_path=PackedInt32Array(1465317720) index="3" unique_id=1490664288]
 visible = false
-scale = Vector2(1, 3)
+scale = Vector2(1, 2)
 shape = SubResource("RectangleShape2D_5sqx0")
-target_position = Vector2(100, 0)
+target_position = Vector2(150, 0)
 
 [node name="Collision" parent="." index="2" unique_id=775821313]
 position = Vector2(0, 0)

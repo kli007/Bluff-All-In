@@ -41,48 +41,31 @@ func set_stats() -> void:
 
 func _physics_process(delta: float) -> void:
 	var friction: float
-	movement(delta)
-	
+	var hCond: bool = true
+	var gCond: bool = true
 	if is_on_floor(): #bug here!!!!!!!
 		friction = groundRay.get_collider().friction
 	else:
 		friction = Global.air_friction
 		
-	if isStatus == STATUS.KNOCKBACK:
-		velocity.x = statusVelocity.x
-	elif isStatus == STATUS.RECOIL:
-		velocity = statusVelocity
-	elif isActioning == State.DASH:
-		velocity.x = (lastDirection.x/abs(lastDirection.x)) * DashSpeed
+	if direction:
+		velocity.x = move_toward(velocity.x, direction.x * speed, acceleration)
 	else:
-		if direction:
-			velocity.x = move_toward(velocity.x, direction.x * speed, acceleration)
-		else:
-			velocity.x = move_toward(velocity.x, 0, friction)
-
-	if (isActioning != State.SHOWDOWN
-	 and isActioning != State.GRAPPLE):
-		move_and_slide()
-		animation_control()
-		flip_sprite()
-		if (not is_on_floor() and isActioning != State.DASH
-		 and isActioning != State.ATTACK):
+		velocity.x = move_toward(velocity.x, 0, friction)
+	checkStatus(delta)
+	checkAction(hCond, gCond)
+	if (hCond):
+		moveHelper()
+		if (not is_on_floor() and gCond):
 			velocity += get_gravity() * delta
 		else:
 			activeJumps = MAX_JUMP_AVAILABLE
-	
-		
-func animation_control() -> void:
+			
+func checkAction(hCond: bool, gCond: bool) -> void:
 	match isActioning:
-		State.IDLE:
-			if velocity.y < 0:
-				animNode.play('JUMP')
-			elif velocity.y > 0:
-				animNode.play('FALL')
-			elif velocity.x != 0:
-				animNode.play('MOVE')
-			else:
-				animNode.play('IDLE')
+		State.DASH:
+			velocity.x = (lastDirection.x/abs(lastDirection.x)) * DashSpeed
+			gCond = false
 		State.JUMP:
 			if velocity.y < 0:
 				animNode.play("JUMPING")
@@ -93,7 +76,21 @@ func animation_control() -> void:
 				animNode.play("FALLING")
 			else:
 				isActioning = State.IDLE
-		
+		State.SHOWDOWN:
+			hCond = false
+		State.GRAPPLE:
+			hCond = false
+		State.ATTACK:
+			gCond = false
+		State.IDLE:
+			if velocity.y < 0:
+				animNode.play('JUMP')
+			elif velocity.y > 0:
+				animNode.play('FALL')
+			elif velocity.x != 0:
+				animNode.play('MOVE')
+			else:
+				animNode.play('IDLE')
 
 func setPendCard() -> void:
 	while CardData.checkSpace(Global.pendNodes) and not deckNode.checkDeck():

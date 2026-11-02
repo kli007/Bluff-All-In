@@ -44,7 +44,10 @@ func _physics_process(delta: float) -> void:
 		gravity(gScalar, delta)
 	elif isStatus == STATUS.SPIKE:
 		on_status_timer_timeout()
-		
+	checkStatus(delta)
+	moveHelper()
+	
+func checkStatus(delta: float) -> void:
 	match isStatus:
 		STATUS.KNOCKBACK:
 			velocity = statusVelocity
@@ -64,7 +67,8 @@ func _physics_process(delta: float) -> void:
 			velocity = statusVelocity
 		STATUS.NOTHING:
 			movement(delta)
-		
+	
+func moveHelper() -> void:
 	flip_sprite()
 	move_and_slide()
 	effect_control()

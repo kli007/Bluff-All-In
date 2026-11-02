@@ -43,7 +43,6 @@ func movement(_delta: float) -> void:
 			walkingAround()
 		State.IDLE:
 			animNode.play("IDLE")
-			pass
 
 func walkingAround() -> void:
 	if walkTimer.is_stopped():
@@ -72,6 +71,7 @@ func changeState() -> void:
 	
 func detectPlayer() -> void:
 	if playerRay.is_colliding() and floorRay.is_colliding():
+		
 		var hitObject: Node = playerRay.get_collider(0)
 		if hitObject.name == 'Player':
 			targetPlayer()
