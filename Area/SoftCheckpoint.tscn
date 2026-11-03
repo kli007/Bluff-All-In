@@ -1,0 +1,14 @@
+[gd_scene format=3 uid="uid://bmb2lm4erhdp2"]
+
+[ext_resource type="Script" uid="uid://clheblalq7sio" path="res://Area/soft_checkpoint.gd" id="1_misjf"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_5sqx0"]
+size = Vector2(48, 56.5)
+
+[node name="SoftCheckpoint" type="Area2D" unique_id=1711238018]
+script = ExtResource("1_misjf")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=1200367183]
+shape = SubResource("RectangleShape2D_5sqx0")
+
+[connection signal="body_entered" from="." to="." method="_on_body_entered"]

@@ -7,7 +7,7 @@ func mainManager(action: String, player: CharacterBody2D) -> void:
 		'dash':
 			dashBurn(player)
 		'grap':
-			grapBurn(player, player.grapRay)
+			grapBurn(player, player.grapBox)
 		'heal':
 			healBurn()
 
@@ -18,7 +18,7 @@ func dashBurn(playerNode: CharacterBody2D) -> void:
 	playerNode.collision_layer = 2
 	playerNode.collision_mask = 2
 	
-func grapBurn(player: CharacterBody2D, grapple: ShapeCast2D) -> void:
+func grapBurn(player: CharacterBody2D, grapple: Area2D) -> void:
 	var burnCard: Node2D
 	var reverseNodes: Array = Global.playedNodes.duplicate()
 	reverseNodes.reverse()
@@ -26,10 +26,17 @@ func grapBurn(player: CharacterBody2D, grapple: ShapeCast2D) -> void:
 		if not card.checkData():
 			burnCard = card
 			break
-	if not grapple.is_colliding():
+	var bodies: Array = grapple.get_overlapping_bodies()
+	if bodies.is_empty():
 		return
 	else:
-		var target: CharacterBody2D = grapple.get_collider(0)
+		var target: CharacterBody2D
+		for body in bodies: # this needs to be changed
+			if body is CharacterBody2D:
+				if body.canGrapple:
+					target = body
+		if not target:
+			return
 		target.getGrapple(player, grappleDistance, grapSpeed)
 		CombatManager.dealDamage("Burn_Grapple", target, player.global_position, player.name)
 	CardData.hideCards(burnCard)	
@@ -43,7 +50,3 @@ func healBurn() -> void:
 	for card in burnCards:
 		CardData.hideCards(card)
 	CardData.moveUpCards(Global.playedNodes)
-	
-func rotateGrapple(grapple: ShapeCast2D, direction: Vector2):
-	grapple.rotation = direction.angle()
-	

@@ -19,7 +19,7 @@ extends CharacterBody2D
 @export var max_hover_fall: float = 15.0
 @export var spike_mult: float = 2
 @export var normal_g: float = 1.0
-
+@export var canGrapple: bool = true
 
 var isStatus: STATUS = STATUS.NOTHING
 

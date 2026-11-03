@@ -8,6 +8,8 @@
 [ext_resource type="Shape2D" uid="uid://dx0kln6elb2qg" path="res://Assets/Polygon/up_attack_polygon.tres" id="6_6ysni"]
 [ext_resource type="Shape2D" uid="uid://67dpk84cat4v" path="res://Assets/Polygon/down_attack_polygon.tres" id="6_vlldt"]
 
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_wfklh"]
+
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_5sqx0"]
 size = Vector2(25, 22.666668)
 
@@ -133,10 +135,10 @@ tracks/0/path = NodePath("VisualManager/Sprite:frame")
 tracks/0/interp = 1
 tracks/0/loop_wrap = true
 tracks/0/keys = {
-"times": PackedFloat32Array(),
-"transitions": PackedFloat32Array(),
+"times": PackedFloat32Array(0, 0.025, 0.05, 0.075, 0.1, 0.125, 0.15, 0.175),
+"transitions": PackedFloat32Array(1, 1, 1, 1, 1, 1, 1, 1),
 "update": 1,
-"values": []
+"values": [96, 97, 98, 99, 100, 101, 102, 103]
 }
 tracks/1/type = "value"
 tracks/1/imported = false
@@ -680,7 +682,7 @@ _data = {
 
 [node name="Player" unique_id=569175648 instance=ExtResource("1_vlldt")]
 script = ExtResource("2_s1rgi")
-DashSpeed = 800.0
+DashSpeed = 200.0
 currentAttack = ""
 
 [node name="DeckManager" type="Node" parent="." index="1" unique_id=1004625260]
@@ -694,7 +696,14 @@ texture = ExtResource("2_kpjcp")
 hframes = 12
 vframes = 10
 
-[node name="HitBox" parent="VisualManager" parent_id_path=PackedInt32Array(1465317720) index="1" unique_id=443541335]
+[node name="Grapplebox" type="Area2D" parent="VisualManager" parent_id_path=PackedInt32Array(1465317720) index="1" unique_id=669064909]
+
+[node name="GrappleCollsion" type="CollisionShape2D" parent="VisualManager/Grapplebox" index="0" unique_id=481689833]
+position = Vector2(100, 0)
+scale = Vector2(10, 12.5)
+shape = SubResource("RectangleShape2D_wfklh")
+
+[node name="HitBox" parent="VisualManager" parent_id_path=PackedInt32Array(1465317720) index="2" unique_id=443541335]
 visible = true
 
 [node name="DamageCollision" parent="VisualManager/HitBox" index="0" unique_id=4510622]

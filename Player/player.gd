@@ -6,7 +6,8 @@ extends Entity
 @onready var dashTime: Timer = $DashTimer
 @onready var trickTime: Timer = $TrickTimer
 @onready var grapRay: ShapeCast2D = $GrappleRay
-@export var DashSpeed: float = 800.0
+@onready var grapBox: Area2D = $VisualManager/Grapplebox
+@export var DashSpeed: float = 200.0
 @export var currentAttack: String
 
 signal needMultiplier
@@ -33,7 +34,6 @@ func _ready() -> void:
 	Global.data_dispense.connect(on_save_dispense)
 	CombatManager.playerRecoil.connect(startRecoil)
 	setPendCard()
-	#hover_change.connect(on_status_timer_timeout)
 	
 func set_stats() -> void:
 	speed = 200.0
@@ -59,7 +59,7 @@ func _physics_process(delta: float) -> void:
 func checkAction() -> void:
 	match isActioning:
 		State.DASH:
-			velocity.x = (lastDirection.x/abs(lastDirection.x)) * DashSpeed
+			velocity.x += (lastDirection.x/abs(lastDirection.x)) * DashSpeed 
 			gravityCond = false
 		State.JUMP:
 			if velocity.y < 0:
@@ -163,16 +163,19 @@ func movement(deltaTime: float) -> void:
 		lastDirection.x = direction.x
 		velocity.x = move_toward(velocity.x, direction.x * speed, acceleration)
 		
-	if Input.is_action_just_pressed("Move_Jump") and activeJumps > 0:
+	if (Input.is_action_just_pressed("Move_Jump") and activeJumps > 0 and
+	isActioning in [State.IDLE, State.DASH, State.JUMP, State.FALL]):
 		velocity.y = jump_velocity
 		activeJumps -= 1
 		airAction = true
+		if isActioning == State.DASH:
+			pass
 		
 	if Input.is_action_just_pressed("Delete"):
 		deckNode.deleteDeck()
 		
-	if Input.is_action_just_pressed("Attack") and airAction and (isActioning == State.IDLE 
-	or isActioning == State.DASH or isActioning == State.JUMP or isActioning == State.FALL):
+	if (Input.is_action_just_pressed("Attack") and airAction and 
+	isActioning in [State.IDLE, State.DASH, State.JUMP, State.FALL]):
 		if CardData.checkSpace(Global.playedNodes) and CardData.checkSpace(Global.pendNodes) < MAX_PEND_CARDS:
 			if isActioning == State.DASH:
 					animNode.play("G_Attack_1")
@@ -214,7 +217,7 @@ func movement(deltaTime: float) -> void:
 	elif Input.is_action_just_released('Burn'):
 		burnActive = false
 	
-	if Input.is_action_just_pressed("Dash") and isActioning == State.IDLE:
+	if Input.is_action_just_pressed("Dash") and isActioning in [State.IDLE, State.JUMP, State.FALL]:
 		if burnActive and CardData.checkSpace(Global.playedNodes) < MAX_PLAYED_CARDS:
 			BurnManager.mainManager('dash', self)
 			burnActive = false
@@ -242,8 +245,6 @@ func movement(deltaTime: float) -> void:
 	
 	if Input.is_action_just_pressed("Load Game" ):
 		Global.loadGame()
-		
-	BurnManager.rotateGrapple(grapRay, lastDirection)
 	
 func hoverMovement(delta: float) -> void:
 	movement(delta)
