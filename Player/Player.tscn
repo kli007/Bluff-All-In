@@ -8,13 +8,119 @@
 [ext_resource type="Shape2D" uid="uid://dx0kln6elb2qg" path="res://Assets/Polygon/up_attack_polygon.tres" id="6_6ysni"]
 [ext_resource type="Shape2D" uid="uid://67dpk84cat4v" path="res://Assets/Polygon/down_attack_polygon.tres" id="6_vlldt"]
 
-[sub_resource type="RectangleShape2D" id="RectangleShape2D_ptm0p"]
-
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_5sqx0"]
 size = Vector2(25, 22.666668)
 
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_ptm0p"]
+
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_5dqqt"]
 size = Vector2(20, 31)
+
+[sub_resource type="Animation" id="Animation_8sa4y"]
+resource_name = "A_Attack_1"
+length = 0.5
+step = 0.0
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("VisualManager/Sprite:frame")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.125, 0.25, 0.375, 0.5),
+"transitions": PackedFloat32Array(1, 1, 1, 1, 1),
+"update": 1,
+"values": [12, 13, 14, 15, 16]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("VisualManager/HitBox/DamageCollision:disabled")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0, 0.155, 0.5),
+"transitions": PackedFloat32Array(200, 200, 1),
+"update": 1,
+"values": [true, false, true]
+}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("VisualManager/HitBox/DamageCollision:position")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0, 0.15, 0.5),
+"transitions": PackedFloat32Array(200, 200, 1),
+"update": 0,
+"values": [Vector2(0, 0), Vector2(27.5, 4), Vector2(0, 0)]
+}
+tracks/3/type = "value"
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/path = NodePath("VisualManager/HitBox/DamageCollision:scale")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/keys = {
+"times": PackedFloat32Array(0, 0.15, 0.5),
+"transitions": PackedFloat32Array(200, 200, 1),
+"update": 0,
+"values": [Vector2(1, 1), Vector2(1.5, 1.75), Vector2(1, 1)]
+}
+
+[sub_resource type="Animation" id="Animation_3nb2p"]
+resource_name = "A_Attack_2"
+length = 0.5
+step = 0.0
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("VisualManager/Sprite:frame")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.125, 0.25, 0.375, 0.5),
+"transitions": PackedFloat32Array(1, 1, 1, 1, 1),
+"update": 1,
+"values": [36, 37, 39, 40, 41]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("VisualManager/HitBox/DamageCollision:disabled")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0, 0.25, 0.5),
+"transitions": PackedFloat32Array(200, 200, 1),
+"update": 1,
+"values": [true, false, true]
+}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("VisualManager/HitBox/DamageCollision:position")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0, 0.26, 0.5),
+"transitions": PackedFloat32Array(200, 200, 1),
+"update": 0,
+"values": [Vector2(0, 0), Vector2(27.5, 4), Vector2(0, 0)]
+}
+tracks/3/type = "value"
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/path = NodePath("VisualManager/HitBox/DamageCollision:scale")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/keys = {
+"times": PackedFloat32Array(0, 0.25, 0.5),
+"transitions": PackedFloat32Array(200, 200, 1),
+"update": 0,
+"values": [Vector2(1, 1), Vector2(1.5, 1.75), Vector2(1, 1)]
+}
 
 [sub_resource type="Animation" id="Animation_5wa8t"]
 resource_name = "Dash"
@@ -111,7 +217,7 @@ tracks/3/keys = {
 
 [sub_resource type="Animation" id="Animation_tdg3f"]
 resource_name = "Fall"
-length = 0.375
+length = 0.25
 tracks/0/type = "value"
 tracks/0/imported = false
 tracks/0/enabled = true
@@ -119,11 +225,32 @@ tracks/0/path = NodePath("VisualManager/Sprite:frame")
 tracks/0/interp = 1
 tracks/0/loop_wrap = true
 tracks/0/keys = {
-"times": PackedFloat32Array(0, 0.125, 0.25),
-"transitions": PackedFloat32Array(1, 1, 1),
+"times": PackedFloat32Array(0, 0.125),
+"transitions": PackedFloat32Array(1, 1),
 "update": 1,
-"values": [86, 87, 88]
+"values": [87, 88]
 }
+
+[sub_resource type="Animation" id="Animation_7v5gs"]
+resource_name = "FALLING"
+length = 0.125
+loop_mode = 1
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("VisualManager/Sprite:frame")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [88]
+}
+
+[sub_resource type="Animation" id="Animation_dm7nj"]
+resource_name = "GRAPPLE"
+length = 0.2
 
 [sub_resource type="Animation" id="Animation_dtqjt"]
 resource_name = "G_Attack_1"
@@ -163,7 +290,7 @@ tracks/2/keys = {
 "times": PackedFloat32Array(0, 0.15, 0.5),
 "transitions": PackedFloat32Array(200, 200, 1),
 "update": 0,
-"values": [Vector2(0, 0), Vector2(20, 4), Vector2(0, 0)]
+"values": [Vector2(0, 0), Vector2(27.5, 4), Vector2(0, 0)]
 }
 tracks/3/type = "value"
 tracks/3/imported = false
@@ -175,7 +302,7 @@ tracks/3/keys = {
 "times": PackedFloat32Array(0, 0.15, 0.5),
 "transitions": PackedFloat32Array(200, 200, 1),
 "update": 0,
-"values": [Vector2(1, 1), Vector2(1, 1.5), Vector2(1, 1)]
+"values": [Vector2(1, 1), Vector2(1.5, 1.75), Vector2(1, 1)]
 }
 
 [sub_resource type="Animation" id="Animation_vlldt"]
@@ -213,10 +340,10 @@ tracks/2/path = NodePath("VisualManager/HitBox/DamageCollision:position")
 tracks/2/interp = 1
 tracks/2/loop_wrap = true
 tracks/2/keys = {
-"times": PackedFloat32Array(0, 0.25, 0.5),
+"times": PackedFloat32Array(0, 0.26, 0.5),
 "transitions": PackedFloat32Array(200, 200, 1),
 "update": 0,
-"values": [Vector2(0, 0), Vector2(20, 4), Vector2(0, 0)]
+"values": [Vector2(0, 0), Vector2(27.5, 4), Vector2(0, 0)]
 }
 tracks/3/type = "value"
 tracks/3/imported = false
@@ -228,7 +355,7 @@ tracks/3/keys = {
 "times": PackedFloat32Array(0, 0.25, 0.5),
 "transitions": PackedFloat32Array(200, 200, 1),
 "update": 0,
-"values": [Vector2(1, 1), Vector2(1, 1.5), Vector2(1, 1)]
+"values": [Vector2(1, 1), Vector2(1.5, 1.75), Vector2(1, 1)]
 }
 
 [sub_resource type="Animation" id="Animation_0j2ni"]
@@ -281,7 +408,7 @@ tracks/3/keys = {
 "times": PackedFloat32Array(0, 0.25, 0.625),
 "transitions": PackedFloat32Array(200, 200, 1),
 "update": 0,
-"values": [Vector2(1, 1), Vector2(1.6, 2.5), Vector2(1, 1)]
+"values": [Vector2(1, 1), Vector2(1.75, 2.5), Vector2(1, 1)]
 }
 
 [sub_resource type="Animation" id="Animation_p7tob"]
@@ -330,6 +457,23 @@ tracks/0/keys = {
 "transitions": PackedFloat32Array(1, 1, 1),
 "update": 1,
 "values": [84, 85, 86]
+}
+
+[sub_resource type="Animation" id="Animation_3mea3"]
+resource_name = "JUMPING"
+length = 0.125
+loop_mode = 1
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("VisualManager/Sprite:frame")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [86]
 }
 
 [sub_resource type="Animation" id="Animation_e80uo"]
@@ -513,15 +657,20 @@ tracks/3/keys = {
 
 [sub_resource type="AnimationLibrary" id="AnimationLibrary_e80uo"]
 _data = {
+&"A_Attack_1": SubResource("Animation_8sa4y"),
+&"A_Attack_2": SubResource("Animation_3nb2p"),
 &"DASH": SubResource("Animation_5wa8t"),
 &"Down_Attack": SubResource("Animation_j23h2"),
 &"FALL": SubResource("Animation_tdg3f"),
+&"FALLING": SubResource("Animation_7v5gs"),
+&"GRAPPLE": SubResource("Animation_dm7nj"),
 &"G_Attack_1": SubResource("Animation_dtqjt"),
 &"G_Attack_2": SubResource("Animation_vlldt"),
 &"G_Attack_3": SubResource("Animation_0j2ni"),
 &"HURT": SubResource("Animation_p7tob"),
 &"IDLE": SubResource("Animation_kpjcp"),
 &"JUMP": SubResource("Animation_cxr5p"),
+&"JUMPING": SubResource("Animation_3mea3"),
 &"MOVE": SubResource("Animation_e80uo"),
 &"RESET": SubResource("Animation_kne1u"),
 &"SHOOT": SubResource("Animation_v0k0e"),
@@ -532,6 +681,7 @@ _data = {
 [node name="Player" unique_id=569175648 instance=ExtResource("1_vlldt")]
 script = ExtResource("2_s1rgi")
 DashSpeed = 800.0
+currentAttack = ""
 
 [node name="DeckManager" type="Node" parent="." index="1" unique_id=1004625260]
 script = ExtResource("3_kne1u")
@@ -544,13 +694,7 @@ texture = ExtResource("2_kpjcp")
 hframes = 12
 vframes = 10
 
-[node name="GrappleRay" type="ShapeCast2D" parent="VisualManager" parent_id_path=PackedInt32Array(1465317720) index="1" unique_id=1725463755]
-scale = Vector2(1, 2)
-shape = SubResource("RectangleShape2D_ptm0p")
-target_position = Vector2(134, 0)
-max_results = 37
-
-[node name="HitBox" parent="VisualManager" parent_id_path=PackedInt32Array(1465317720) index="2" unique_id=443541335]
+[node name="HitBox" parent="VisualManager" parent_id_path=PackedInt32Array(1465317720) index="1" unique_id=443541335]
 visible = true
 
 [node name="DamageCollision" parent="VisualManager/HitBox" index="0" unique_id=4510622]
@@ -559,22 +703,32 @@ shape = SubResource("RectangleShape2D_5sqx0")
 disabled = true
 debug_color = Color(0.86955327, 0.28923154, 0.5197506, 0.41960785)
 
-[node name="Collision" parent="." index="4" unique_id=775821313]
+[node name="GrappleRay" type="ShapeCast2D" parent="." index="4" unique_id=1725463755]
+visible = false
+modulate = Color(1, 1, 1, 0.21176471)
+show_behind_parent = true
+scale = Vector2(1, 3)
+shape = SubResource("RectangleShape2D_ptm0p")
+target_position = Vector2(200, 0)
+max_results = 37
+collision_mask = 4
+
+[node name="Collision" parent="." index="5" unique_id=775821313]
 position = Vector2(0, 2.5)
 shape = SubResource("RectangleShape2D_5dqqt")
 
-[node name="AnimationPlayer" type="AnimationPlayer" parent="." index="5" unique_id=1133206577]
+[node name="AnimationPlayer" type="AnimationPlayer" parent="." index="6" unique_id=1133206577]
 libraries/ = SubResource("AnimationLibrary_e80uo")
 
-[node name="ComboTimer" type="Timer" parent="." index="7" unique_id=1410315735]
+[node name="ComboTimer" type="Timer" parent="." index="8" unique_id=1410315735]
 wait_time = 0.9
 one_shot = true
 
-[node name="DashTimer" type="Timer" parent="." index="8" unique_id=1040722538]
+[node name="DashTimer" type="Timer" parent="." index="9" unique_id=1040722538]
 wait_time = 0.2
 one_shot = true
 
-[node name="TrickTimer" type="Timer" parent="." index="9" unique_id=492310548]
+[node name="TrickTimer" type="Timer" parent="." index="10" unique_id=492310548]
 wait_time = 0.2
 one_shot = true
 

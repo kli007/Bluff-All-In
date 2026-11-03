@@ -26,6 +26,7 @@ func _ready() -> void:
 func set_stats() -> void:
 	super.set_stats()
 	speed = 50
+	acceleration = 30
 	max_health = 50
 
 func movement(_delta: float) -> void:
@@ -42,14 +43,13 @@ func movement(_delta: float) -> void:
 			walkingAround()
 		State.IDLE:
 			animNode.play("IDLE")
-			pass
 
 func walkingAround() -> void:
 	if walkTimer.is_stopped():
 		walkTimer.start(randf_range(2.5, 5.5))
 		
 	if floorRay.is_colliding() and not is_on_wall():
-		velocity.x = direction.x * speed
+		velocity.x = move_toward(velocity.x, direction.x * speed, acceleration)
 	else:
 		switchIdle(State.LOOK)
 
@@ -71,6 +71,7 @@ func changeState() -> void:
 	
 func detectPlayer() -> void:
 	if playerRay.is_colliding() and floorRay.is_colliding():
+		
 		var hitObject: Node = playerRay.get_collider(0)
 		if hitObject.name == 'Player':
 			targetPlayer()
@@ -92,8 +93,8 @@ func switchIdle(placeHolder: State = State.LOOK) -> void:
 	stateTimer.start(1.0)
 	nextAction = placeHolder
 	
-func unique_hit(damageType: String) -> void:
-	super.unique_hit(damageType)
+func unique_hit(damageType: String, damagePos: Vector2) -> void:
+	super.unique_hit(damageType, damagePos)
 	var tempAction: State = nextAction
 	nextAction = State.HURT
 	changeState()

@@ -4,25 +4,31 @@ extends CharacterBody2D
 @onready var effectNode: AnimationPlayer = $EffectsPlayer
 @onready var animNode: AnimationPlayer
 @onready var healthNode: Node = $HealthManager
-@onready var knockTimer: Timer = $KnockbackTimer
-@onready var hoverTimer: Timer = $HoverTimer
-@onready var vertTimer: Timer = $VerticalTimer
+@onready var statusTimer: Timer = $StatusTimer
 @onready var visNode: Node2D = $VisualManager
+@onready var groundRay: RayCast2D = $GroundRay
 @onready var spawnLocation: Vector2 = global_position
 
 @export var speed: float
+@export var acceleration: float
 @export var jump_velocity: float
 @export var max_health: float
 @export var max_hit_threshold: int
 @export var invincibility_time: float
 @export var hover_mult: float = 0.05
+@export var max_hover_fall: float = 15.0
+@export var spike_mult: float = 2
+@export var normal_g: float = 1.0
 
-var isKnockback: bool = false
-var isVertical: bool = false
-var isHovering: bool = false
-var isSpiked: bool = false
-var knockbackVelocity: Vector2
-var verticalVelocity: Vector2
+
+var isStatus: STATUS = STATUS.NOTHING
+
+enum STATUS {KNOCKBACK, VERTICAL, HOVER, SPIKE, GRAPPLE, RECOIL, NOTHING}
+
+var statusVelocity: Vector2
+var gScalar: float = normal_g
+var grappleSpeed: float
+var grappleLocation: Vector2
 var direction: Vector2
 var lastDirection: Vector2 = Vector2.RIGHT
 
@@ -36,21 +42,46 @@ func _ready() -> void:
 	
 	
 func _physics_process(delta: float) -> void:
-	var hoverScalar: float = 1
-	if isHovering:
-		hoverScalar = hover_mult
+	physics(delta)
+	checkStatus(delta)
+	moveHelper()
+	
+func physics(delta: float) -> void:
+	var friction: float
 	if not is_on_floor():
-		gravity(hoverScalar, delta)
-	else:
-		isSpiked = false
-	if isVertical or isKnockback or isHovering:
-		if isVertical:
-			velocity = verticalVelocity
-		if isKnockback:
-			velocity = knockbackVelocity
-	else:
-		movement(delta)
-		
+		velocity += get_gravity() * delta * gScalar
+		friction = Global.air_friction
+	elif "friction" in groundRay.get_collider():
+		friction = groundRay.get_collider().friction
+		if isStatus == STATUS.SPIKE:
+			on_status_timer_timeout()
+	if not direction:
+		velocity.x = move_toward(velocity.x, 0, friction)
+	
+func checkStatus(delta: float) -> void:
+	match isStatus:
+		STATUS.KNOCKBACK:
+			velocity = statusVelocity
+		STATUS.VERTICAL:
+			velocity = statusVelocity
+		STATUS.SPIKE:
+			gScalar = spike_mult
+		STATUS.HOVER:
+			gScalar = hover_mult
+			velocity.y = minf(velocity.y, max_hover_fall)
+			hoverMovement(delta)
+		STATUS.GRAPPLE:
+			var distance: Vector2 = grappleLocation - global_position
+			if distance.length() <= grappleSpeed * delta:
+				finishGrapple()
+			else:
+				velocity = distance.normalized() * grappleSpeed
+		STATUS.RECOIL:
+			velocity = statusVelocity
+		STATUS.NOTHING:
+			movement(delta)
+	
+func moveHelper() -> void:
 	flip_sprite()
 	move_and_slide()
 	effect_control()
@@ -68,9 +99,10 @@ func flip_sprite() -> void:
 		
 func takeDamage(damage: float, knockback: Vector2, damagePos: Vector2, damageType: String) -> void:
 	if healthNode.takeHit(-damage, damageType):
-		animNode.play("HURT")
+		if animNode:
+			animNode.play("HURT")
 		takeKnockback(knockback, damagePos)
-		unique_hit(damageType)
+		unique_hit(damageType, damagePos)
 		
 func takeKnockback(knockForce: Vector2, damagePos: Vector2) -> void:
 	if knockForce.x != 0.0:
@@ -79,41 +111,56 @@ func takeKnockback(knockForce: Vector2, damagePos: Vector2) -> void:
 			offset.y = 0.0
 		if offset == Vector2.ZERO:
 			offset.x = 1.0
-		knockbackVelocity = offset.normalized() * knockForce.x
-		knockTimer.start()
-		isKnockback = true
-	if knockForce.y != 0.0:
-		verticalVelocity = knockForce
-		vertTimer.start()
-		isVertical = true
-		if verticalVelocity.y >= 0:
-			isSpiked = true
+		statusVelocity = offset.normalized() * knockForce.x
+		statusTimer.start(0.2)
+		isStatus = STATUS.KNOCKBACK
+	elif knockForce.y != 0.0:
+		statusVelocity = knockForce
+		statusTimer.start(0.2)
+		if statusVelocity.y >= 0:
+			isStatus = STATUS.SPIKE
+		else:
+			isStatus = STATUS.VERTICAL
+			
+func getGrapple(player: CharacterBody2D, distance: float, gSpeed: float):
+	grappleLocation = player.global_position + player.lastDirection * distance 
+	grappleSpeed = gSpeed
+	isStatus = STATUS.GRAPPLE
 	
+func finishGrapple() -> void:
+	isStatus = STATUS.NOTHING
+	velocity = Vector2.ZERO
+	takeKnockback(Vector2(CombatManager.values.no_kb), global_position)
+	
+func startRecoil(damagePos: Vector2, magnitude: float) -> void:
+	statusVelocity = damagePos.normalized() * magnitude
+	if is_on_floor():
+		statusVelocity = Vector2(statusVelocity.x, 0)
+	statusTimer.start(0.1)
+	isStatus = STATUS.RECOIL
 
-func _on_knockback_timer_timeout() -> void:
-	velocity.x = 0.0
-	isKnockback = false
+func on_status_timer_timeout() -> void:
+	velocity = Vector2.ZERO
+	gScalar = normal_g
+	if (isStatus != STATUS.SPIKE and isStatus != STATUS.HOVER
+	 and isStatus != STATUS.RECOIL):
+		startHovering()
+	else:
+		isStatus = STATUS.NOTHING
 
-func _on_vertical_timer_timeout() -> void:
-	velocity.y =  0.0
-	isVertical = false
-	startHovering()
-	
-func _on_hover_timer_timeout() -> void:
-	isHovering = false
-	
 func startHovering() -> void:
-	if not is_on_ceiling() and not is_on_floor() and not isSpiked:
-		hoverTimer.start()
-		isHovering = true
+	if not is_on_ceiling() and not is_on_floor():
+		velocity.y = 0.0
+		gScalar = hover_mult
+		statusTimer.start(0.5)
+		isStatus = STATUS.HOVER
 		hover_change.emit()
+	else:
+		isStatus = STATUS.NOTHING
 	
 func respawn(new_location: Vector2) -> void:
 	global_position = new_location
 	healthNode.resetAllValues()
-	
-func gravity(_scalar: float, _delta: float) -> void:
-	velocity += get_gravity() * _delta * _scalar
 	
 func death() -> void:
 	pass
@@ -124,11 +171,14 @@ func unique_ready() -> void:
 func set_stats() -> void:
 	pass
 	
-func unique_hit(damageType: String) -> void:
+func unique_hit(damageType: String, damagePos: Vector2) -> void:
 	pass
 	
 func _on_hit_box_body_entered(body: Node2D) -> void:
 	pass # Replace with function body.
 	
 func movement(delta: float) -> void:
+	pass
+	
+func hoverMovement(delta: float) -> void:
 	pass

@@ -29,6 +29,8 @@ func set_stats() -> void:
 	super.set_stats()
 	speed = 50
 	max_health = 50
+	normal_g = 0.0
+	gScalar = normal_g
 	
 func movement(_delta: float) -> void:
 	time_passed += _delta
@@ -51,9 +53,6 @@ func movement(_delta: float) -> void:
 			
 		State.HURT:
 			pass
-		
-func gravity(_scalar: float, _delta: float) -> void:
-	pass
 	
 func flyingAround() -> void:
 	var adjustment: float = 0.0
@@ -133,8 +132,8 @@ func _on_player_area_body_entered(body: Node2D) -> void:
 		targetBody = body
 		switchIdle(State.CHASE)
 		
-func unique_hit(damageType: String) -> void:
-	super.unique_hit(damageType)
+func unique_hit(damageType: String, damagePos: Vector2) -> void:
+	super.unique_hit(damageType, damagePos)
 	var tempAction: State = nextAction
 	nextAction = State.HURT
 	changeState()

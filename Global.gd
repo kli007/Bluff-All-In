@@ -3,6 +3,7 @@ extends Node
 var mainNode: Node
 var pendNodes: Array = []
 var playedNodes: Array = []
+var air_friction: float = 10.0
 
 const SAVE_PATH := "res://Save/savegame.tres"
 

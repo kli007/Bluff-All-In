@@ -2,11 +2,16 @@ class_name CombatValues
 extends Resource
 	
 @export var no_kb: Vector2 = Vector2(0.0,0.0)
+@export var min_kb: Vector2 = Vector2(5.0,0.0)
 @export var small_kb: Vector2 = Vector2(150.0, 0.0)
 @export var medium_kb: Vector2 = Vector2(300.0, 0.0)
 @export var large_kb: Vector2 = Vector2(500.0, 0.0)
 @export var launch_kb: Vector2 = Vector2(0.0, -500.0)
 @export var spike_kb: Vector2 = Vector2(0.0, 500.0)
+
+@export var small_recoil: float = 150.0
+@export var medium_recoil: float = 300.0
+@export var large_recoil: float = 450.0
 
 @export var player_atk_dmg: float = 15.0
 @export var player_proj_dmg: float = 10.0

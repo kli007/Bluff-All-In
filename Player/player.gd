@@ -5,74 +5,87 @@ extends Entity
 @onready var comboTime: Timer = $ComboTimer
 @onready var dashTime: Timer = $DashTimer
 @onready var trickTime: Timer = $TrickTimer
-@onready var grapRay: ShapeCast2D = $VisualManager/GrappleRay
+@onready var grapRay: ShapeCast2D = $GrappleRay
 @export var DashSpeed: float = 800.0
+@export var currentAttack: String
 
 signal needMultiplier
 
-var lookingDir: String = ''
 var burnActive: bool = false
 var activeJumps: int = 3
-var currentAttack: String
-
+var airAction: bool
 var isActioning: State = State.IDLE
+
+var helperCond: bool
+var gravityCond: bool
 
 const MAX_PLAYED_CARDS: int = 5
 const MAX_PEND_CARDS: int = 7
 const HEAL_BURN_MINIMUM: int = 2
 const MAX_JUMP_AVAILABLE: int = 3
 
-enum State {ATTACK, DASH, JUMP, SHOWDOWN, TRICK, IDLE, HURT}
+enum State {ATTACK, DASH, GRAPPLE, JUMP, FALL, SHOWDOWN, TRICK, IDLE, HURT}
 
 func _ready() -> void:
 	super._ready()
 	animNode = $AnimationPlayer
 	Global.data_capture.connect(on_save_capture)
 	Global.data_dispense.connect(on_save_dispense)
+	CombatManager.playerRecoil.connect(startRecoil)
 	setPendCard()
-	grapRay.add_exception(self)
+	#hover_change.connect(on_status_timer_timeout)
 	
 func set_stats() -> void:
 	speed = 200.0
+	acceleration = 20
 	jump_velocity = -450.0
 	max_health = 100
 	max_hit_threshold = 5
 	invincibility_time = .5
 
 func _physics_process(delta: float) -> void:
-	movement(delta)
-		
-	if isKnockback:
-		velocity.x = knockbackVelocity.x
-	elif isActioning == State.DASH:
-		velocity.x = lastDirection.x * DashSpeed
-	else:
-		if direction:
-			velocity.x = direction.x * speed
-		else:
-			velocity.x = move_toward(velocity.x, 0, speed)
-
-	if isActioning != State.ATTACK and isActioning != State.SHOWDOWN:
-		move_and_slide()
-		animation_control()
-		flip_sprite()
-		if not is_on_floor() and isActioning != State.DASH:
-			velocity += get_gravity() * delta
-		else:
-			activeJumps = MAX_JUMP_AVAILABLE
-	
-		
-func animation_control() -> void:
-	if isActioning == State.IDLE:
-		if velocity.y < 0:
-			animNode.play('JUMP')
-		elif velocity.y > 0:
-			animNode.play('FALL')
-		elif velocity.x != 0:
-			animNode.play('MOVE')
-		else:
-			animNode.play('IDLE')
-		
+	helperCond = true
+	gravityCond = true
+	physics(delta)
+	checkStatus(delta)
+	checkAction()
+	if helperCond:
+		moveHelper()
+		if is_on_floor():
+			airAction = true
+			if gravityCond:
+				activeJumps = MAX_JUMP_AVAILABLE
+			
+func checkAction() -> void:
+	match isActioning:
+		State.DASH:
+			velocity.x = (lastDirection.x/abs(lastDirection.x)) * DashSpeed
+			gravityCond = false
+		State.JUMP:
+			if velocity.y < 0:
+				animNode.play("JUMPING")
+			else:
+				isActioning = State.IDLE
+		State.FALL:
+			if velocity.y > 0:
+				animNode.play("FALLING")
+			else:
+				isActioning = State.IDLE
+		State.SHOWDOWN:
+			helperCond = false
+		State.GRAPPLE:
+			helperCond = false
+		State.ATTACK:
+			gravityCond = false
+		State.IDLE:
+			if velocity.y < 0:
+				animNode.play('JUMP')
+			elif velocity.y > 0:
+				animNode.play('FALL')
+			elif velocity.x != 0:
+				animNode.play('MOVE')
+			else:
+				animNode.play('IDLE')
 
 func setPendCard() -> void:
 	while CardData.checkSpace(Global.pendNodes) and not deckNode.checkDeck():
@@ -91,12 +104,19 @@ func showdownPlayedCards() -> void:
 	CardData.removeCards(Global.playedNodes)
 	
 func slash_combo() -> void:
-	if currentAttack == "G_Attack_2":
-		currentAttack = "G_Attack_3"
-	elif currentAttack == "G_Attack_1":
-		currentAttack = "G_Attack_2"
+	if not is_on_floor():
+		airAction = false
+		if currentAttack == "A_Attack_1":
+			animNode.play("A_Attack_2")
+		else:
+			animNode.play("A_Attack_1")
 	else:
-		currentAttack = "G_Attack_1"
+		if currentAttack == "G_Attack_2":
+			animNode.play("G_Attack_3")
+		elif currentAttack == "G_Attack_1":
+			animNode.play("G_Attack_2")
+		else:
+			animNode.play("G_Attack_1")
 		
 	comboTime.start()
 	
@@ -107,6 +127,12 @@ func _on_animation_player_animation_finished(anim_name: StringName) -> void:
 		collision_layer = 1
 		collision_mask = 1
 		velocity.x = 0
+	if anim_name == "JUMP":
+		isActioning = State.JUMP
+		return
+	if anim_name == "FALL":
+		isActioning = State.FALL
+		return
 	isActioning = State.IDLE
 		
 func _on_combo_timer_timeout() -> void:
@@ -121,7 +147,7 @@ func _on_hit_box_body_entered(body: Node2D) -> void:
 	var damage: String = 'player_atk_dmg'
 	match isActioning:
 		State.ATTACK:
-			damage = currentAttack
+			damage = animNode.current_animation
 		State.SHOWDOWN:
 			damage = deckNode.lastPlayedHand
 		State.DASH:
@@ -131,45 +157,36 @@ func _on_hit_box_body_entered(body: Node2D) -> void:
 func movement(deltaTime: float) -> void:
 	if isActioning != State.DASH:
 		direction.x = Input.get_axis("Move_Left", "Move_Right")
-	
-	if direction:
-		lastDirection = direction
+		lastDirection.y = Input.get_axis("Look_Up", "Look_Down")
 		
-	if Input.is_action_pressed("Look_Up") and (lookingDir == '' or lookingDir == 'UP'):
-		lookingDir = 'UP'
-	elif Input.is_action_just_released("Look_Up"):
-		lookingDir = ''
-		
-	if Input.is_action_pressed("Look_Down") and (lookingDir == '' or lookingDir == 'DOWN'):
-		lookingDir = 'DOWN'
-	elif Input.is_action_just_released("Look_Down"):
-		lookingDir = ''
+	if direction.x:
+		lastDirection.x = direction.x
+		velocity.x = move_toward(velocity.x, direction.x * speed, acceleration)
 		
 	if Input.is_action_just_pressed("Move_Jump") and activeJumps > 0:
 		velocity.y = jump_velocity
 		activeJumps -= 1
+		airAction = true
 		
 	if Input.is_action_just_pressed("Delete"):
 		deckNode.deleteDeck()
 		
-	if Input.is_action_just_pressed("Attack") and (isActioning == State.IDLE or isActioning == State.DASH):
+	if Input.is_action_just_pressed("Attack") and airAction and (isActioning == State.IDLE 
+	or isActioning == State.DASH or isActioning == State.JUMP or isActioning == State.FALL):
 		if CardData.checkSpace(Global.playedNodes) and CardData.checkSpace(Global.pendNodes) < MAX_PEND_CARDS:
-			comboTime.stop()
 			if isActioning == State.DASH:
-					currentAttack = "G_Attack_1"
+					animNode.play("G_Attack_1")
 					dashTime.stop()
 			if not is_on_floor():
-				if lookingDir == 'DOWN':
-					currentAttack = "Down_Attack"
+				if lastDirection.y > 0.0:
+					animNode.play("Down_Attack")
 				else:
 					slash_combo()
 			else:
-				if lookingDir == 'UP':
-					currentAttack = "Up_Attack"
+				if lastDirection.y < 0.0:
+					animNode.play("Up_Attack")
 				else:
 					slash_combo()
-			#setPlayedCard()
-			animNode.play(currentAttack)
 			isActioning = State.ATTACK
 					
 	
@@ -177,6 +194,9 @@ func movement(deltaTime: float) -> void:
 		if burnActive and (CardData.checkSpace(Global.playedNodes) < MAX_PLAYED_CARDS):
 			BurnManager.mainManager("grap", self)
 			burnActive = false
+			animNode.play("GRAPPLE")
+			isActioning = State.GRAPPLE
+			startHovering()
 		elif projNode.projectileCount and CardData.checkSpace(Global.pendNodes) < MAX_PEND_CARDS:
 			projNode.create_projectile(self, lastDirection, global_position)
 			if not projNode.projectileCount:
@@ -222,6 +242,11 @@ func movement(deltaTime: float) -> void:
 	
 	if Input.is_action_just_pressed("Load Game" ):
 		Global.loadGame()
+		
+	BurnManager.rotateGrapple(grapRay, lastDirection)
+	
+func hoverMovement(delta: float) -> void:
+	movement(delta)
 	
 func on_save_capture(data: SaveData) -> void:
 	data.player_health = healthNode.health
@@ -245,6 +270,6 @@ func load_cards(cardArray: Array, cardNodes: Array) -> void:
 		if card['rank'] != '' and card['suit'] != '':
 			CardData.setCards(card, cardNodes)
 			
-func unique_hit(damageType: String) -> void:
-	super.unique_hit(damageType)
+func unique_hit(damageType: String, damagePos: Vector2) -> void:
+	super.unique_hit(damageType, damagePos)
 	isActioning = State.HURT
