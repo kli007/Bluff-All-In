@@ -1,5 +1,5 @@
 extends Node
-var projectile = preload("res://Projectiles/Player/projectile.tscn")
+var projectile: Resource = preload("res://Projectiles/Player/projectile.tscn")
 
 signal proj_changed
 signal reload_status
@@ -12,8 +12,9 @@ const MAX_PROJ_COUNT: int = 4  # can be changed later
 const RELOAD_TIME: float = 1.0
 
 func create_projectile(playerNode: Node, playerDirection: Vector2, playerGP: Vector2) -> void:
-	var Proj = Global.mainNode.get_node("ProjectileGroup")
-	var new_projectile = projectile.instantiate()
+	var Proj: Node = Global.mainNode.get_node("ProjectileGroup")
+	var new_projectile: Area2D = projectile.instantiate()
+	
 	new_projectile.global_position = playerGP
 	new_projectile.lock_on_to_player(playerDirection, playerNode, Proj)
 	Proj.call_deferred("add_child", new_projectile)

@@ -104,3 +104,12 @@ func getRankMultiplier(rank: String) -> float:
 			return values.d_rank_mult
 		_:
 			return values.f_rank_mult
+			
+func _playerHitEnemy(player: CharacterBody2D, attack: String) -> void:
+	var attackKeys: Array = ATTACKS.keys().slice(0,7)
+	if attackKeys.has(attack):
+		player.setPlayedCard()
+		player.currentAttack = attack
+		if not player.is_on_floor() and attack != "Down_Attack":
+			player.startHovering()
+			player.airAction = true

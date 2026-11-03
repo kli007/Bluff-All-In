@@ -13,7 +13,11 @@ signal needMultiplier
 
 var burnActive: bool = false
 var activeJumps: int = 3
+var airAction: bool
 var isActioning: State = State.IDLE
+
+var helperCond: bool
+var gravityCond: bool
 
 const MAX_PLAYED_CARDS: int = 5
 const MAX_PEND_CARDS: int = 7
@@ -40,21 +44,23 @@ func set_stats() -> void:
 	invincibility_time = .5
 
 func _physics_process(delta: float) -> void:
-	var hCond: bool = true
-	var gCond: bool = true
+	helperCond = true
+	gravityCond = true
 	physics(delta)
 	checkStatus(delta)
-	checkAction(hCond, gCond)
-	if (hCond):
+	checkAction()
+	if helperCond:
 		moveHelper()
-		if is_on_floor() or gCond:
-			activeJumps = MAX_JUMP_AVAILABLE
+		if is_on_floor():
+			airAction = true
+			if gravityCond:
+				activeJumps = MAX_JUMP_AVAILABLE
 			
-func checkAction(_hCond: bool, _gCond: bool) -> void:
+func checkAction() -> void:
 	match isActioning:
 		State.DASH:
 			velocity.x = (lastDirection.x/abs(lastDirection.x)) * DashSpeed
-			_gCond = false
+			gravityCond = false
 		State.JUMP:
 			if velocity.y < 0:
 				animNode.play("JUMPING")
@@ -66,11 +72,11 @@ func checkAction(_hCond: bool, _gCond: bool) -> void:
 			else:
 				isActioning = State.IDLE
 		State.SHOWDOWN:
-			_hCond = false
+			helperCond = false
 		State.GRAPPLE:
-			_hCond = false
+			helperCond = false
 		State.ATTACK:
-			_gCond = false
+			gravityCond = false
 		State.IDLE:
 			if velocity.y < 0:
 				animNode.play('JUMP')
@@ -99,6 +105,7 @@ func showdownPlayedCards() -> void:
 	
 func slash_combo() -> void:
 	if not is_on_floor():
+		airAction = false
 		if currentAttack == "A_Attack_1":
 			animNode.play("A_Attack_2")
 		else:
@@ -150,24 +157,21 @@ func _on_hit_box_body_entered(body: Node2D) -> void:
 func movement(deltaTime: float) -> void:
 	if isActioning != State.DASH:
 		direction.x = Input.get_axis("Move_Left", "Move_Right")
-		direction.y = Input.get_axis("Look_Up", "Look_Down")
+		lastDirection.y = Input.get_axis("Look_Up", "Look_Down")
 		
-	if direction:
-		lastDirection = direction
+	if direction.x:
+		lastDirection.x = direction.x
 		velocity.x = move_toward(velocity.x, direction.x * speed, acceleration)
-		
-	if Input.is_action_just_released("Look_Up") or Input.is_action_just_released("Look_Down"):
-		lastDirection.y = 0.0
-		
 		
 	if Input.is_action_just_pressed("Move_Jump") and activeJumps > 0:
 		velocity.y = jump_velocity
 		activeJumps -= 1
+		airAction = true
 		
 	if Input.is_action_just_pressed("Delete"):
 		deckNode.deleteDeck()
 		
-	if Input.is_action_just_pressed("Attack") and (isActioning == State.IDLE 
+	if Input.is_action_just_pressed("Attack") and airAction and (isActioning == State.IDLE 
 	or isActioning == State.DASH or isActioning == State.JUMP or isActioning == State.FALL):
 		if CardData.checkSpace(Global.playedNodes) and CardData.checkSpace(Global.pendNodes) < MAX_PEND_CARDS:
 			if isActioning == State.DASH:
@@ -178,7 +182,6 @@ func movement(deltaTime: float) -> void:
 					animNode.play("Down_Attack")
 				else:
 					slash_combo()
-					startHovering()
 			else:
 				if lastDirection.y < 0.0:
 					animNode.play("Up_Attack")
