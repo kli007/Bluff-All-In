@@ -30,16 +30,12 @@ func grapBurn(player: CharacterBody2D, grapple: Area2D) -> void:
 	if bodies.is_empty():
 		return
 	else:
-		var target: CharacterBody2D
-		for body in bodies: # this needs to be changed
-			if body is CharacterBody2D:
-				if body.canGrapple:
-					target = body
-		if not target:
+		var target: CharacterBody2D = getBody(bodies, player)
+		if target == null:
 			return
 		target.getGrapple(player, grappleDistance, grapSpeed)
 		CombatManager.dealDamage("Burn_Grapple", target, player.global_position, player.name)
-	CardData.hideCards(burnCard)	
+		CardData.hideCards(burnCard)	
 	
 func healBurn() -> void:
 	var burnCards: Array
@@ -50,3 +46,29 @@ func healBurn() -> void:
 	for card in burnCards:
 		CardData.hideCards(card)
 	CardData.moveUpCards(Global.playedNodes)
+	
+func getBody(bodies: Array, player: CharacterBody2D) -> CharacterBody2D:
+	var space: PhysicsDirectSpaceState2D = player.get_world_2d().direct_space_state
+	var returnBody: CharacterBody2D = null
+	var currentDist: float = INF
+	for body in bodies:
+		if body is not CharacterBody2D or body.name == "Player" or not body.canGrapple:
+			continue
+			
+		var query := PhysicsRayQueryParameters2D.create(
+				player.global_position, body.global_position, 1, [player.get_rid(), body.get_rid()])
+		var hit: Dictionary = space.intersect_ray(query)
+		if not hit.is_empty():
+			continue
+			
+		var dist: float = body.global_position.distance_squared_to(player.global_position)
+		var closer: bool = returnBody == null
+		if not closer:
+			if body.priorityGrapple != returnBody.priorityGrapple:
+				closer = body.priorityGrapple
+			else:
+				closer = dist < currentDist
+		if closer:
+			returnBody = body
+			currentDist = dist
+	return returnBody

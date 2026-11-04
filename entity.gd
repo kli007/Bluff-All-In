@@ -20,6 +20,7 @@ extends CharacterBody2D
 @export var spike_mult: float = 2
 @export var normal_g: float = 1.0
 @export var canGrapple: bool = true
+@export var priorityGrapple: bool = false
 
 var isStatus: STATUS = STATUS.NOTHING
 
@@ -130,7 +131,8 @@ func getGrapple(player: CharacterBody2D, distance: float, gSpeed: float):
 func finishGrapple() -> void:
 	isStatus = STATUS.NOTHING
 	velocity = Vector2.ZERO
-	takeKnockback(Vector2(CombatManager.values.no_kb), global_position)
+	#takeKnockback(Vector2(CombatManager.values.no_kb), global_position)
+	startHovering()
 	
 func startRecoil(damagePos: Vector2, magnitude: float) -> void:
 	statusVelocity = damagePos.normalized() * magnitude

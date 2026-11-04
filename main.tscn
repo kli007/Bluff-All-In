@@ -16,7 +16,10 @@
 [node name="Main" type="Node" unique_id=1517588686]
 script = ExtResource("1_lquwl")
 
-[node name="EnemyTemplate" parent="." unique_id=569175648 instance=ExtResource("2_dg77c")]
+[node name="EnemyTemplate2" parent="." unique_id=569175648 instance=ExtResource("2_dg77c")]
+position = Vector2(304, -30)
+
+[node name="EnemyTemplate" parent="." unique_id=2128246214 instance=ExtResource("2_dg77c")]
 position = Vector2(392, -23)
 
 [node name="TestArea" parent="." unique_id=512090307 instance=ExtResource("1_ig7tw")]
