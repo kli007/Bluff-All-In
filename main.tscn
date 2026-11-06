@@ -4,6 +4,7 @@
 [ext_resource type="Script" uid="uid://2eckjdluntd6" path="res://main.gd" id="1_lquwl"]
 [ext_resource type="PackedScene" uid="uid://daaqo57ngxba6" path="res://Player/Player.tscn" id="2_0xm2m"]
 [ext_resource type="PackedScene" uid="uid://dqswf1f3rgufw" path="res://Enemy/enemyTemplate.tscn" id="2_dg77c"]
+[ext_resource type="PackedScene" uid="uid://bfu6erksjquk6" path="res://Area/grapplePoint.tscn" id="2_ycdy4"]
 [ext_resource type="PackedScene" uid="uid://bc4g2w3j8inqx" path="res://Cards/PlayedCards.tscn" id="3_1bvp3"]
 [ext_resource type="PackedScene" uid="uid://ce7wj45lpekfs" path="res://Cards/PendCards.tscn" id="3_h2yge"]
 [ext_resource type="Script" uid="uid://cssp134kyvgv4" path="res://Health/player_health.gd" id="6_4c57u"]
@@ -16,8 +17,8 @@
 [node name="Main" type="Node" unique_id=1517588686]
 script = ExtResource("1_lquwl")
 
-[node name="EnemyTemplate2" parent="." unique_id=569175648 instance=ExtResource("2_dg77c")]
-position = Vector2(304, -30)
+[node name="GrapplePoint" parent="." unique_id=569175648 instance=ExtResource("2_ycdy4")]
+position = Vector2(146, -78)
 
 [node name="EnemyTemplate" parent="." unique_id=2128246214 instance=ExtResource("2_dg77c")]
 position = Vector2(392, -23)

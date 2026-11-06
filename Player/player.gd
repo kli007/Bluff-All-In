@@ -74,7 +74,7 @@ func checkAction() -> void:
 		State.SHOWDOWN:
 			helperCond = false
 		State.GRAPPLE:
-			helperCond = false
+			helperCond = isStatus != STATUS.GRAPPLE
 		State.ATTACK:
 			gravityCond = false
 		State.IDLE:
@@ -193,13 +193,14 @@ func movement(deltaTime: float) -> void:
 			isActioning = State.ATTACK
 					
 	
-	if Input.is_action_just_pressed("Trick") and isActioning == State.IDLE:
+	if Input.is_action_just_pressed("Trick") and isActioning in [State.IDLE, State.JUMP, State.FALL]:
 		if burnActive and (CardData.checkSpace(Global.playedNodes) < MAX_PLAYED_CARDS):
 			BurnManager.mainManager("grap", self)
 			burnActive = false
 			animNode.play("GRAPPLE")
 			isActioning = State.GRAPPLE
-			startHovering()
+			if isStatus != STATUS.GRAPPLE:
+				startHovering()
 		elif projNode.projectileCount and CardData.checkSpace(Global.pendNodes) < MAX_PEND_CARDS:
 			projNode.create_projectile(self, lastDirection, global_position)
 			if not projNode.projectileCount:
@@ -225,7 +226,7 @@ func movement(deltaTime: float) -> void:
 		dashTime.start()
 		isActioning = State.DASH
 	
-	if Input.is_action_just_pressed("Showdown") and isActioning == State.IDLE:
+	if Input.is_action_just_pressed("Showdown") and isActioning in [State.IDLE, State.JUMP, State.FALL]:
 		if burnActive:
 			if CardData.checkSpace(Global.playedNodes) <= HEAL_BURN_MINIMUM:
 				healthNode.changeHealth(30.0)

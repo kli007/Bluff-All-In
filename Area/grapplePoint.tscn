@@ -1,0 +1,17 @@
+[gd_scene format=3 uid="uid://bfu6erksjquk6"]
+
+[ext_resource type="PackedScene" uid="uid://bbab152wypwbs" path="res://Entity.tscn" id="1_vnog7"]
+[ext_resource type="Script" uid="uid://co735sck4oibb" path="res://Area/grapple_point.gd" id="2_ur6ah"]
+[ext_resource type="Texture2D" uid="uid://bbedbd08thbv8" path="res://Assets/Sprite/Player/projectile.png" id="3_nfjkb"]
+
+[node name="GrapplePoint" unique_id=569175648 instance=ExtResource("1_vnog7")]
+collision_layer = 4
+collision_mask = 0
+script = ExtResource("2_ur6ah")
+
+[node name="Sprite" parent="VisualManager" parent_id_path=PackedInt32Array(1465317720) index="0" unique_id=97275318]
+texture = ExtResource("3_nfjkb")
+
+[node name="Collision" parent="." index="2" unique_id=775821313]
+position = Vector2(0, 0)
+scale = Vector2(1, -0.5)

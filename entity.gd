@@ -32,8 +32,10 @@ var grappleSpeed: float
 var grappleLocation: Vector2
 var direction: Vector2
 var lastDirection: Vector2 = Vector2.RIGHT
+var grappleType: String = "PULL"
 
 signal hover_change
+signal grapple_signal
 
 func _ready() -> void:
 	set_stats()
@@ -72,11 +74,14 @@ func checkStatus(delta: float) -> void:
 			velocity.y = minf(velocity.y, max_hover_fall)
 			hoverMovement(delta)
 		STATUS.GRAPPLE:
-			var distance: Vector2 = grappleLocation - global_position
-			if distance.length() <= grappleSpeed * delta:
-				finishGrapple()
+			if grappleType == "PULL":
+				var distance: Vector2 = grappleLocation - global_position
+				if distance.length() <= grappleSpeed * delta:
+					finishGrapple()
+				else:
+					velocity = distance.normalized() * grappleSpeed
 			else:
-				velocity = distance.normalized() * grappleSpeed
+				velocity = Vector2.ZERO
 		STATUS.RECOIL:
 			velocity = statusVelocity
 		STATUS.NOTHING:
@@ -123,9 +128,14 @@ func takeKnockback(knockForce: Vector2, damagePos: Vector2) -> void:
 		else:
 			isStatus = STATUS.VERTICAL
 			
-func getGrapple(player: CharacterBody2D, distance: float, gSpeed: float):
-	grappleLocation = player.global_position + player.lastDirection * distance 
-	grappleSpeed = gSpeed
+func getGrapple(source: CharacterBody2D, distance: float, gSpeed: float):
+	if grappleType == "PULL":
+		grappleLocation = source.global_position + source.lastDirection * distance 
+		grappleSpeed = gSpeed
+	elif grappleType == "PUSH":
+		lastDirection = -source.lastDirection
+		source.getGrapple(self, distance, gSpeed)
+		source.grapple_signal.connect(finishGrapple, CONNECT_ONE_SHOT)
 	isStatus = STATUS.GRAPPLE
 	
 func finishGrapple() -> void:
@@ -133,6 +143,7 @@ func finishGrapple() -> void:
 	velocity = Vector2.ZERO
 	#takeKnockback(Vector2(CombatManager.values.no_kb), global_position)
 	startHovering()
+	grapple_signal.emit()
 	
 func startRecoil(damagePos: Vector2, magnitude: float) -> void:
 	statusVelocity = damagePos.normalized() * magnitude

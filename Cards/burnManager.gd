@@ -71,4 +71,5 @@ func getBody(bodies: Array, player: CharacterBody2D) -> CharacterBody2D:
 		if closer:
 			returnBody = body
 			currentDist = dist
+			
 	return returnBody
