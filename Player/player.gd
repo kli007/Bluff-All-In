@@ -16,6 +16,8 @@ var burnActive: bool = false
 var activeJumps: int = 3
 var airAction: bool
 var isActioning: State = State.IDLE
+var launchVelocity: float = -500.0
+var spikeVelocity: float = 500.0
 
 var helperCond: bool
 var gravityCond: bool
@@ -53,6 +55,9 @@ func _physics_process(delta: float) -> void:
 		moveHelper()
 		if is_on_floor():
 			airAction = true
+			if animNode.current_animation == "Down_Attack":
+				animNode.stop()
+				isActioning = State.IDLE
 			if gravityCond:
 				activeJumps = MAX_JUMP_AVAILABLE
 			
@@ -117,9 +122,15 @@ func slash_combo() -> void:
 			animNode.play("G_Attack_2")
 		else:
 			animNode.play("G_Attack_1")
-		
 	comboTime.start()
 	
+func drag(attack: String) -> void:
+	match attack:
+		"Launcher":
+			velocity.y = launchVelocity
+		"Spike":
+			velocity.y = spikeVelocity
+			
 func _on_animation_player_animation_finished(anim_name: StringName) -> void:
 	if anim_name == "SHOWDOWN":
 		CombatManager.resetComboMult()
