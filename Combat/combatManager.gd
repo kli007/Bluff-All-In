@@ -14,8 +14,8 @@ var ATTACKS: Dictionary = {
 	"G_Attack_3": _atk("Attack", values.player_atk_dmg, values.medium_kb, 2, 0),
 	"A_Attack_1": _atk("Attack", values.player_atk_dmg, values.min_kb, 1, 0),
 	"A_Attack_2": _atk("Attack", values.player_atk_dmg, values.small_kb, 1, 0),
-	"Up_Attack":  _atk("Launcher", values.player_launch_dmg, values.launch_kb, 2, 0),
-	"Down_Attack":  _atk("Spike", values.player_spike_dmg, values.spike_kb, 4, 0),
+	"Up_Attack":  _atk("Launcher", values.player_launch_dmg, values.drag_kb, 2, 0),
+	"Down_Attack":  _atk("Spike", values.player_spike_dmg, values.drag_kb, 4, 0),
 	"Dash_Attack": _atk("Attack", values.player_atk_dmg, values.no_kb, 1, 0),
 	"Player_Projectile": _atk("Projectile Hit", values.player_proj_dmg, values.no_kb, 1, 0),
 	"Burn_Dash": _atk("Burn Dash", 0, values.no_kb, 100, 0),
@@ -34,20 +34,19 @@ var ATTACKS: Dictionary = {
 	"hand_RF_dmg":  _atk("Royal Flush", values.hand_RF_dmg, values.large_kb, 7, 0),
 }
 
-func dealDamage(damageType: String, body: Node, pos: Vector2, origin: String) -> void:
+func dealDamage(damageType: String, body: Node, pos: Vector2, origin: CharacterBody2D) -> void:
 	if not ATTACKS.has(damageType):
 		push_error("Unknown attack id: '%s'" % damageType)
 		return
 	if body.healthNode.checkIfHit(damageType):
-		var knockback: Vector2 = ATTACKS[damageType]['knockback']
 		var damage: float = ATTACKS[damageType]['damage']
-		if origin == "Player":
+		if origin.name == "Player":
 			if comboMultiplier != 0.0:
 				damage *= comboMultiplier
 				resetComboMult()
 			accumDamage += damage
 			accumDmgChange.emit()
-		body.takeDamage(damage, knockback, pos, damageType)
+		body.takeDamage(damage, damageType, pos, origin)
 		
 func recoilBody(attack: String, direction: Vector2, projMag: float) -> void:
 	var magnitude: float = ATTACKS[attack]["recoil"]

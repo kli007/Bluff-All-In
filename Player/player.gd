@@ -11,6 +11,7 @@ extends Entity
 @export var currentAttack: String
 
 signal needMultiplier
+signal dragFinished
 
 var burnActive: bool = false
 var activeJumps: int = 3
@@ -58,6 +59,7 @@ func _physics_process(delta: float) -> void:
 			if animNode.current_animation == "Down_Attack":
 				animNode.stop()
 				isActioning = State.IDLE
+				dragFinished.emit()
 			if gravityCond:
 				activeJumps = MAX_JUMP_AVAILABLE
 			
@@ -144,6 +146,8 @@ func _on_animation_player_animation_finished(anim_name: StringName) -> void:
 	if anim_name == "FALL":
 		isActioning = State.FALL
 		return
+	if anim_name == "Up_Attack":
+		dragFinished.emit()
 	isActioning = State.IDLE
 		
 func _on_combo_timer_timeout() -> void:
@@ -163,7 +167,7 @@ func _on_hit_box_body_entered(body: Node2D) -> void:
 			damage = deckNode.lastPlayedHand
 		State.DASH:
 			damage = "Burn_Dash"
-	CombatManager.dealDamage(damage, body, global_position, self.name)
+	CombatManager.dealDamage(damage, body, global_position, self)
 
 func movement(deltaTime: float) -> void:
 	if isActioning != State.DASH:

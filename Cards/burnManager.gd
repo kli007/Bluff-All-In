@@ -34,7 +34,7 @@ func grapBurn(player: CharacterBody2D, grapple: Area2D) -> void:
 		if target == null:
 			return
 		target.getGrapple(player, grappleDistance, grapSpeed)
-		CombatManager.dealDamage("Burn_Grapple", target, player.global_position, player.name)
+		CombatManager.dealDamage("Burn_Grapple", target, player.global_position, player)
 		CardData.hideCards(burnCard)	
 	
 func healBurn() -> void:

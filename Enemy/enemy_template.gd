@@ -40,7 +40,7 @@ func spawnCards() -> void:
 
 func _on_hit_box_body_entered(body: Node2D) -> void:
 	if body.name == "Player":
-		CombatManager.dealDamage(contact_damage, body, global_position, self.name)
+		CombatManager.dealDamage(contact_damage, body, global_position, self)
 
 func unique_hit(damageType: String, damagePos: Vector2) -> void:
 	CombatManager.lastHitEnemy = self

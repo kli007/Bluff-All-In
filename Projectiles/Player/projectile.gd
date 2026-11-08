@@ -29,5 +29,5 @@ func _on_body_entered(body: Node2D) -> void:
 	if exceptionArray.has(body):
 		return
 	elif body is CharacterBody2D:
-		CombatManager.dealDamage('Player_Projectile', body, global_position, "Player")
+		CombatManager.dealDamage('Player_Projectile', body, global_position, player)
 	queue_free()
