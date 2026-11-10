@@ -1,0 +1,39 @@
+[gd_scene format=3 uid="uid://dciu326ve7yw"]
+
+[ext_resource type="Script" uid="uid://0ekbsysdv0of" path="res://Projectiles/Player/projectile_display.gd" id="1_i6lqw"]
+[ext_resource type="Texture2D" uid="uid://cp3qhfwop3ajx" path="res://Assets/Sprite/Player/emptyprojectile.png" id="1_nf03y"]
+
+[node name="ProjectileDisplay" type="HBoxContainer" unique_id=793609437]
+anchors_preset = -1
+anchor_right = 0.033
+anchor_bottom = 0.012
+offset_right = 0.6399994
+offset_bottom = 0.03999996
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/separation = 4
+script = ExtResource("1_i6lqw")
+
+[node name="1" type="TextureRect" parent="." unique_id=1392327155]
+layout_mode = 2
+texture = ExtResource("1_nf03y")
+expand_mode = 2
+stretch_mode = 2
+
+[node name="2" type="TextureRect" parent="." unique_id=764884226]
+layout_mode = 2
+texture = ExtResource("1_nf03y")
+expand_mode = 2
+stretch_mode = 2
+
+[node name="3" type="TextureRect" parent="." unique_id=1230233908]
+layout_mode = 2
+texture = ExtResource("1_nf03y")
+expand_mode = 2
+stretch_mode = 2
+
+[node name="4" type="TextureRect" parent="." unique_id=1571029657]
+layout_mode = 2
+texture = ExtResource("1_nf03y")
+expand_mode = 2
+stretch_mode = 2

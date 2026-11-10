@@ -112,3 +112,6 @@ func _playerHitEnemy(player: CharacterBody2D, attack: String) -> void:
 		if not player.is_on_floor() and attack != "Down_Attack":
 			player.startHovering()
 			player.airAction = true
+	
+	if attack == "Player_Projectile":
+		player.projNode.projectileLanded -= 1

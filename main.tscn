@@ -8,11 +8,11 @@
 [ext_resource type="PackedScene" uid="uid://bc4g2w3j8inqx" path="res://Cards/PlayedCards.tscn" id="3_1bvp3"]
 [ext_resource type="PackedScene" uid="uid://ce7wj45lpekfs" path="res://Cards/PendCards.tscn" id="3_h2yge"]
 [ext_resource type="Script" uid="uid://cssp134kyvgv4" path="res://Health/player_health.gd" id="6_4c57u"]
-[ext_resource type="Script" uid="uid://vqjxie4pbklg" path="res://Projectiles/Player/player_projectiles.gd" id="6_272bh"]
 [ext_resource type="Texture2D" uid="uid://dbf07vmwaqx41" path="res://Assets/Sprite/UI/healthbottom.png" id="6_ycdy4"]
 [ext_resource type="Texture2D" uid="uid://dutqccrcecuog" path="res://Assets/Sprite/UI/healthtop.png" id="7_w48qg"]
 [ext_resource type="Texture2D" uid="uid://j084rtd85k7w" path="res://Assets/Sprite/UI/healthprog.png" id="8_vivmo"]
 [ext_resource type="PackedScene" uid="uid://c6gwf1rure1a0" path="res://Combat/player_combo.tscn" id="9_kek77"]
+[ext_resource type="PackedScene" uid="uid://dciu326ve7yw" path="res://Projectiles/Player/ProjectileDisplay.tscn" id="12_ycdy4"]
 
 [node name="Main" type="Node" unique_id=1517588686]
 script = ExtResource("1_lquwl")
@@ -28,6 +28,20 @@ position = Vector2(191, 7)
 
 [node name="Player" parent="." unique_id=1593983104 instance=ExtResource("2_0xm2m")]
 position = Vector2(154, -12)
+DashSpeed = 200.0
+currentAttack = ""
+speed = 0.0
+acceleration = 0.0
+jump_velocity = 0.0
+max_health = 0.0
+max_hit_threshold = 0
+invincibility_time = 0.0
+hover_mult = 0.05
+max_hover_fall = 15.0
+spike_mult = 2.0
+normal_g = 1.0
+canGrapple = true
+priorityGrapple = false
 
 [node name="Camera2D" type="Camera2D" parent="Player" unique_id=919362061]
 position = Vector2(1, 4)
@@ -61,14 +75,6 @@ texture_over = ExtResource("7_w48qg")
 texture_progress = ExtResource("8_vivmo")
 script = ExtResource("6_4c57u")
 
-[node name="PlayerProjectiles" type="Label" parent="HUD/UserUIControl" unique_id=1768357784]
-visible = false
-layout_mode = 0
-offset_top = 23.0
-offset_right = 185.0
-offset_bottom = 53.0
-script = ExtResource("6_272bh")
-
 [node name="PendCardsControl" type="Control" parent="HUD" unique_id=1218590380]
 layout_mode = 3
 anchors_preset = 1
@@ -81,12 +87,25 @@ grow_horizontal = 0
 [node name="PendCards" parent="HUD/PendCardsControl" unique_id=1641465469 instance=ExtResource("3_h2yge")]
 position = Vector2(282, 41)
 
+[node name="ProjectileDisplay" parent="HUD/PendCardsControl" unique_id=793609437 instance=ExtResource("12_ycdy4")]
+layout_mode = 1
+anchor_left = 0.624
+anchor_top = 0.48200002
+anchor_right = 0.79300004
+anchor_bottom = 0.544
+offset_left = -0.008010864
+offset_top = 0.009994507
+offset_right = -0.03100586
+offset_bottom = -0.08000946
+grow_horizontal = 1
+grow_vertical = 1
+
 [node name="PlayerCombo" parent="HUD/PendCardsControl" unique_id=2032755852 instance=ExtResource("9_kek77")]
 layout_mode = 0
-offset_left = 237.0
-offset_top = 111.0
-offset_right = 364.0
-offset_bottom = 285.0
+offset_left = 238.0
+offset_top = 158.0
+offset_right = 365.0
+offset_bottom = 332.0
 
 [node name="ProjectileGroup" type="Node" parent="." unique_id=621505026]
 
