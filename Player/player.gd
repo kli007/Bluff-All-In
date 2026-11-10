@@ -56,7 +56,7 @@ func _physics_process(delta: float) -> void:
 		moveHelper()
 		if is_on_floor():
 			airAction = true
-			if animNode.current_animation == "Down_Attack":
+			if animNode.current_animation in ["Down_Attack", "Down_Attack_2"]:
 				animNode.stop()
 				isActioning = State.IDLE
 				dragFinished.emit()
@@ -148,6 +148,8 @@ func _on_animation_player_animation_finished(anim_name: StringName) -> void:
 		return
 	if anim_name == "Up_Attack":
 		dragFinished.emit()
+	if anim_name == "Down_Attack":
+		animNode.play("Down_Attack_2")
 	isActioning = State.IDLE
 		
 func _on_combo_timer_timeout() -> void:
@@ -162,7 +164,10 @@ func _on_hit_box_body_entered(body: Node2D) -> void:
 	var damage: String = 'player_atk_dmg'
 	match isActioning:
 		State.ATTACK:
-			damage = animNode.current_animation
+			if animNode.current_animation == "Down_Attack_2":
+				damage = "Down_Attack"
+			else:
+				damage = animNode.current_animation
 		State.SHOWDOWN:
 			damage = deckNode.lastPlayedHand
 		State.DASH:

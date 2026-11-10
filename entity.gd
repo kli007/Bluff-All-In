@@ -119,6 +119,7 @@ func takeKnockback(knockForce: Vector2, damagePos: Vector2, origin: CharacterBod
 		statusTimer.start(0.2)
 		isStatus = STATUS.KNOCKBACK
 	elif knockForce.y != 0.0:
+		on_status_timer_timeout()
 		dragBody = origin
 		isStatus = STATUS.DRAG
 		add_collision_exception_with(dragBody)
@@ -144,7 +145,6 @@ func getGrapple(source: CharacterBody2D, distance: float, gSpeed: float):
 func finishGrapple() -> void:
 	isStatus = STATUS.NOTHING
 	velocity = Vector2.ZERO
-	#takeKnockback(Vector2(CombatManager.values.no_kb), global_position)
 	startHovering()
 	grapple_signal.emit()
 	
