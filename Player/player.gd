@@ -223,17 +223,9 @@ func movement(deltaTime: float) -> void:
 				startHovering()
 		elif CardData.checkSpace(Global.pendNodes) < MAX_PEND_CARDS:
 			projNode.create_projectile(self, lastDirection, global_position)
-			if not projNode.projectileLanded:
-				TrickManager.mainManager()
-				setPlayedCard()
-				projNode.setProjectiles()
 			animNode.play("SHOOT")
 			isActioning = State.TRICK
-	'if Input.is_action_pressed("Trick") and not burnActive:
-		projNode.reloadProjectiles(deltaTime)
-	if Input.is_action_just_released("Trick") and not burnActive:
-		projNode.releaseReload()'
-		
+
 	if Input.is_action_pressed('Burn'):
 		burnActive = true
 	elif Input.is_action_just_released('Burn'):

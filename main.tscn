@@ -89,13 +89,13 @@ position = Vector2(282, 41)
 
 [node name="ProjectileDisplay" parent="HUD/PendCardsControl" unique_id=793609437 instance=ExtResource("12_ycdy4")]
 layout_mode = 1
-anchor_left = 0.624
+anchor_left = 0.646
 anchor_top = 0.48200002
-anchor_right = 0.79300004
+anchor_right = 0.76600003
 anchor_bottom = 0.544
-offset_left = -0.008010864
+offset_left = -0.08201599
 offset_top = 0.009994507
-offset_right = -0.03100586
+offset_right = -0.12200928
 offset_bottom = -0.08000946
 grow_horizontal = 1
 grow_vertical = 1

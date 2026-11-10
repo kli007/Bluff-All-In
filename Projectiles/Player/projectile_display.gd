@@ -7,10 +7,12 @@ var projectiles: Node = null
 func _ready() -> void:
 	projectiles = get_node('/root/Main/Player/ProjectileManager')
 	projectiles.proj_changed.connect(update_display)
+	for i in get_child_count():
+		get_child(i).texture = empty_texture
 
 func update_display(projs: int):
 	for i in get_child_count():
-		if i <= projs:
+		if i >= projs:
 			get_child(i).texture = empty_texture
 		else:
 			get_child(i).texture = hit_texture

@@ -31,9 +31,3 @@ layout_mode = 2
 texture = ExtResource("1_nf03y")
 expand_mode = 2
 stretch_mode = 2
-
-[node name="4" type="TextureRect" parent="." unique_id=1571029657]
-layout_mode = 2
-texture = ExtResource("1_nf03y")
-expand_mode = 2
-stretch_mode = 2

@@ -114,4 +114,4 @@ func _playerHitEnemy(player: CharacterBody2D, attack: String) -> void:
 			player.airAction = true
 	
 	if attack == "Player_Projectile":
-		player.projNode.projectileLanded -= 1
+		player.projNode.hitProjectile()
