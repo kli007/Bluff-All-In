@@ -119,18 +119,12 @@ func takeKnockback(knockForce: Vector2, damagePos: Vector2, origin: CharacterBod
 		statusTimer.start(0.2)
 		isStatus = STATUS.KNOCKBACK
 	elif knockForce.y != 0.0:
-		on_status_timer_timeout()
+		clearStatus()
 		dragBody = origin
 		isStatus = STATUS.DRAG
 		add_collision_exception_with(dragBody)
 		dragBody.add_collision_exception_with(self)
 		dragBody.dragFinished.connect(on_status_timer_timeout, CONNECT_ONE_SHOT)
-		'statusVelocity = knockForce
-		statusTimer.start(0.2)
-		if statusVelocity.y >= 0:
-			isStatus = STATUS.SPIKE
-		else:
-			isStatus = STATUS.VERTICAL'
 			
 func getGrapple(source: CharacterBody2D, distance: float, gSpeed: float):
 	if grappleType == "PULL":
@@ -156,17 +150,21 @@ func startRecoil(damagePos: Vector2, magnitude: float) -> void:
 	isStatus = STATUS.RECOIL
 
 func on_status_timer_timeout() -> void:
+	var prevStatus: STATUS = isStatus
+	clearStatus()
+	if not prevStatus in [STATUS.HOVER, STATUS.RECOIL]:
+		startHovering()
+		
+func clearStatus() -> void:
+	isStatus = STATUS.NOTHING
+	statusTimer.stop()
 	velocity = Vector2.ZERO
 	gScalar = normal_g
 	if dragBody != null:
 		remove_collision_exception_with(dragBody)
 		dragBody.remove_collision_exception_with(self)
-		dragBody.startHovering()
+		#dragBody.startHovering() need to find better alt
 		dragBody = null
-	if not isStatus in [STATUS.HOVER, STATUS.RECOIL]:
-		startHovering()
-	else:
-		isStatus = STATUS.NOTHING
 
 func startHovering() -> void:
 	if not is_on_ceiling() and not is_on_floor():

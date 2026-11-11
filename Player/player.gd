@@ -131,6 +131,7 @@ func drag(attack: String) -> void:
 		"Launcher":
 			velocity.y = launchVelocity
 		"Spike":
+			clearStatus()
 			velocity.y = spikeVelocity
 			
 func _on_animation_player_animation_finished(anim_name: StringName) -> void:
@@ -150,7 +151,9 @@ func _on_animation_player_animation_finished(anim_name: StringName) -> void:
 		dragFinished.emit()
 	if anim_name == "Down_Attack":
 		animNode.play("Down_Attack_2")
+		return
 	isActioning = State.IDLE
+	dragFinished.emit()
 		
 func _on_combo_timer_timeout() -> void:
 	currentAttack = ""
