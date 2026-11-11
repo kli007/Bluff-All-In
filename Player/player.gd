@@ -15,6 +15,7 @@ signal dragFinished
 
 var burnActive: bool = false
 var activeJumps: int = 3
+var attackSpeed: float = 100.0
 var airAction: bool
 var isActioning: State = State.IDLE
 var launchVelocity: float = -500.0
@@ -153,7 +154,6 @@ func _on_animation_player_animation_finished(anim_name: StringName) -> void:
 		animNode.play("Down_Attack_2")
 		return
 	isActioning = State.IDLE
-	dragFinished.emit()
 		
 func _on_combo_timer_timeout() -> void:
 	currentAttack = ""
@@ -184,7 +184,10 @@ func movement(deltaTime: float) -> void:
 		
 	if direction.x:
 		lastDirection.x = direction.x
-		velocity.x = move_toward(velocity.x, direction.x * speed, acceleration)
+		if isActioning == State.ATTACK:
+			velocity.x = move_toward(velocity.x, direction.x * attackSpeed, acceleration)
+		else:
+			velocity.x = move_toward(velocity.x, direction.x * speed, acceleration)
 		
 	if (Input.is_action_just_pressed("Move_Jump") and activeJumps > 0 and
 	isActioning in [State.IDLE, State.DASH, State.JUMP, State.FALL]):
@@ -291,3 +294,4 @@ func load_cards(cardArray: Array, cardNodes: Array) -> void:
 func unique_hit(damageType: String, damagePos: Vector2) -> void:
 	super.unique_hit(damageType, damagePos)
 	isActioning = State.HURT
+	dragFinished.emit()

@@ -55,7 +55,7 @@ func physics(delta: float) -> void:
 	if not is_on_floor():
 		velocity += get_gravity() * delta * gScalar
 		friction = Global.air_friction
-	elif "friction" in groundRay.get_collider():
+	elif groundRay.is_colliding() and "friction" in groundRay.get_collider():
 		friction = groundRay.get_collider().friction
 	if not direction:
 		velocity.x = move_toward(velocity.x, 0, friction)
@@ -163,7 +163,8 @@ func clearStatus() -> void:
 	if dragBody != null:
 		remove_collision_exception_with(dragBody)
 		dragBody.remove_collision_exception_with(self)
-		#dragBody.startHovering() need to find better alt
+		if dragBody.isActioning == dragBody.State.ATTACK:
+			dragBody.startHovering()
 		dragBody = null
 
 func startHovering() -> void:
