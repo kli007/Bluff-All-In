@@ -17,8 +17,17 @@
 [node name="Main" type="Node" unique_id=1517588686]
 script = ExtResource("1_lquwl")
 
-[node name="GrapplePoint" parent="." unique_id=569175648 instance=ExtResource("2_ycdy4")]
-position = Vector2(146, -78)
+[node name="GrapplePoint4" parent="." unique_id=569175648 instance=ExtResource("2_ycdy4")]
+position = Vector2(191, -360)
+
+[node name="GrapplePoint3" parent="." unique_id=901571541 instance=ExtResource("2_ycdy4")]
+position = Vector2(94, -214)
+
+[node name="GrapplePoint2" parent="." unique_id=1551893345 instance=ExtResource("2_ycdy4")]
+position = Vector2(195, -125)
+
+[node name="GrapplePoint" parent="." unique_id=1228766061 instance=ExtResource("2_ycdy4")]
+position = Vector2(103, -38)
 
 [node name="EnemyTemplate" parent="." unique_id=2128246214 instance=ExtResource("2_dg77c")]
 position = Vector2(392, -23)
@@ -28,20 +37,6 @@ position = Vector2(191, 7)
 
 [node name="Player" parent="." unique_id=1593983104 instance=ExtResource("2_0xm2m")]
 position = Vector2(154, -12)
-DashSpeed = 200.0
-currentAttack = ""
-speed = 0.0
-acceleration = 0.0
-jump_velocity = 0.0
-max_health = 0.0
-max_hit_threshold = 0
-invincibility_time = 0.0
-hover_mult = 0.05
-max_hover_fall = 15.0
-spike_mult = 2.0
-normal_g = 1.0
-canGrapple = true
-priorityGrapple = false
 
 [node name="Camera2D" type="Camera2D" parent="Player" unique_id=919362061]
 position = Vector2(1, 4)

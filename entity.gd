@@ -124,7 +124,7 @@ func takeKnockback(knockForce: Vector2, damagePos: Vector2, origin: CharacterBod
 		isStatus = STATUS.DRAG
 		add_collision_exception_with(dragBody)
 		dragBody.add_collision_exception_with(self)
-		dragBody.dragFinished.connect(on_status_timer_timeout, CONNECT_ONE_SHOT)
+		dragBody.attackFinished.connect(on_status_timer_timeout, CONNECT_ONE_SHOT)
 			
 func getGrapple(source: CharacterBody2D, distance: float, gSpeed: float):
 	if grappleType == "PULL":
@@ -168,6 +168,7 @@ func clearStatus() -> void:
 		dragBody = null
 
 func startHovering() -> void:
+	statusTimer.stop()
 	if not is_on_ceiling() and not is_on_floor():
 		velocity.y = 0.0
 		gScalar = hover_mult

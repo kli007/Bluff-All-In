@@ -11,11 +11,11 @@ extends Entity
 @export var currentAttack: String
 
 signal needMultiplier
-signal dragFinished
+signal attackFinished
 
 var burnActive: bool = false
 var activeJumps: int = 3
-var attackSpeed: float = 100.0
+var attackSpeed: float = 75.0
 var airAction: bool
 var isActioning: State = State.IDLE
 var launchVelocity: float = -500.0
@@ -59,8 +59,7 @@ func _physics_process(delta: float) -> void:
 			airAction = true
 			if animNode.current_animation in ["Down_Attack", "Down_Attack_2"]:
 				animNode.stop()
-				isActioning = State.IDLE
-				dragFinished.emit()
+				switchState(State.IDLE)
 			if gravityCond:
 				activeJumps = MAX_JUMP_AVAILABLE
 			
@@ -73,13 +72,14 @@ func checkAction() -> void:
 			if velocity.y < 0:
 				animNode.play("JUMPING")
 			else:
-				isActioning = State.IDLE
+				switchState(State.IDLE)
 		State.FALL:
 			if velocity.y > 0:
 				animNode.play("FALLING")
 			else:
-				isActioning = State.IDLE
+				switchState(State.IDLE)
 		State.SHOWDOWN:
+			velocity = Vector2.ZERO
 			helperCond = false
 		State.GRAPPLE:
 			helperCond = isStatus != STATUS.GRAPPLE
@@ -131,6 +131,7 @@ func drag(attack: String) -> void:
 	match attack:
 		"Launcher":
 			velocity.y = launchVelocity
+			airAction = false
 		"Spike":
 			clearStatus()
 			velocity.y = spikeVelocity
@@ -143,23 +144,21 @@ func _on_animation_player_animation_finished(anim_name: StringName) -> void:
 		collision_mask = 1
 		velocity.x = 0
 	if anim_name == "JUMP":
-		isActioning = State.JUMP
+		switchState(State.JUMP)
 		return
 	if anim_name == "FALL":
-		isActioning = State.FALL
+		switchState(State.FALL)
 		return
-	if anim_name == "Up_Attack":
-		dragFinished.emit()
 	if anim_name == "Down_Attack":
 		animNode.play("Down_Attack_2")
 		return
-	isActioning = State.IDLE
+	switchState(State.IDLE)
 		
 func _on_combo_timer_timeout() -> void:
 	currentAttack = ""
 	
 func _on_trick_timer_timeout() -> void:
-	isActioning = State.IDLE
+	switchState(State.IDLE)
 
 func _on_hit_box_body_entered(body: Node2D) -> void:
 	if body.name == 'Player' or body is not CharacterBody2D:
@@ -206,17 +205,13 @@ func movement(deltaTime: float) -> void:
 			if isActioning == State.DASH:
 					animNode.play("G_Attack_1")
 					dashTime.stop()
-			if not is_on_floor():
-				if lastDirection.y > 0.0:
-					animNode.play("Down_Attack")
-				else:
-					slash_combo()
+			if lastDirection.y < 0.0 and airAction:
+				animNode.play("Up_Attack")
+			elif lastDirection.y > 0.0 and not is_on_floor():
+				animNode.play("Down_Attack")
 			else:
-				if lastDirection.y < 0.0:
-					animNode.play("Up_Attack")
-				else:
-					slash_combo()
-			isActioning = State.ATTACK
+				slash_combo()
+			switchState(State.ATTACK)
 					
 	
 	if Input.is_action_just_pressed("Trick") and isActioning in [State.IDLE, State.JUMP, State.FALL]:
@@ -224,13 +219,13 @@ func movement(deltaTime: float) -> void:
 			BurnManager.mainManager("grap", self)
 			burnActive = false
 			animNode.play("GRAPPLE")
-			isActioning = State.GRAPPLE
+			switchState(State.GRAPPLE)
 			if isStatus != STATUS.GRAPPLE:
 				startHovering()
 		elif CardData.checkSpace(Global.pendNodes) < MAX_PEND_CARDS:
 			projNode.create_projectile(self, lastDirection, global_position)
 			animNode.play("SHOOT")
-			isActioning = State.TRICK
+			switchState(State.TRICK)
 
 	if Input.is_action_pressed('Burn'):
 		burnActive = true
@@ -243,7 +238,7 @@ func movement(deltaTime: float) -> void:
 			burnActive = false
 		animNode.play("DASH")
 		dashTime.start()
-		isActioning = State.DASH
+		switchState(State.DASH)
 	
 	if Input.is_action_just_pressed("Showdown") and isActioning in [State.IDLE, State.JUMP, State.FALL]:
 		if burnActive:
@@ -255,7 +250,7 @@ func movement(deltaTime: float) -> void:
 			animNode.play("SHOWDOWN")
 			deckNode.checkHand()
 			showdownPlayedCards()
-			isActioning = State.SHOWDOWN
+			switchState(State.SHOWDOWN)
 			
 	if Input.is_action_pressed("DeleteHealthDebug"):
 		healthNode.changeHealth(-1.0)
@@ -268,6 +263,11 @@ func movement(deltaTime: float) -> void:
 	
 func hoverMovement(delta: float) -> void:
 	movement(delta)
+	
+func switchState(newState: State) -> void:
+	if isActioning in [State.ATTACK, State.TRICK]:
+		attackFinished.emit(self)
+	isActioning = newState
 	
 func on_save_capture(data: SaveData) -> void:
 	data.player_health = healthNode.health
@@ -293,5 +293,4 @@ func load_cards(cardArray: Array, cardNodes: Array) -> void:
 			
 func unique_hit(damageType: String, damagePos: Vector2) -> void:
 	super.unique_hit(damageType, damagePos)
-	isActioning = State.HURT
-	dragFinished.emit()
+	switchState(State.HURT)
