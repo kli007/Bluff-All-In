@@ -31,3 +31,6 @@ func _on_reset_timer_timeout() -> void:
 	canGrapple = true
 	sprite.texture = hit_texture
 	collision.disabled = false
+
+func startHovering() -> void:
+	isStatus = STATUS.NOTHING

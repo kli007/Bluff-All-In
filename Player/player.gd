@@ -262,6 +262,8 @@ func movement(deltaTime: float) -> void:
 		Global.loadGame()
 	
 func hoverMovement(delta: float) -> void:
+	if isActioning == State.HURT:
+		on_status_timer_timeout()
 	movement(delta)
 	
 func switchState(newState: State) -> void:
