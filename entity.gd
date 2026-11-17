@@ -149,7 +149,7 @@ func startRecoil(damagePos: Vector2, magnitude: float) -> void:
 	statusTimer.start(0.1)
 	isStatus = STATUS.RECOIL
 
-func on_status_timer_timeout() -> void:
+func on_status_timer_timeout(_player: CharacterBody2D = null) -> void:
 	var prevStatus: STATUS = isStatus
 	clearStatus()
 	if not prevStatus in [STATUS.HOVER, STATUS.RECOIL]:

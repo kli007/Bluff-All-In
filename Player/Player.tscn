@@ -673,6 +673,10 @@ tracks/1/keys = {
 "values": [false, true]
 }
 
+[sub_resource type="Animation" id="Animation_evw08"]
+resource_name = "SLIDE"
+step = 0.0333
+
 [sub_resource type="Animation" id="Animation_s1rgi"]
 resource_name = "Up_Attack"
 length = 0.65
@@ -760,6 +764,7 @@ _data = {
 &"RESET": SubResource("Animation_kne1u"),
 &"SHOOT": SubResource("Animation_v0k0e"),
 &"SHOWDOWN": SubResource("Animation_8g4oa"),
+&"SLIDE": SubResource("Animation_evw08"),
 &"Up_Attack": SubResource("Animation_s1rgi")
 }
 

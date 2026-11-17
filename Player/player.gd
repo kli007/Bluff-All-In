@@ -11,7 +11,7 @@ extends Entity
 @export var currentAttack: String
 
 signal needMultiplier
-signal attackFinished
+signal attackFinished(player: CharacterBody2D)
 
 var burnActive: bool = false
 var activeJumps: int = 3
@@ -28,8 +28,11 @@ const MAX_PLAYED_CARDS: int = 5
 const MAX_PEND_CARDS: int = 7
 const HEAL_BURN_MINIMUM: int = 2
 const MAX_JUMP_AVAILABLE: int = 3
+const WALL_JUMP_VELOCITY: float = -400.0
+const WALL_JUMP_PUSHBACK: float = 200.0
+const WALL_SLIDE_MULT: float = 0.1
 
-enum State {ATTACK, DASH, GRAPPLE, JUMP, FALL, SHOWDOWN, TRICK, IDLE, HURT}
+enum State {ATTACK, DASH, GRAPPLE, JUMP, FALL, SLIDE, SHOWDOWN, TRICK, IDLE, HURT}
 
 func _ready() -> void:
 	super._ready()
@@ -55,9 +58,13 @@ func _physics_process(delta: float) -> void:
 	checkAction()
 	if helperCond:
 		moveHelper()
+		if is_on_wall_only() and isActioning in [State.IDLE, State.FALL]:
+			switchState(State.SLIDE)
+		elif not is_on_wall() and isActioning == State.SLIDE:
+			switchState(State.IDLE)
 		if is_on_floor():
 			airAction = true
-			if animNode.current_animation in ["Down_Attack", "Down_Attack_2"]:
+			if animNode.current_animation in ["Down_Attack", "Down_Attack_2", "SLIDE"]:
 				animNode.stop()
 				switchState(State.IDLE)
 			if gravityCond:
@@ -83,6 +90,9 @@ func checkAction() -> void:
 			helperCond = false
 		State.GRAPPLE:
 			helperCond = isStatus != STATUS.GRAPPLE
+		State.SLIDE:
+			gScalar = WALL_SLIDE_MULT
+			airAction = true
 		State.ATTACK:
 			gravityCond = false
 		State.IDLE:
@@ -188,13 +198,19 @@ func movement(deltaTime: float) -> void:
 		else:
 			velocity.x = move_toward(velocity.x, direction.x * speed, acceleration)
 		
-	if (Input.is_action_just_pressed("Move_Jump") and activeJumps > 0 and
-	isActioning in [State.IDLE, State.DASH, State.JUMP, State.FALL]):
-		velocity.y = jump_velocity
-		activeJumps -= 1
-		airAction = true
-		if isActioning == State.DASH:
-			pass
+	if (Input.is_action_just_pressed("Move_Jump") and
+	isActioning in [State.IDLE, State.DASH, State.JUMP, State.FALL, State.SLIDE]):
+		switchState(State.IDLE)
+		if is_on_wall_only():
+			var wall_normal: Vector2 = get_wall_normal()
+			velocity.y = WALL_JUMP_VELOCITY
+			velocity.x = WALL_JUMP_PUSHBACK * wall_normal.x
+		elif activeJumps > 0:
+			velocity.y = jump_velocity
+			activeJumps -= 1
+			airAction = true
+			if isActioning == State.DASH:
+				pass
 		
 	if Input.is_action_just_pressed("Delete"):
 		deckNode.deleteDeck()
@@ -267,8 +283,15 @@ func hoverMovement(delta: float) -> void:
 	movement(delta)
 	
 func switchState(newState: State) -> void:
-	if isActioning in [State.ATTACK, State.TRICK]:
-		attackFinished.emit(self)
+	match isActioning:
+		State.ATTACK:
+			attackFinished.emit(self)
+		State.TRICK:
+			attackFinished.emit(self)
+		State.SLIDE:
+			gScalar = 1.0
+		State.GRAPPLE:
+			grapple_signal.emit()
 	isActioning = newState
 	
 func on_save_capture(data: SaveData) -> void:
