@@ -5,7 +5,6 @@ var hit_texture = preload("res://Assets/Sprite/Player/projectile.png")
 
 @onready var sprite: Sprite2D = $VisualManager/Sprite
 @onready var resetTime: Timer = $ResetTimer
-@onready var collision: CollisionShape2D = $Collision
 
 func unique_ready() -> void:
 	canGrapple = true

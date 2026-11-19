@@ -24,6 +24,8 @@ var spikeVelocity: float = 500.0
 var helperCond: bool
 var gravityCond: bool
 
+var debugMode: bool = false
+
 const MAX_PLAYED_CARDS: int = 5
 const MAX_PEND_CARDS: int = 7
 const HEAL_BURN_MINIMUM: int = 2
@@ -187,17 +189,20 @@ func _on_hit_box_body_entered(body: Node2D) -> void:
 	CombatManager.dealDamage(damage, body, global_position, self)
 
 func movement(deltaTime: float) -> void:
+	if debugMode:
+		DEBUGMovement()
+		return
+
 	if isActioning != State.DASH:
 		direction.x = Input.get_axis("Move_Left", "Move_Right")
 		lastDirection.y = Input.get_axis("Look_Up", "Look_Down")
-		
 	if direction.x:
 		lastDirection.x = direction.x
 		if isActioning == State.ATTACK:
 			velocity.x = move_toward(velocity.x, direction.x * attackSpeed, acceleration)
 		else:
 			velocity.x = move_toward(velocity.x, direction.x * speed, acceleration)
-		
+	
 	if (Input.is_action_just_pressed("Move_Jump") and
 	isActioning in [State.IDLE, State.DASH, State.JUMP, State.FALL, State.SLIDE]):
 		switchState(State.IDLE)
@@ -276,6 +281,33 @@ func movement(deltaTime: float) -> void:
 	
 	if Input.is_action_just_pressed("Load Game" ):
 		Global.loadGame()
+		
+	if Input.is_action_just_pressed("DEBUG"):
+		toggleDEBUG()
+
+func DEBUGMovement() -> void:
+	direction.x = Input.get_axis("Move_Left", "Move_Right")
+	direction.y = Input.get_axis("Look_Up", "Look_Down")
+	if direction:
+		lastDirection = direction
+		velocity.x = move_toward(velocity.x, direction.x * speed, 30)
+		velocity.y = move_toward(velocity.y, direction.y * speed, 30)
+	else:
+		velocity = Vector2.ZERO
+		
+	if Input.is_action_just_pressed("DEBUG"):
+		toggleDEBUG()
+		
+	
+	
+func toggleDEBUG() -> void:
+	debugMode = !debugMode
+	if !debugMode:
+		gScalar = 1.0
+		collision.disabled = false
+	else:
+		gScalar = 0.0
+		collision.disabled = true
 	
 func hoverMovement(delta: float) -> void:
 	if isActioning == State.HURT:

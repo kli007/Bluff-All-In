@@ -7,6 +7,7 @@ extends CharacterBody2D
 @onready var statusTimer: Timer = $StatusTimer
 @onready var visNode: Node2D = $VisualManager
 @onready var groundRay: RayCast2D = $GroundRay
+@onready var collision: CollisionShape2D = $Collision
 @onready var spawnLocation: Vector2 = global_position
 
 @export var speed: float
