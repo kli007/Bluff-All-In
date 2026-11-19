@@ -73,7 +73,7 @@ func detectPlayer() -> void:
 	if playerRay.is_colliding() and floorRay.is_colliding():
 		
 		var hitObject: Node = playerRay.get_collider(0)
-		if hitObject.name == 'Player':
+		if 'name' in hitObject and hitObject.name == 'Player':
 			targetPlayer()
 			
 func targetPlayer() -> void:
@@ -115,7 +115,7 @@ func _on_hit_box_body_entered(body: Node2D) -> void:
 		_:
 			damageType = contact_damage
 	if body.name == "Player":
-		CombatManager.dealDamage(damageType, body, global_position, self.name)
+		CombatManager.dealDamage(damageType, body, global_position, self)
 
 func _on_walk_timer_timeout() -> void:
 	switchIdle(State.LOOK)

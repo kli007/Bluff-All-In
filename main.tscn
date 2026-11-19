@@ -3,8 +3,7 @@
 [ext_resource type="PackedScene" uid="uid://bjaqw7tc8s4am" path="res://Area/TEST/TestArea.tscn" id="1_ig7tw"]
 [ext_resource type="Script" uid="uid://2eckjdluntd6" path="res://main.gd" id="1_lquwl"]
 [ext_resource type="PackedScene" uid="uid://daaqo57ngxba6" path="res://Player/Player.tscn" id="2_0xm2m"]
-[ext_resource type="PackedScene" uid="uid://dqswf1f3rgufw" path="res://Enemy/enemyTemplate.tscn" id="2_dg77c"]
-[ext_resource type="PackedScene" uid="uid://bfu6erksjquk6" path="res://Area/grapplePoint.tscn" id="2_ycdy4"]
+[ext_resource type="PackedScene" uid="uid://ddcrwp75cqmlj" path="res://Enemy/chargerEnemy.tscn" id="2_w48qg"]
 [ext_resource type="PackedScene" uid="uid://bc4g2w3j8inqx" path="res://Cards/PlayedCards.tscn" id="3_1bvp3"]
 [ext_resource type="PackedScene" uid="uid://ce7wj45lpekfs" path="res://Cards/PendCards.tscn" id="3_h2yge"]
 [ext_resource type="Script" uid="uid://cssp134kyvgv4" path="res://Health/player_health.gd" id="6_4c57u"]
@@ -13,24 +12,10 @@
 [ext_resource type="Texture2D" uid="uid://j084rtd85k7w" path="res://Assets/Sprite/UI/healthprog.png" id="8_vivmo"]
 [ext_resource type="PackedScene" uid="uid://c6gwf1rure1a0" path="res://Combat/player_combo.tscn" id="9_kek77"]
 [ext_resource type="PackedScene" uid="uid://dciu326ve7yw" path="res://Projectiles/Player/ProjectileDisplay.tscn" id="12_ycdy4"]
+[ext_resource type="PackedScene" uid="uid://dlhy3k1qvlvma" path="res://Enemy/flyingEnemy.tscn" id="13_ycdy4"]
 
 [node name="Main" type="Node" unique_id=1517588686]
 script = ExtResource("1_lquwl")
-
-[node name="GrapplePoint4" parent="." unique_id=569175648 instance=ExtResource("2_ycdy4")]
-position = Vector2(191, -360)
-
-[node name="GrapplePoint3" parent="." unique_id=901571541 instance=ExtResource("2_ycdy4")]
-position = Vector2(94, -214)
-
-[node name="GrapplePoint2" parent="." unique_id=1551893345 instance=ExtResource("2_ycdy4")]
-position = Vector2(195, -125)
-
-[node name="GrapplePoint" parent="." unique_id=1228766061 instance=ExtResource("2_ycdy4")]
-position = Vector2(103, -38)
-
-[node name="EnemyTemplate" parent="." unique_id=2128246214 instance=ExtResource("2_dg77c")]
-position = Vector2(392, -23)
 
 [node name="TestArea" parent="." unique_id=512090307 instance=ExtResource("1_ig7tw")]
 position = Vector2(191, 7)
@@ -105,3 +90,17 @@ offset_bottom = 332.0
 [node name="ProjectileGroup" type="Node" parent="." unique_id=621505026]
 
 [node name="ItemGroup" type="Node" parent="." unique_id=1675475672]
+
+[node name="EnemyGroup" type="Node" parent="." unique_id=1992130886]
+
+[node name="ChargerEnemy2" parent="EnemyGroup" unique_id=737281285 instance=ExtResource("2_w48qg")]
+position = Vector2(524, -18)
+
+[node name="ChargerEnemy" parent="EnemyGroup" unique_id=688067766 instance=ExtResource("2_w48qg")]
+position = Vector2(406, -30)
+
+[node name="FlyingEnemy" parent="EnemyGroup" unique_id=569175648 instance=ExtResource("13_ycdy4")]
+position = Vector2(931, 34)
+
+[node name="FlyingEnemy2" parent="EnemyGroup" unique_id=233552440 instance=ExtResource("13_ycdy4")]
+position = Vector2(1232, 34)

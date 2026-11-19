@@ -28,7 +28,7 @@ func _ready() -> void:
 func set_stats() -> void:
 	super.set_stats()
 	speed = 50
-	max_health = 50
+	max_health = 30.0
 	normal_g = 0.0
 	gScalar = normal_g
 	

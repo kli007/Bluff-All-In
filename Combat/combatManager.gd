@@ -22,6 +22,7 @@ var ATTACKS: Dictionary = {
 	"Burn_Grapple": _atk("Burn Grapple", 0, values.no_kb, 100, 0),
 	"enemy_small_contact_dmg": _atk("NA", values.enemy_small_contact_dmg, values.small_kb, 3, 0),
 	"enemy_small_attack_dmg":  _atk("NA", values.enemy_small_attack_dmg, values.medium_kb, 5, 0),
+	"Enemy_Projectile": _atk("NA", values.enemy_small_attack_dmg, values.small_kb, 5, 0),
 	"hand_HC_dmg": _atk("High Card", values.hand_HC_dmg, values.small_kb, 3, 0),
 	"hand_pair_dmg": _atk("Pair", values.hand_pair_dmg, values.small_kb, 3, 0),
 	"hand_2pair_dmg": _atk("Two Pair", values.hand_2pair_dmg, values.medium_kb, 5, 0),
