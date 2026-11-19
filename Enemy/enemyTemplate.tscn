@@ -6,8 +6,21 @@
 
 [node name="EnemyTemplate" unique_id=569175648 instance=ExtResource("1_4wbl1")]
 script = ExtResource("2_e7ey8")
-contact_damage = "enemy_small_contact_dmg"
-cardDrop = 5
+contact_damage = null
+cardDrop = null
+can_move = null
+speed = null
+acceleration = null
+jump_velocity = null
+max_health = null
+max_hit_threshold = null
+invincibility_time = null
+hover_mult = null
+max_hover_fall = null
+spike_mult = null
+normal_g = null
+canGrapple = null
+priorityGrapple = null
 
 [node name="Sprite" parent="VisualManager" parent_id_path=PackedInt32Array(1465317720) index="0" unique_id=97275318]
 texture = ExtResource("3_x3b2x")
@@ -27,3 +40,8 @@ offset_bottom = -37.0
 horizontal_alignment = 1
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="." index="4" unique_id=423126123]
+
+[node name="VisibleOnScreenNotifier2D" type="VisibleOnScreenNotifier2D" parent="." index="8" unique_id=802506299]
+
+[connection signal="screen_entered" from="VisibleOnScreenNotifier2D" to="." method="_on_visible_on_screen_notifier_2d_screen_entered"]
+[connection signal="screen_exited" from="VisibleOnScreenNotifier2D" to="." method="_on_visible_on_screen_notifier_2d_screen_exited"]

@@ -14,6 +14,7 @@ func set_stats() -> void:
 	max_health = 30000.0
 	max_hit_threshold = 5
 	invincibility_time = 1.50
+	can_move = false
 
 func unique_ready() -> void:
 	healthNode.health_changed.connect(_on_enemy_health_changed)
@@ -47,3 +48,9 @@ func unique_hit(damageType: String, damagePos: Vector2) -> void:
 	CombatManager.recoilBody(damageType, damagePos - global_position, 0.0)
 	CombatManager.enemy_hit.emit(damageType)
 	
+
+func _on_visible_on_screen_notifier_2d_screen_entered() -> void:
+	can_move = true
+
+func _on_visible_on_screen_notifier_2d_screen_exited() -> void:
+	can_move = false

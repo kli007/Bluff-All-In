@@ -22,6 +22,7 @@ extends CharacterBody2D
 @export var normal_g: float = 1.0
 @export var canGrapple: bool = true
 @export var priorityGrapple: bool = false
+@export var can_move = true
 
 var isStatus: STATUS = STATUS.NOTHING
 
@@ -83,7 +84,8 @@ func checkStatus(delta: float) -> void:
 		STATUS.RECOIL:
 			velocity = statusVelocity
 		STATUS.NOTHING:
-			movement(delta)
+			if can_move:
+				movement(delta)
 	
 func moveHelper() -> void:
 	flip_sprite()
