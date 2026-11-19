@@ -68,6 +68,8 @@ func checkStatus(delta: float) -> void:
 			velocity = statusVelocity
 		STATUS.DRAG:
 			velocity.y = dragBody.velocity.y
+			if dragBody.isActioning != dragBody.State.ATTACK:
+				on_status_timer_timeout()
 		STATUS.HOVER:
 			gScalar = hover_mult
 			velocity.y = minf(velocity.y, max_hover_fall)
@@ -127,7 +129,7 @@ func takeKnockback(knockForce: Vector2, damagePos: Vector2, origin: CharacterBod
 		isStatus = STATUS.DRAG
 		add_collision_exception_with(dragBody)
 		dragBody.add_collision_exception_with(self)
-		dragBody.attackFinished.connect(on_status_timer_timeout, CONNECT_ONE_SHOT)
+		#dragBody.attackFinished.connect(on_status_timer_timeout, CONNECT_ONE_SHOT)
 			
 func getGrapple(source: CharacterBody2D, distance: float, gSpeed: float):
 	if grappleType == "PULL":

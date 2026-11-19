@@ -107,14 +107,14 @@ func getRankMultiplier(rank: String) -> float:
 			
 func _playerHitEnemy(player: CharacterBody2D, attack: String) -> void:
 	var attackKeys: Array = ATTACKS.keys().slice(0,7)
-	var airAttacks: Array = attackKeys.slice(3,4)
+	var airAttacks: Array = attackKeys.slice(3,5)
 	if attackKeys.has(attack):
 		player.setPlayedCard()
 		player.currentAttack = attack
 		if attack in airAttacks:
 			playerAirReset(player)
 		else:
-			player.attackFinished.connect(playerAirReset, CONNECT_ONE_SHOT)
+			player.pendingAirReset = true
 	
 	if attack == "Player_Projectile":
 		player.projNode.hitProjectile()

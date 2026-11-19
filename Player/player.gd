@@ -11,7 +11,7 @@ extends Entity
 @export var currentAttack: String
 
 signal needMultiplier
-signal attackFinished(player: CharacterBody2D)
+#signal attackFinished(player: CharacterBody2D)
 
 var burnActive: bool = false
 var activeJumps: int = 3
@@ -20,6 +20,7 @@ var airAction: bool
 var isActioning: State = State.IDLE
 var launchVelocity: float = -500.0
 var spikeVelocity: float = 500.0
+var pendingAirReset: bool = false
 
 var helperCond: bool
 var gravityCond: bool
@@ -175,7 +176,7 @@ func _on_trick_timer_timeout() -> void:
 func _on_hit_box_body_entered(body: Node2D) -> void:
 	if body.name == 'Player' or body is not CharacterBody2D:
 		return
-	var damage: String = 'player_atk_dmg'
+	var damage: String = ''
 	match isActioning:
 		State.ATTACK:
 			if animNode.current_animation == "Down_Attack_2":
@@ -315,16 +316,17 @@ func hoverMovement(delta: float) -> void:
 	movement(delta)
 	
 func switchState(newState: State) -> void:
-	match isActioning:
-		State.ATTACK:
-			attackFinished.emit(self)
-		State.TRICK:
-			attackFinished.emit(self)
+	var oldState: State = isActioning
+	isActioning = newState
+	match oldState:
+		State.ATTACK, State.TRICK:
+			if pendingAirReset:
+				pendingAirReset = false
+				CombatManager.playerAirReset(self)
 		State.SLIDE:
 			gScalar = 1.0
 		State.GRAPPLE:
 			grapple_signal.emit()
-	isActioning = newState
 	
 func on_save_capture(data: SaveData) -> void:
 	data.player_health = healthNode.health

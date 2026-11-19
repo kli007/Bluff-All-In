@@ -6,6 +6,7 @@
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_5sqx0"]
 
 [node name="Projectile" type="Area2D" unique_id=1628043726]
+collision_mask = 5
 script = ExtResource("1_ggq0q")
 
 [node name="Sprite2D" type="Sprite2D" parent="." unique_id=1030241480]

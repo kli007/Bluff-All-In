@@ -18,13 +18,13 @@ func takeDamage(damage: float, damageType: String, damagePos: Vector2, origin: C
 	if origin.name == "Player":
 		CombatManager.enemy_hit.emit(damageType)
 		if damageType != "Burn_Grapple":
-			origin.attackFinished.connect(deactivate, CONNECT_ONE_SHOT)
+			deactivate()
 
-func deactivate(_player: CharacterBody2D) -> void:
+func deactivate() -> void:
 	canGrapple = false
 	sprite.texture = empty_texture
 	resetTime.start()
-	collision.disabled = true
+	collision.set_deferred("disabled", true)
 
 func _on_reset_timer_timeout() -> void:
 	canGrapple = true

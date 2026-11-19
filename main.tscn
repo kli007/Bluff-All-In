@@ -13,6 +13,7 @@
 [ext_resource type="PackedScene" uid="uid://c6gwf1rure1a0" path="res://Combat/player_combo.tscn" id="9_kek77"]
 [ext_resource type="PackedScene" uid="uid://dciu326ve7yw" path="res://Projectiles/Player/ProjectileDisplay.tscn" id="12_ycdy4"]
 [ext_resource type="PackedScene" uid="uid://dlhy3k1qvlvma" path="res://Enemy/flyingEnemy.tscn" id="13_ycdy4"]
+[ext_resource type="PackedScene" uid="uid://dqswf1f3rgufw" path="res://Enemy/enemyTemplate.tscn" id="14_w48qg"]
 
 [node name="Main" type="Node" unique_id=1517588686]
 script = ExtResource("1_lquwl")
@@ -94,13 +95,76 @@ offset_bottom = 332.0
 [node name="EnemyGroup" type="Node" parent="." unique_id=1992130886]
 
 [node name="ChargerEnemy2" parent="EnemyGroup" unique_id=737281285 instance=ExtResource("2_w48qg")]
-position = Vector2(524, -18)
+position = Vector2(683, -4)
+contact_damage = "enemy_small_contact_dmg"
+cardDrop = 5
+speed = 0.0
+acceleration = 0.0
+jump_velocity = 0.0
+max_health = 0.0
+max_hit_threshold = 0
+invincibility_time = 0.0
+hover_mult = 0.05
+max_hover_fall = 15.0
+spike_mult = 2.0
+normal_g = 1.0
+canGrapple = true
+priorityGrapple = false
+can_move = true
 
 [node name="ChargerEnemy" parent="EnemyGroup" unique_id=688067766 instance=ExtResource("2_w48qg")]
-position = Vector2(406, -30)
+position = Vector2(787, -76)
+contact_damage = "enemy_small_contact_dmg"
+cardDrop = 5
+speed = 0.0
+acceleration = 0.0
+jump_velocity = 0.0
+max_health = 0.0
+max_hit_threshold = 0
+invincibility_time = 0.0
+hover_mult = 0.05
+max_hover_fall = 15.0
+spike_mult = 2.0
+normal_g = 1.0
+canGrapple = true
+priorityGrapple = false
+can_move = true
 
 [node name="FlyingEnemy" parent="EnemyGroup" unique_id=569175648 instance=ExtResource("13_ycdy4")]
 position = Vector2(931, 34)
+contact_damage = "enemy_small_contact_dmg"
+cardDrop = 5
+speed = 0.0
+acceleration = 0.0
+jump_velocity = 0.0
+max_health = 0.0
+max_hit_threshold = 0
+invincibility_time = 0.0
+hover_mult = 0.05
+max_hover_fall = 15.0
+spike_mult = 2.0
+normal_g = 1.0
+canGrapple = true
+priorityGrapple = false
+can_move = true
 
 [node name="FlyingEnemy2" parent="EnemyGroup" unique_id=233552440 instance=ExtResource("13_ycdy4")]
 position = Vector2(1232, 34)
+contact_damage = "enemy_small_contact_dmg"
+cardDrop = 5
+speed = 0.0
+acceleration = 0.0
+jump_velocity = 0.0
+max_health = 0.0
+max_hit_threshold = 0
+invincibility_time = 0.0
+hover_mult = 0.05
+max_hover_fall = 15.0
+spike_mult = 2.0
+normal_g = 1.0
+canGrapple = true
+priorityGrapple = false
+can_move = true
+
+[node name="EnemyTemplate" parent="EnemyGroup" unique_id=877029463 instance=ExtResource("14_w48qg")]
+position = Vector2(279, -17)
