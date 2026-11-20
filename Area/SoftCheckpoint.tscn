@@ -6,6 +6,8 @@
 size = Vector2(48, 56.5)
 
 [node name="SoftCheckpoint" type="Area2D" unique_id=1711238018]
+collision_layer = 0
+collision_mask = 5
 script = ExtResource("1_misjf")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=1200367183]

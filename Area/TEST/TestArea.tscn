@@ -85,8 +85,8 @@ texture = ExtResource("1_dbkhw")
 10:3/0 = 0
 
 [sub_resource type="TileSet" id="TileSet_ptm0p"]
-physics_layer_0/collision_layer = 3
-physics_layer_0/collision_mask = 3
+physics_layer_0/collision_layer = 11
+physics_layer_0/collision_mask = 11
 sources/0 = SubResource("TileSetAtlasSource_y61ny")
 
 [node name="TestArea" type="Node2D" unique_id=512090307]
@@ -101,8 +101,7 @@ script = ExtResource("2_ffjm5")
 
 [node name="KillzoneSensor" parent="." unique_id=188571064 instance=ExtResource("2_xiuh1")]
 position = Vector2(-595, 138)
-collision_layer = 3
-collision_mask = 3
+collision_mask = 7
 
 [node name="Platforms" type="Node2D" parent="." unique_id=91361191]
 position = Vector2(-74, -41)

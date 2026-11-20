@@ -5,13 +5,14 @@ extends Entity
 @onready var comboTime: Timer = $ComboTimer
 @onready var dashTime: Timer = $DashTimer
 @onready var trickTime: Timer = $TrickTimer
-@onready var grapRay: ShapeCast2D = $GrappleRay
 @onready var grapBox: Area2D = $VisualManager/Grapplebox
+@onready var baseCollisonLayer = collision_layer
+@onready var baseCollisonMask = collision_mask
+
 @export var DashSpeed: float = 200.0
 @export var currentAttack: String
 
 signal needMultiplier
-#signal attackFinished(player: CharacterBody2D)
 
 var burnActive: bool = false
 var activeJumps: int = 3
@@ -153,8 +154,8 @@ func _on_animation_player_animation_finished(anim_name: StringName) -> void:
 	if anim_name == "SHOWDOWN":
 		CombatManager.resetComboMult()
 	if anim_name == "DASH":
-		collision_layer = 1
-		collision_mask = 1
+		collision_layer = baseCollisonLayer
+		collision_mask = baseCollisonMask
 		velocity.x = 0
 	if anim_name == "JUMP":
 		switchState(State.JUMP)
@@ -299,8 +300,7 @@ func DEBUGMovement() -> void:
 	if Input.is_action_just_pressed("DEBUG"):
 		toggleDEBUG()
 		
-	
-	
+
 func toggleDEBUG() -> void:
 	debugMode = !debugMode
 	if !debugMode:
