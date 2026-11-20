@@ -9,7 +9,7 @@ extends Entity
 @onready var baseCollisonLayer = collision_layer
 @onready var baseCollisonMask = collision_mask
 
-@export var DashSpeed: float = 200.0
+@export var DashSpeed: float = 800.0
 @export var currentAttack: String
 
 signal needMultiplier
@@ -77,7 +77,8 @@ func _physics_process(delta: float) -> void:
 func checkAction() -> void:
 	match isActioning:
 		State.DASH:
-			velocity.x += (lastDirection.x/abs(lastDirection.x)) * DashSpeed 
+			direction.x = lastDirection.x
+			velocity.x = direction.x * DashSpeed
 			gravityCond = false
 		State.JUMP:
 			if velocity.y < 0:
@@ -202,7 +203,7 @@ func movement(deltaTime: float) -> void:
 		lastDirection.x = direction.x
 		if isActioning == State.ATTACK:
 			velocity.x = move_toward(velocity.x, direction.x * attackSpeed, acceleration)
-		else:
+		elif isActioning != State.DASH:
 			velocity.x = move_toward(velocity.x, direction.x * speed, acceleration)
 	
 	if (Input.is_action_just_pressed("Move_Jump") and
@@ -260,7 +261,7 @@ func movement(deltaTime: float) -> void:
 			BurnManager.mainManager('dash', self)
 			burnActive = false
 		animNode.play("DASH")
-		dashTime.start()
+		#dashTime.start()
 		switchState(State.DASH)
 	
 	if Input.is_action_just_pressed("Showdown") and isActioning in [State.IDLE, State.JUMP, State.FALL]:

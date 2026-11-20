@@ -64,7 +64,7 @@ func physics(delta: float) -> void:
 	
 func checkStatus(delta: float) -> void:
 	match isStatus:
-		STATUS.KNOCKBACK:
+		STATUS.KNOCKBACK, STATUS.RECOIL:
 			velocity = statusVelocity
 		STATUS.DRAG:
 			velocity.y = dragBody.velocity.y
@@ -83,8 +83,7 @@ func checkStatus(delta: float) -> void:
 					velocity = distance.normalized() * grappleSpeed
 			else:
 				velocity = Vector2.ZERO
-		STATUS.RECOIL:
-			velocity = statusVelocity
+		
 		STATUS.NOTHING:
 			if can_move:
 				movement(delta)
