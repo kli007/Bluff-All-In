@@ -3,13 +3,11 @@ extends Entity
 @onready var deckNode: Node = $DeckManager
 @onready var projNode: Node = $ProjectileManager
 @onready var comboTime: Timer = $ComboTimer
-@onready var dashTime: Timer = $DashTimer
 @onready var trickTime: Timer = $TrickTimer
 @onready var grapBox: Area2D = $VisualManager/Grapplebox
 @onready var baseCollisonLayer = collision_layer
 @onready var baseCollisonMask = collision_mask
 
-@export var DashSpeed: float = 800.0
 @export var currentAttack: String
 
 signal needMultiplier
@@ -35,6 +33,7 @@ const MAX_JUMP_AVAILABLE: int = 3
 const WALL_JUMP_VELOCITY: float = -400.0
 const WALL_JUMP_PUSHBACK: float = 200.0
 const WALL_SLIDE_MULT: float = 0.1
+const DASH_SPEED: float = 600.0
 
 enum State {ATTACK, DASH, GRAPPLE, JUMP, FALL, SLIDE, SHOWDOWN, TRICK, IDLE, HURT}
 
@@ -78,7 +77,7 @@ func checkAction() -> void:
 	match isActioning:
 		State.DASH:
 			direction.x = lastDirection.x
-			velocity.x = direction.x * DashSpeed
+			velocity.x = ceil(direction.x) * DASH_SPEED
 			gravityCond = false
 		State.JUMP:
 			if velocity.y < 0:
@@ -228,7 +227,6 @@ func movement(deltaTime: float) -> void:
 		if CardData.checkSpace(Global.playedNodes) and CardData.checkSpace(Global.pendNodes) < MAX_PEND_CARDS:
 			if isActioning == State.DASH:
 					animNode.play("G_Attack_1")
-					dashTime.stop()
 			if lastDirection.y < 0.0 and airAction:
 				animNode.play("Up_Attack")
 			elif lastDirection.y > 0.0 and not is_on_floor():
@@ -246,7 +244,8 @@ func movement(deltaTime: float) -> void:
 			switchState(State.GRAPPLE)
 			if isStatus != STATUS.GRAPPLE:
 				startHovering()
-		elif CardData.checkSpace(Global.pendNodes) < MAX_PEND_CARDS:
+		elif ((CardData.checkSpace(Global.pendNodes) < MAX_PEND_CARDS and 
+		CardData.checkSpace(Global.playedNodes) > 0) or projNode.projectileLanded < projNode.MAX_PROJ_LAND):
 			projNode.create_projectile(self, lastDirection, global_position)
 			animNode.play("SHOOT")
 			switchState(State.TRICK)
@@ -261,7 +260,6 @@ func movement(deltaTime: float) -> void:
 			BurnManager.mainManager('dash', self)
 			burnActive = false
 		animNode.play("DASH")
-		#dashTime.start()
 		switchState(State.DASH)
 	
 	if Input.is_action_just_pressed("Showdown") and isActioning in [State.IDLE, State.JUMP, State.FALL]:
