@@ -101,6 +101,21 @@ script = ExtResource("1_rsn3l")
 charge_speed = 200.0
 charge_damage = "enemy_small_attack_dmg"
 charge_distance = 150.0
+contact_damage = "enemy_small_contact_dmg"
+cardDrop = 5
+speed = 0.0
+acceleration = 0.0
+jump_velocity = 0.0
+max_health = 0.0
+max_hit_threshold = 0
+invincibility_time = 0.0
+hover_mult = 0.05
+max_hover_fall = 15.0
+spike_mult = 2.0
+normal_g = 1.0
+canGrapple = true
+priorityGrapple = false
+can_move = true
 
 [node name="Sprite" parent="VisualManager" parent_id_path=PackedInt32Array(1465317720) index="0" unique_id=97275318]
 position = Vector2(10.999999, -11.999999)
@@ -119,12 +134,14 @@ scale = Vector2(1.2, 0.8)
 [node name="FloorRay" type="RayCast2D" parent="VisualManager" parent_id_path=PackedInt32Array(1465317720) index="2" unique_id=2114168476]
 visible = false
 target_position = Vector2(50, 35)
+collision_mask = 9
 
 [node name="PlayerRay" type="ShapeCast2D" parent="VisualManager" parent_id_path=PackedInt32Array(1465317720) index="3" unique_id=1490664288]
 visible = false
 scale = Vector2(1, 2)
 shape = SubResource("RectangleShape2D_5sqx0")
 target_position = Vector2(150, 0)
+collision_mask = 5
 
 [node name="Collision" parent="." index="2" unique_id=775821313]
 position = Vector2(0, 0)

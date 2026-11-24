@@ -84,6 +84,7 @@ _data = {
 
 [node name="Entity" type="CharacterBody2D" unique_id=569175648]
 collision_layer = 5
+collision_mask = 9
 script = ExtResource("1_ql5c0")
 
 [node name="HealthManager" parent="." unique_id=1013381791 instance=ExtResource("2_ctcih")]
@@ -94,6 +95,8 @@ script = ExtResource("1_ql5c0")
 
 [node name="HitBox" type="Area2D" parent="VisualManager" unique_id=443541335]
 visible = false
+collision_layer = 0
+collision_mask = 4
 
 [node name="DamageCollision" type="CollisionShape2D" parent="VisualManager/HitBox" unique_id=4510622]
 position = Vector2(-0.5, -2)
@@ -111,6 +114,7 @@ one_shot = true
 
 [node name="GroundRay" type="RayCast2D" parent="." unique_id=305696123]
 visible = false
+collision_mask = 9
 
 [connection signal="body_entered" from="VisualManager/HitBox" to="." method="_on_hit_box_body_entered"]
 [connection signal="animation_finished" from="EffectsPlayer" to="." method="_on_effects_player_animation_finished"]

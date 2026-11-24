@@ -3,28 +3,39 @@ extends Entity
 @onready var deckNode: Node = $DeckManager
 @onready var projNode: Node = $ProjectileManager
 @onready var comboTime: Timer = $ComboTimer
-@onready var dashTime: Timer = $DashTimer
 @onready var trickTime: Timer = $TrickTimer
-@onready var grapRay: ShapeCast2D = $GrappleRay
-@export var DashSpeed: float = 800.0
+@onready var grapBox: Area2D = $VisualManager/Grapplebox
+@onready var baseCollisonLayer = collision_layer
+@onready var baseCollisonMask = collision_mask
+
 @export var currentAttack: String
 
 signal needMultiplier
 
 var burnActive: bool = false
 var activeJumps: int = 3
+var attackSpeed: float = 75.0
 var airAction: bool
 var isActioning: State = State.IDLE
+var launchVelocity: float = -500.0
+var spikeVelocity: float = 500.0
+var pendingAirReset: bool = false
 
 var helperCond: bool
 var gravityCond: bool
+
+var debugMode: bool = false
 
 const MAX_PLAYED_CARDS: int = 5
 const MAX_PEND_CARDS: int = 7
 const HEAL_BURN_MINIMUM: int = 2
 const MAX_JUMP_AVAILABLE: int = 3
+const WALL_JUMP_VELOCITY: float = -400.0
+const WALL_JUMP_PUSHBACK: float = 200.0
+const WALL_SLIDE_MULT: float = 0.1
+const DASH_SPEED: float = 600.0
 
-enum State {ATTACK, DASH, GRAPPLE, JUMP, FALL, SHOWDOWN, TRICK, IDLE, HURT}
+enum State {ATTACK, DASH, GRAPPLE, JUMP, FALL, SLIDE, SHOWDOWN, TRICK, IDLE, HURT}
 
 func _ready() -> void:
 	super._ready()
@@ -33,7 +44,6 @@ func _ready() -> void:
 	Global.data_dispense.connect(on_save_dispense)
 	CombatManager.playerRecoil.connect(startRecoil)
 	setPendCard()
-	#hover_change.connect(on_status_timer_timeout)
 	
 func set_stats() -> void:
 	speed = 200.0
@@ -51,30 +61,42 @@ func _physics_process(delta: float) -> void:
 	checkAction()
 	if helperCond:
 		moveHelper()
+		if is_on_wall_only() and isActioning in [State.IDLE, State.FALL]:
+			switchState(State.SLIDE)
+		elif not is_on_wall() and isActioning == State.SLIDE:
+			switchState(State.IDLE)
 		if is_on_floor():
 			airAction = true
+			if animNode.current_animation in ["Down_Attack", "Down_Attack_2", "SLIDE"]:
+				animNode.stop()
+				switchState(State.IDLE)
 			if gravityCond:
 				activeJumps = MAX_JUMP_AVAILABLE
 			
 func checkAction() -> void:
 	match isActioning:
 		State.DASH:
-			velocity.x = (lastDirection.x/abs(lastDirection.x)) * DashSpeed
+			direction.x = lastDirection.x
+			velocity.x = ceil(direction.x) * DASH_SPEED
 			gravityCond = false
 		State.JUMP:
 			if velocity.y < 0:
 				animNode.play("JUMPING")
 			else:
-				isActioning = State.IDLE
+				switchState(State.IDLE)
 		State.FALL:
 			if velocity.y > 0:
 				animNode.play("FALLING")
 			else:
-				isActioning = State.IDLE
+				switchState(State.IDLE)
 		State.SHOWDOWN:
+			velocity = Vector2.ZERO
 			helperCond = false
 		State.GRAPPLE:
-			helperCond = false
+			helperCond = isStatus != STATUS.GRAPPLE
+		State.SLIDE:
+			gScalar = WALL_SLIDE_MULT
+			airAction = true
 		State.ATTACK:
 			gravityCond = false
 		State.IDLE:
@@ -117,112 +139,130 @@ func slash_combo() -> void:
 			animNode.play("G_Attack_2")
 		else:
 			animNode.play("G_Attack_1")
-		
 	comboTime.start()
 	
+func drag(attack: String) -> void:
+	match attack:
+		"Launcher":
+			velocity.y = launchVelocity
+			airAction = false
+		"Spike":
+			clearStatus()
+			velocity.y = spikeVelocity
+			
 func _on_animation_player_animation_finished(anim_name: StringName) -> void:
 	if anim_name == "SHOWDOWN":
 		CombatManager.resetComboMult()
 	if anim_name == "DASH":
-		collision_layer = 1
-		collision_mask = 1
+		collision_layer = baseCollisonLayer
+		collision_mask = baseCollisonMask
 		velocity.x = 0
 	if anim_name == "JUMP":
-		isActioning = State.JUMP
+		switchState(State.JUMP)
 		return
 	if anim_name == "FALL":
-		isActioning = State.FALL
+		switchState(State.FALL)
 		return
-	isActioning = State.IDLE
+	if anim_name == "Down_Attack":
+		animNode.play("Down_Attack_2")
+		return
+	switchState(State.IDLE)
 		
 func _on_combo_timer_timeout() -> void:
 	currentAttack = ""
 	
 func _on_trick_timer_timeout() -> void:
-	isActioning = State.IDLE
+	switchState(State.IDLE)
 
 func _on_hit_box_body_entered(body: Node2D) -> void:
 	if body.name == 'Player' or body is not CharacterBody2D:
 		return
-	var damage: String = 'player_atk_dmg'
+	var damage: String = ''
 	match isActioning:
 		State.ATTACK:
-			damage = animNode.current_animation
+			if animNode.current_animation == "Down_Attack_2":
+				damage = "Down_Attack"
+			else:
+				damage = animNode.current_animation
 		State.SHOWDOWN:
 			damage = deckNode.lastPlayedHand
 		State.DASH:
 			damage = "Burn_Dash"
-	CombatManager.dealDamage(damage, body, global_position, self.name)
+	CombatManager.dealDamage(damage, body, global_position, self)
 
 func movement(deltaTime: float) -> void:
+	if debugMode:
+		DEBUGMovement()
+		return
+
 	if isActioning != State.DASH:
 		direction.x = Input.get_axis("Move_Left", "Move_Right")
 		lastDirection.y = Input.get_axis("Look_Up", "Look_Down")
-		
 	if direction.x:
 		lastDirection.x = direction.x
-		velocity.x = move_toward(velocity.x, direction.x * speed, acceleration)
-		
-	if Input.is_action_just_pressed("Move_Jump") and activeJumps > 0:
-		velocity.y = jump_velocity
-		activeJumps -= 1
-		airAction = true
+		if isActioning == State.ATTACK:
+			velocity.x = move_toward(velocity.x, direction.x * attackSpeed, acceleration)
+		elif isActioning != State.DASH:
+			velocity.x = move_toward(velocity.x, direction.x * speed, acceleration)
+	
+	if (Input.is_action_just_pressed("Move_Jump") and
+	isActioning in [State.IDLE, State.DASH, State.JUMP, State.FALL, State.SLIDE]):
+		switchState(State.IDLE)
+		if is_on_wall():
+			var wall_normal: Vector2 = get_wall_normal()
+			velocity.y = WALL_JUMP_VELOCITY
+			velocity.x = WALL_JUMP_PUSHBACK * wall_normal.x
+		elif activeJumps > 0:
+			velocity.y = jump_velocity
+			activeJumps -= 1
+			airAction = true
+			if isActioning == State.DASH:
+				pass
 		
 	if Input.is_action_just_pressed("Delete"):
 		deckNode.deleteDeck()
 		
-	if Input.is_action_just_pressed("Attack") and airAction and (isActioning == State.IDLE 
-	or isActioning == State.DASH or isActioning == State.JUMP or isActioning == State.FALL):
+	if (Input.is_action_just_pressed("Attack") and airAction and 
+	isActioning in [State.IDLE, State.DASH, State.JUMP, State.FALL]):
 		if CardData.checkSpace(Global.playedNodes) and CardData.checkSpace(Global.pendNodes) < MAX_PEND_CARDS:
 			if isActioning == State.DASH:
 					animNode.play("G_Attack_1")
-					dashTime.stop()
-			if not is_on_floor():
-				if lastDirection.y > 0.0:
-					animNode.play("Down_Attack")
-				else:
-					slash_combo()
+			if lastDirection.y < 0.0 and airAction:
+				animNode.play("Up_Attack")
+			elif lastDirection.y > 0.0 and not is_on_floor():
+				animNode.play("Down_Attack")
 			else:
-				if lastDirection.y < 0.0:
-					animNode.play("Up_Attack")
-				else:
-					slash_combo()
-			isActioning = State.ATTACK
+				slash_combo()
+			switchState(State.ATTACK)
 					
 	
-	if Input.is_action_just_pressed("Trick") and isActioning == State.IDLE:
+	if Input.is_action_just_pressed("Trick") and isActioning in [State.IDLE, State.JUMP, State.FALL]:
 		if burnActive and (CardData.checkSpace(Global.playedNodes) < MAX_PLAYED_CARDS):
 			BurnManager.mainManager("grap", self)
 			burnActive = false
 			animNode.play("GRAPPLE")
-			isActioning = State.GRAPPLE
-			startHovering()
-		elif projNode.projectileCount and CardData.checkSpace(Global.pendNodes) < MAX_PEND_CARDS:
+			switchState(State.GRAPPLE)
+			if isStatus != STATUS.GRAPPLE:
+				startHovering()
+		elif ((CardData.checkSpace(Global.pendNodes) < MAX_PEND_CARDS and 
+		CardData.checkSpace(Global.playedNodes) > 0) or projNode.projectileLanded < projNode.MAX_PROJ_LAND):
 			projNode.create_projectile(self, lastDirection, global_position)
-			if not projNode.projectileCount:
-				TrickManager.mainManager()
-				setPlayedCard()
 			animNode.play("SHOOT")
-			isActioning = State.TRICK
-	if Input.is_action_pressed("Trick") and not burnActive:
-		projNode.reloadProjectiles(deltaTime)
-	if Input.is_action_just_released("Trick") and not burnActive:
-		projNode.releaseReload()
-		
+			switchState(State.TRICK)
+
 	if Input.is_action_pressed('Burn'):
 		burnActive = true
 	elif Input.is_action_just_released('Burn'):
 		burnActive = false
 	
-	if Input.is_action_just_pressed("Dash") and isActioning == State.IDLE:
+	if Input.is_action_just_pressed("Dash") and isActioning in [State.IDLE, State.JUMP, State.FALL]:
 		if burnActive and CardData.checkSpace(Global.playedNodes) < MAX_PLAYED_CARDS:
 			BurnManager.mainManager('dash', self)
 			burnActive = false
 		animNode.play("DASH")
-		dashTime.start()
-		isActioning = State.DASH
+		switchState(State.DASH)
 	
-	if Input.is_action_just_pressed("Showdown") and isActioning == State.IDLE:
+	if Input.is_action_just_pressed("Showdown") and isActioning in [State.IDLE, State.JUMP, State.FALL]:
 		if burnActive:
 			if CardData.checkSpace(Global.playedNodes) <= HEAL_BURN_MINIMUM:
 				healthNode.changeHealth(30.0)
@@ -232,7 +272,7 @@ func movement(deltaTime: float) -> void:
 			animNode.play("SHOWDOWN")
 			deckNode.checkHand()
 			showdownPlayedCards()
-			isActioning = State.SHOWDOWN
+			switchState(State.SHOWDOWN)
 			
 	if Input.is_action_pressed("DeleteHealthDebug"):
 		healthNode.changeHealth(-1.0)
@@ -243,10 +283,49 @@ func movement(deltaTime: float) -> void:
 	if Input.is_action_just_pressed("Load Game" ):
 		Global.loadGame()
 		
-	BurnManager.rotateGrapple(grapRay, lastDirection)
+	if Input.is_action_just_pressed("DEBUG"):
+		toggleDEBUG()
+
+func DEBUGMovement() -> void:
+	direction.x = Input.get_axis("Move_Left", "Move_Right")
+	direction.y = Input.get_axis("Look_Up", "Look_Down")
+	if direction:
+		lastDirection = direction
+		velocity.x = move_toward(velocity.x, direction.x * speed, 30)
+		velocity.y = move_toward(velocity.y, direction.y * speed, 30)
+	else:
+		velocity = Vector2.ZERO
+		
+	if Input.is_action_just_pressed("DEBUG"):
+		toggleDEBUG()
+		
+
+func toggleDEBUG() -> void:
+	debugMode = !debugMode
+	if !debugMode:
+		gScalar = 1.0
+		collision.disabled = false
+	else:
+		gScalar = 0.0
+		collision.disabled = true
 	
 func hoverMovement(delta: float) -> void:
+	if isActioning == State.HURT:
+		on_status_timer_timeout()
 	movement(delta)
+	
+func switchState(newState: State) -> void:
+	var oldState: State = isActioning
+	isActioning = newState
+	match oldState:
+		State.ATTACK, State.TRICK:
+			if pendingAirReset:
+				pendingAirReset = false
+				CombatManager.playerAirReset(self)
+		State.SLIDE:
+			gScalar = 1.0
+		State.GRAPPLE:
+			grapple_signal.emit()
 	
 func on_save_capture(data: SaveData) -> void:
 	data.player_health = healthNode.health
@@ -272,4 +351,4 @@ func load_cards(cardArray: Array, cardNodes: Array) -> void:
 			
 func unique_hit(damageType: String, damagePos: Vector2) -> void:
 	super.unique_hit(damageType, damagePos)
-	isActioning = State.HURT
+	switchState(State.HURT)

@@ -1,17 +1,19 @@
 [gd_scene format=3 uid="uid://bf21dgh6rbsk4"]
 
-[ext_resource type="PackedScene" uid="uid://bjaqw7tc8s4am" path="res://Area/TestArea.tscn" id="1_ig7tw"]
+[ext_resource type="PackedScene" uid="uid://bjaqw7tc8s4am" path="res://Area/TEST/TestArea.tscn" id="1_ig7tw"]
 [ext_resource type="Script" uid="uid://2eckjdluntd6" path="res://main.gd" id="1_lquwl"]
 [ext_resource type="PackedScene" uid="uid://daaqo57ngxba6" path="res://Player/Player.tscn" id="2_0xm2m"]
-[ext_resource type="PackedScene" uid="uid://dlhy3k1qvlvma" path="res://Enemy/flyingEnemy.tscn" id="2_dg77c"]
+[ext_resource type="PackedScene" uid="uid://ddcrwp75cqmlj" path="res://Enemy/chargerEnemy.tscn" id="2_w48qg"]
 [ext_resource type="PackedScene" uid="uid://bc4g2w3j8inqx" path="res://Cards/PlayedCards.tscn" id="3_1bvp3"]
 [ext_resource type="PackedScene" uid="uid://ce7wj45lpekfs" path="res://Cards/PendCards.tscn" id="3_h2yge"]
 [ext_resource type="Script" uid="uid://cssp134kyvgv4" path="res://Health/player_health.gd" id="6_4c57u"]
-[ext_resource type="Script" uid="uid://vqjxie4pbklg" path="res://Projectiles/Player/player_projectiles.gd" id="6_272bh"]
 [ext_resource type="Texture2D" uid="uid://dbf07vmwaqx41" path="res://Assets/Sprite/UI/healthbottom.png" id="6_ycdy4"]
 [ext_resource type="Texture2D" uid="uid://dutqccrcecuog" path="res://Assets/Sprite/UI/healthtop.png" id="7_w48qg"]
 [ext_resource type="Texture2D" uid="uid://j084rtd85k7w" path="res://Assets/Sprite/UI/healthprog.png" id="8_vivmo"]
 [ext_resource type="PackedScene" uid="uid://c6gwf1rure1a0" path="res://Combat/player_combo.tscn" id="9_kek77"]
+[ext_resource type="PackedScene" uid="uid://dciu326ve7yw" path="res://Projectiles/Player/ProjectileDisplay.tscn" id="12_ycdy4"]
+[ext_resource type="PackedScene" uid="uid://dlhy3k1qvlvma" path="res://Enemy/flyingEnemy.tscn" id="13_ycdy4"]
+[ext_resource type="PackedScene" uid="uid://dqswf1f3rgufw" path="res://Enemy/enemyTemplate.tscn" id="14_w48qg"]
 
 [node name="Main" type="Node" unique_id=1517588686]
 script = ExtResource("1_lquwl")
@@ -54,14 +56,6 @@ texture_over = ExtResource("7_w48qg")
 texture_progress = ExtResource("8_vivmo")
 script = ExtResource("6_4c57u")
 
-[node name="PlayerProjectiles" type="Label" parent="HUD/UserUIControl" unique_id=1768357784]
-visible = false
-layout_mode = 0
-offset_top = 23.0
-offset_right = 185.0
-offset_bottom = 53.0
-script = ExtResource("6_272bh")
-
 [node name="PendCardsControl" type="Control" parent="HUD" unique_id=1218590380]
 layout_mode = 3
 anchors_preset = 1
@@ -74,16 +68,43 @@ grow_horizontal = 0
 [node name="PendCards" parent="HUD/PendCardsControl" unique_id=1641465469 instance=ExtResource("3_h2yge")]
 position = Vector2(282, 41)
 
+[node name="ProjectileDisplay" parent="HUD/PendCardsControl" unique_id=793609437 instance=ExtResource("12_ycdy4")]
+layout_mode = 1
+anchor_left = 0.646
+anchor_top = 0.48200002
+anchor_right = 0.76600003
+anchor_bottom = 0.544
+offset_left = -0.08201599
+offset_top = 0.009994507
+offset_right = -0.12200928
+offset_bottom = -0.08000946
+grow_horizontal = 1
+grow_vertical = 1
+
 [node name="PlayerCombo" parent="HUD/PendCardsControl" unique_id=2032755852 instance=ExtResource("9_kek77")]
 layout_mode = 0
-offset_left = 237.0
-offset_top = 111.0
-offset_right = 364.0
-offset_bottom = 285.0
+offset_left = 238.0
+offset_top = 158.0
+offset_right = 365.0
+offset_bottom = 332.0
 
 [node name="ProjectileGroup" type="Node" parent="." unique_id=621505026]
 
 [node name="ItemGroup" type="Node" parent="." unique_id=1675475672]
 
-[node name="FlyingEnemy" parent="." unique_id=569175648 instance=ExtResource("2_dg77c")]
-position = Vector2(281, -39)
+[node name="EnemyGroup" type="Node" parent="." unique_id=1992130886]
+
+[node name="ChargerEnemy2" parent="EnemyGroup" unique_id=737281285 instance=ExtResource("2_w48qg")]
+position = Vector2(683, -4)
+
+[node name="ChargerEnemy" parent="EnemyGroup" unique_id=688067766 instance=ExtResource("2_w48qg")]
+position = Vector2(787, -76)
+
+[node name="FlyingEnemy" parent="EnemyGroup" unique_id=569175648 instance=ExtResource("13_ycdy4")]
+position = Vector2(931, 34)
+
+[node name="FlyingEnemy2" parent="EnemyGroup" unique_id=233552440 instance=ExtResource("13_ycdy4")]
+position = Vector2(1232, 34)
+
+[node name="EnemyTemplate" parent="EnemyGroup" unique_id=877029463 instance=ExtResource("14_w48qg")]
+position = Vector2(446, -20)

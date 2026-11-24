@@ -7,6 +7,7 @@ extends CharacterBody2D
 @onready var statusTimer: Timer = $StatusTimer
 @onready var visNode: Node2D = $VisualManager
 @onready var groundRay: RayCast2D = $GroundRay
+@onready var collision: CollisionShape2D = $Collision
 @onready var spawnLocation: Vector2 = global_position
 
 @export var speed: float
@@ -19,11 +20,13 @@ extends CharacterBody2D
 @export var max_hover_fall: float = 15.0
 @export var spike_mult: float = 2
 @export var normal_g: float = 1.0
-
+@export var canGrapple: bool = true
+@export var priorityGrapple: bool = false
+@export var can_move = true
 
 var isStatus: STATUS = STATUS.NOTHING
 
-enum STATUS {KNOCKBACK, VERTICAL, HOVER, SPIKE, GRAPPLE, RECOIL, NOTHING}
+enum STATUS {KNOCKBACK, HOVER, DRAG, GRAPPLE, RECOIL, NOTHING}
 
 var statusVelocity: Vector2
 var gScalar: float = normal_g
@@ -31,8 +34,11 @@ var grappleSpeed: float
 var grappleLocation: Vector2
 var direction: Vector2
 var lastDirection: Vector2 = Vector2.RIGHT
+var grappleType: String = "PULL"
+var dragBody: CharacterBody2D 
 
 signal hover_change
+signal grapple_signal
 
 func _ready() -> void:
 	set_stats()
@@ -51,35 +57,36 @@ func physics(delta: float) -> void:
 	if not is_on_floor():
 		velocity += get_gravity() * delta * gScalar
 		friction = Global.air_friction
-	elif "friction" in groundRay.get_collider():
+	elif groundRay.is_colliding() and "friction" in groundRay.get_collider():
 		friction = groundRay.get_collider().friction
-		if isStatus == STATUS.SPIKE:
-			on_status_timer_timeout()
 	if not direction:
 		velocity.x = move_toward(velocity.x, 0, friction)
 	
 func checkStatus(delta: float) -> void:
 	match isStatus:
-		STATUS.KNOCKBACK:
+		STATUS.KNOCKBACK, STATUS.RECOIL:
 			velocity = statusVelocity
-		STATUS.VERTICAL:
-			velocity = statusVelocity
-		STATUS.SPIKE:
-			gScalar = spike_mult
+		STATUS.DRAG:
+			velocity.y = dragBody.velocity.y
+			if dragBody.isActioning != dragBody.State.ATTACK:
+				on_status_timer_timeout()
 		STATUS.HOVER:
 			gScalar = hover_mult
 			velocity.y = minf(velocity.y, max_hover_fall)
 			hoverMovement(delta)
 		STATUS.GRAPPLE:
-			var distance: Vector2 = grappleLocation - global_position
-			if distance.length() <= grappleSpeed * delta:
-				finishGrapple()
+			if grappleType == "PULL":
+				var distance: Vector2 = grappleLocation - global_position
+				if distance.length() <= grappleSpeed * delta:
+					finishGrapple()
+				else:
+					velocity = distance.normalized() * grappleSpeed
 			else:
-				velocity = distance.normalized() * grappleSpeed
-		STATUS.RECOIL:
-			velocity = statusVelocity
+				velocity = Vector2.ZERO
+		
 		STATUS.NOTHING:
-			movement(delta)
+			if can_move:
+				movement(delta)
 	
 func moveHelper() -> void:
 	flip_sprite()
@@ -97,14 +104,15 @@ func flip_sprite() -> void:
 	if direction.x > 0:
 		visNode.scale.x = 1
 		
-func takeDamage(damage: float, knockback: Vector2, damagePos: Vector2, damageType: String) -> void:
+func takeDamage(damage: float, damageType: String, damagePos: Vector2, origin: CharacterBody2D) -> void:
+	var knockback: Vector2 = CombatManager.ATTACKS[damageType]['knockback']
 	if healthNode.takeHit(-damage, damageType):
 		if animNode:
 			animNode.play("HURT")
-		takeKnockback(knockback, damagePos)
+		takeKnockback(knockback, damagePos, origin)
 		unique_hit(damageType, damagePos)
 		
-func takeKnockback(knockForce: Vector2, damagePos: Vector2) -> void:
+func takeKnockback(knockForce: Vector2, damagePos: Vector2, origin: CharacterBody2D) -> void:
 	if knockForce.x != 0.0:
 		var offset: Vector2 = global_position - damagePos
 		if is_on_floor():
@@ -115,22 +123,27 @@ func takeKnockback(knockForce: Vector2, damagePos: Vector2) -> void:
 		statusTimer.start(0.2)
 		isStatus = STATUS.KNOCKBACK
 	elif knockForce.y != 0.0:
-		statusVelocity = knockForce
-		statusTimer.start(0.2)
-		if statusVelocity.y >= 0:
-			isStatus = STATUS.SPIKE
-		else:
-			isStatus = STATUS.VERTICAL
-			
-func getGrapple(player: CharacterBody2D, distance: float, gSpeed: float):
-	grappleLocation = player.global_position + player.lastDirection * distance 
-	grappleSpeed = gSpeed
+		clearStatus()
+		dragBody = origin
+		isStatus = STATUS.DRAG
+		add_collision_exception_with(dragBody)
+		dragBody.add_collision_exception_with(self)
+		
+func getGrapple(source: CharacterBody2D, distance: float, gSpeed: float):
+	if grappleType == "PULL":
+		grappleLocation = source.global_position + source.lastDirection * distance 
+		grappleSpeed = gSpeed
+	elif grappleType == "PUSH":
+		lastDirection = -source.lastDirection
+		source.getGrapple(self, distance, gSpeed)
+		source.grapple_signal.connect(finishGrapple, CONNECT_ONE_SHOT)
 	isStatus = STATUS.GRAPPLE
 	
 func finishGrapple() -> void:
 	isStatus = STATUS.NOTHING
 	velocity = Vector2.ZERO
-	takeKnockback(Vector2(CombatManager.values.no_kb), global_position)
+	startHovering()
+	grapple_signal.emit()
 	
 func startRecoil(damagePos: Vector2, magnitude: float) -> void:
 	statusVelocity = damagePos.normalized() * magnitude
@@ -139,16 +152,26 @@ func startRecoil(damagePos: Vector2, magnitude: float) -> void:
 	statusTimer.start(0.1)
 	isStatus = STATUS.RECOIL
 
-func on_status_timer_timeout() -> void:
+func on_status_timer_timeout(_player: CharacterBody2D = null) -> void:
+	var prevStatus: STATUS = isStatus
+	clearStatus()
+	if not prevStatus in [STATUS.HOVER, STATUS.RECOIL]:
+		startHovering()
+		
+func clearStatus() -> void:
+	isStatus = STATUS.NOTHING
+	statusTimer.stop()
 	velocity = Vector2.ZERO
 	gScalar = normal_g
-	if (isStatus != STATUS.SPIKE and isStatus != STATUS.HOVER
-	 and isStatus != STATUS.RECOIL):
-		startHovering()
-	else:
-		isStatus = STATUS.NOTHING
+	if dragBody != null:
+		remove_collision_exception_with(dragBody)
+		dragBody.remove_collision_exception_with(self)
+		if dragBody.isActioning == dragBody.State.ATTACK:
+			dragBody.startHovering()
+		dragBody = null
 
 func startHovering() -> void:
+	statusTimer.stop()
 	if not is_on_ceiling() and not is_on_floor():
 		velocity.y = 0.0
 		gScalar = hover_mult

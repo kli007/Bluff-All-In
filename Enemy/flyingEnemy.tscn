@@ -102,6 +102,21 @@ flying_period = 2.0
 flying_range = []
 shooting_range = 130.0
 chasing_range = 350.0
+contact_damage = "enemy_small_contact_dmg"
+cardDrop = 5
+speed = 0.0
+acceleration = 0.0
+jump_velocity = 0.0
+max_health = 0.0
+max_hit_threshold = 0
+invincibility_time = 0.0
+hover_mult = 0.05
+max_hover_fall = 15.0
+spike_mult = 2.0
+normal_g = 1.0
+canGrapple = true
+priorityGrapple = false
+can_move = true
 
 [node name="Sprite" parent="VisualManager" parent_id_path=PackedInt32Array(1465317720) index="0" unique_id=97275318]
 scale = Vector2(0.45, 0.45)
@@ -115,6 +130,8 @@ scale = Vector2(1.2, 0.6)
 [node name="PlayerArea" type="Area2D" parent="." index="3" unique_id=181755791]
 visible = false
 scale = Vector2(20, 20)
+collision_layer = 0
+collision_mask = 5
 
 [node name="TrackCollision" type="CollisionShape2D" parent="PlayerArea" index="0" unique_id=1743099216]
 shape = SubResource("CircleShape2D_5sqx0")
@@ -123,7 +140,7 @@ shape = SubResource("CircleShape2D_5sqx0")
 libraries/ = SubResource("AnimationLibrary_osyvj")
 
 [node name="GroundRay" parent="." index="8" unique_id=305696123]
-visible = true
+collision_mask = 1
 
 [node name="StateTimer" type="Timer" parent="." index="9" unique_id=2130467437]
 

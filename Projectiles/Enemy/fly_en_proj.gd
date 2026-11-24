@@ -20,5 +20,5 @@ func _on_body_entered(body: Node2D) -> void:
 	if body == parentNode:
 		return
 	if body.name == "Player":
-		CombatManager.dealDamage('player_proj_dmg', body, global_position, "")
+		CombatManager.dealDamage('Enemy_Projectile', body, global_position, parentNode)
 	queue_free()
