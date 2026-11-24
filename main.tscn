@@ -107,4 +107,4 @@ position = Vector2(931, 34)
 position = Vector2(1232, 34)
 
 [node name="EnemyTemplate" parent="EnemyGroup" unique_id=877029463 instance=ExtResource("14_w48qg")]
-position = Vector2(45, 38)
+position = Vector2(446, -20)

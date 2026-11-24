@@ -208,7 +208,7 @@ func movement(deltaTime: float) -> void:
 	if (Input.is_action_just_pressed("Move_Jump") and
 	isActioning in [State.IDLE, State.DASH, State.JUMP, State.FALL, State.SLIDE]):
 		switchState(State.IDLE)
-		if is_on_wall_only():
+		if is_on_wall():
 			var wall_normal: Vector2 = get_wall_normal()
 			velocity.y = WALL_JUMP_VELOCITY
 			velocity.x = WALL_JUMP_PUSHBACK * wall_normal.x
